@@ -113,7 +113,8 @@ h1 {
   font-size: clamp(2rem, 8vw, 3.2rem);
   line-height: 1.1;
   font-weight: 700;
-  margin-bottom: 0.2rem;
+  margin-bottom: 3rem;
+  /* Increased spacing as requested */
   letter-spacing: -0.05rem;
   background: linear-gradient(to right, #fff, #a0a0a0);
   background-clip: text;
