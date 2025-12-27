@@ -85,6 +85,7 @@ function App() {
           <div className="scale-base"></div>
         </div>
         <h1>attorney.ai</h1>
+        <p className="subtitle">Transcripción e inteligencia artificial para el sector legal</p>
 
         {error && (
             <div style={{ color: 'var(--danger)', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
