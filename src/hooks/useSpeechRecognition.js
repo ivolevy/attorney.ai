@@ -19,21 +19,58 @@ const useSpeechRecognition = () => {
             recognition.interimResults = true;
             recognition.lang = 'es-ES';
 
+            const processCommands = (transcript) => {
+                let processed = transcript;
+                const commands = {
+                    'punto': '.',
+                    'coma': ',',
+                    'dos puntos': ':',
+                    'punto y coma': ';',
+                    'nuevo párrafo': '\n\n',
+                    'nueva línea': '\n',
+                    'abrir signo de interrogación': '¿',
+                    'cerrar signo de interrogación': '?',
+                    'comillas': '"',
+                };
+
+                Object.keys(commands).forEach(cmd => {
+                    // Use regex with word boundaries, case insensitive
+                    const regex = new RegExp(`\\s?\\b${cmd}\\b`, 'gi');
+                    processed = processed.replace(regex, (match) => {
+                        return commands[cmd];
+                    });
+                });
+
+                // Post-processing: remove spaces before punctuation
+                processed = processed.replace(/\s+([.,:;?])/g, '$1');
+
+                // Capitalize first letter of sentences
+                processed = processed.replace(/([.!?])\s*([a-z])/g, (match, p1, p2) => p1 + ' ' + p2.toUpperCase());
+
+                return processed;
+            };
+
             recognition.onresult = (event) => {
                 let finalTranscriptChunk = '';
                 let interimTranscriptChunk = '';
 
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const transcript = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
-                        finalTranscriptChunk += event.results[i][0].transcript;
+                        finalTranscriptChunk += processCommands(transcript);
                     } else {
-                        interimTranscriptChunk += event.results[i][0].transcript;
+                        interimTranscriptChunk += transcript;
                     }
                 }
 
                 if (finalTranscriptChunk) {
-                    setText(prev => prev + ' ' + finalTranscriptChunk);
-                    setInterimText(''); // Clear interim once verified
+                    setText(prev => {
+                        const base = prev.trim();
+                        const addition = finalTranscriptChunk.trim();
+                        if (!base) return addition.charAt(0).toUpperCase() + addition.slice(1);
+                        return base + ' ' + addition;
+                    });
+                    setInterimText('');
                 } else {
                     setInterimText(interimTranscriptChunk);
                 }

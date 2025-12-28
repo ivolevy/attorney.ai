@@ -155,6 +155,10 @@ function App() {
            </div>
         </div>
 
+        <div className="voice-commands-info">
+          Comandos: "punto", "coma", "dos puntos", "nuevo párrafo"
+        </div>
+
         {/* Quick Actions Panel */}
         <div className="quick-actions-panel">
           <h3>Acciones Rápidas</h3>
