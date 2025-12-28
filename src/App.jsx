@@ -177,7 +177,11 @@ function App() {
             </button>
           </div>
         </div>
+        <div className="footer">
+          Powered by <a href="https://www.linkedin.com/in/ivan-levy/" target="_blank" rel="noopener noreferrer">Ivan Levy</a>
+        </div>
       </div>
+
     </>
   );
 }
