@@ -53,59 +53,14 @@ body {
 
 /* Professional Legal Logo (CSS) */
 .legal-logo {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    /* Slightly larger container to center the icon */
+    height: 60px;
     margin: 0 auto 0.2rem;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.scale-line {
-    width: 35px;
-    height: 2px;
-    background: var(--accent-green);
-    position: relative;
-    border-radius: 2px;
-}
-
-.scale-line::before,
-.scale-line::after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    width: 10px;
-    height: 6px;
-    border: 2px solid var(--accent-green);
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-}
-
-.scale-line::before {
-    left: -4px;
-}
-
-.scale-line::after {
-    right: -4px;
-}
-
-.scale-base {
-    position: absolute;
-    bottom: 12px;
-    width: 2px;
-    height: 20px;
-    background: var(--accent-green);
-}
-
-.scale-base::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -7px;
-    width: 16px;
-    height: 2px;
-    background: var(--accent-green);
 }
 
 /* Typography */

@@ -3,7 +3,7 @@ import useSpeechRecognition from './hooks/useSpeechRecognition';
 import { exportToPDF, exportToWord } from './utils/exportUtils';
 import { 
   Mic, MicOff, Trash2, Copy, AlertCircle, FileText, FileDown, 
-  MessageCircle, Zap, ExternalLink 
+  MessageCircle, Zap, ExternalLink, Scale 
 } from 'lucide-react';
 import './index.css';
 
@@ -81,11 +81,9 @@ function App() {
 
       <div className="container">
         <div className="legal-logo">
-          <div className="scale-line"></div>
-          <div className="scale-base"></div>
+          <Scale size={48} color="var(--accent-green)" strokeWidth={1.5} />
         </div>
         <h1>attorney.ai</h1>
-        <p className="subtitle">Transcripción inteligente impulsada con IA para el sector legal</p>
 
         {error && (
             <div style={{ color: 'var(--danger)', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
