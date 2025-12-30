@@ -3,8 +3,21 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 const useSpeechRecognition = () => {
     const [text, setText] = useState('');
     const [interimText, setInterimText] = useState('');
-    const [isListening, setIsListening] = useState(false);
+    const [isListening, _setIsListening] = useState(false);
+    const isListeningRef = useRef(false);
+
+    const setIsListening = useCallback((val) => {
+        isListeningRef.current = val;
+        _setIsListening(val);
+    }, []);
     const [error, setError] = useState(null);
+    const [autoRestart, _setAutoRestart] = useState(false);
+    const autoRestartRef = useRef(autoRestart);
+
+    const setAutoRestart = useCallback((val) => {
+        autoRestartRef.current = val;
+        _setAutoRestart(val);
+    }, []);
 
     // Use ref for recognition to avoid dependency cycles and re-instantiation
     const recognitionRef = useRef(null);
@@ -22,23 +35,97 @@ const useSpeechRecognition = () => {
             const processCommands = (transcript) => {
                 let processed = transcript;
                 const commands = {
+                    'punto seguido': '. ',
+                    'punto aparte': '\n\n',
+                    'punto y aparte': '\n\n',
+                    'párrafo aparte': '\n\n',
+                    'parrafo aparte': '\n\n',
+                    'punto final': '.',
                     'punto': '.',
                     'coma': ',',
                     'dos puntos': ':',
                     'punto y coma': ';',
                     'nuevo párrafo': '\n\n',
+                    'nuevo parrafo': '\n\n',
+                    'párrafo nuevo': '\n\n',
+                    'parrafo nuevo': '\n\n',
+                    'puntos suspensivos': '...',
                     'nueva línea': '\n',
+                    'nueva linea': '\n',
                     'abrir signo de interrogación': '¿',
                     'cerrar signo de interrogación': '?',
+                    'signo de exclamación': '!',
+                    'abrir paréntesis': '(',
+                    'cerrar paréntesis': ')',
                     'comillas': '"',
+                    'guion': '-',
+                    'guión': '-',
                 };
 
+                // Verbal numbers to digits (simple common ones)
+                const verbalNumbers = {
+                    'cero': '0', 'uno': '1', 'dos': '2', 'tres': '3', 'cuatro': '4', 'cinco': '5', 'seis': '6', 'siete': '7', 'ocho': '8', 'nueve': '9',
+                    'diez': '10', 'once': '11', 'doce': '12', 'trece': '13', 'catorce': '14', 'quince': '15', 'dieciseis': '16', 'diecisiete': '17', 'dieciocho': '18', 'diecinueve': '19',
+                    'veinte': '20', 'veintiuno': '21', 'veintidós': '22', 'veintitrés': '23', 'veinticuatro': '24', 'veinticinco': '25', 'veintiseis': '26', 'veintisiete': '27', 'veintiocho': '28', 'veintinueve': '29',
+                    'treinta': '30', 'cuarenta': '40', 'cincuenta': '50', 'sesenta': '60', 'setenta': '70', 'ochenta': '80', 'noventa': '90',
+                    'cien': '100', 'mil': '1000'
+                };
+
+                // Replace specific combined forms like "cuarenticuatro"
+                processed = processed.replace(/\b(cuarenticuatro|cuarenticinco|cuarentiseis|cuarentisiete|cuarentiocho|cuarentinueve)\b/gi, (match) => {
+                    const map = { 'cuarenticuatro': '44', 'cuarenticinco': '45', 'cuarentiseis': '46', 'cuarentisiete': '47', 'cuarentiocho': '48', 'cuarentinueve': '49' };
+                    return map[match.toLowerCase()] || match;
+                });
+
+                // Replace "número y número" (e.g., "cuarenta y cuatro")
+                processed = processed.replace(/\b(treinta|cuarenta|cincuenta|sesenta|setenta|ochenta|noventa)\s+y\s+(uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\b/gi, (match, p1, p2) => {
+                    const ten = verbalNumbers[p1.toLowerCase()];
+                    const unit = verbalNumbers[p2.toLowerCase()];
+                    return (parseInt(ten) + parseInt(unit)).toString();
+                });
+
+                // Apply commands replacements
                 Object.keys(commands).forEach(cmd => {
-                    // Use regex with word boundaries, case insensitive
                     const regex = new RegExp(`\\s?\\b${cmd}\\b`, 'gi');
                     processed = processed.replace(regex, (match) => {
                         return commands[cmd];
                     });
+                });
+
+                // NEW: Date formatting (15 del 2 -> 15/2, 5 de mayo -> 5/5, 15 del 12 del 25 -> 15/12/25)
+                const months = {
+                    'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6,
+                    'julio': 7, 'agosto': 8, 'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
+                };
+
+                // Pattern with year: "15 del 12 del 25" OR "15 de mayo de 2025"
+                processed = processed.replace(/(\d+)\s+(del|de|barra)\s+(\d+|[a-z]+)\s+(del|de|barra)\s+(\d+)/gi, (match, day, p1, month, p2, year) => {
+                    let mIdx = month.toLowerCase();
+                    let mNum = months[mIdx] || month;
+                    return `${day}/${mNum}/${year}`;
+                });
+
+                // Pattern without year: "15 del 2" OR "5 de mayo"
+                processed = processed.replace(/(\d+)\s+(del|de)\s+(\d+|[a-z]+)\b/gi, (match, day, prep, month) => {
+                    let m = month.toLowerCase();
+                    if (months[m]) {
+                        return `${day}/${months[m]}`;
+                    } else if (!isNaN(parseInt(month))) {
+                        return `${day}/${month}`;
+                    }
+                    return match;
+                });
+
+                // NEW: Spelling corrections (e.g., "Levy con y" -> "Levy", "Levi con igriega" -> "Levy")
+                processed = processed.replace(/(\w+)[iy]?\s+con\s+(i\s*griega|igriega|y)\b/gi, (match, word) => {
+                    const lowWord = word.toLowerCase();
+                    if (lowWord.endsWith('i')) {
+                        return word.slice(0, -1) + 'y';
+                    }
+                    if (lowWord.endsWith('y')) {
+                        return word;
+                    }
+                    return word + 'y';
                 });
 
                 // Post-processing: remove spaces before punctuation
@@ -66,10 +153,16 @@ const useSpeechRecognition = () => {
                 if (finalTranscriptChunk) {
                     setText(prev => {
                         const base = prev.trim();
-                        const addition = finalTranscriptChunk.trim();
+                        const addition = finalTranscriptChunk; // Preserve whatever processCommands returned
                         if (!base) return addition.charAt(0).toUpperCase() + addition.slice(1);
                         return base + ' ' + addition;
                     });
+
+                    // NEW: Pass the final text to the listener if provided
+                    if (recognitionRef.current.onFinalCallback) {
+                        recognitionRef.current.onFinalCallback(finalTranscriptChunk.trim());
+                    }
+
                     setInterimText('');
                 } else {
                     setInterimText(interimTranscriptChunk);
@@ -86,9 +179,17 @@ const useSpeechRecognition = () => {
             };
 
             recognition.onend = () => {
-                // When it ends, check if we should still be listening (e.g. if it stopped due to silence but user didn't click stop)
-                // For simplicity in this demo, we just stop the UI state.
-                setIsListening(false);
+                if (autoRestartRef.current) {
+                    try {
+                        recognition.start();
+                        setIsListening(true);
+                    } catch (e) {
+                        console.error("Auto-restart failed", e);
+                        setIsListening(false);
+                    }
+                } else {
+                    setIsListening(false);
+                }
             };
 
             recognitionRef.current = recognition;
@@ -98,23 +199,27 @@ const useSpeechRecognition = () => {
     }, []);
 
     const startListening = useCallback(() => {
-        if (recognitionRef.current && !isListening) {
+        if (recognitionRef.current && !isListeningRef.current) {
             try {
                 recognitionRef.current.start();
                 setIsListening(true);
                 setError(null);
             } catch (err) {
-                console.error(err);
+                console.error("Manual start failed", err);
             }
         }
-    }, [isListening]);
+    }, [setIsListening]);
 
     const stopListening = useCallback(() => {
-        if (recognitionRef.current && isListening) {
-            recognitionRef.current.stop();
-            setIsListening(false);
+        if (recognitionRef.current && isListeningRef.current) {
+            try {
+                recognitionRef.current.stop();
+                setIsListening(false);
+            } catch (err) {
+                console.error("Manual stop failed", err);
+            }
         }
-    }, [isListening]);
+    }, [setIsListening]);
 
     const resetText = useCallback(() => {
         setText('');
@@ -133,7 +238,13 @@ const useSpeechRecognition = () => {
         stopListening,
         resetText,
         hasSupport: isSupported,
-        error
+        error,
+        setAutoRestart,
+        setOnFinal: (cb) => {
+            if (recognitionRef.current) {
+                recognitionRef.current.onFinalCallback = cb;
+            }
+        }
     };
 };
 

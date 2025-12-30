@@ -1,9 +1,12 @@
 import { useRef, useEffect } from 'react';
 import useSpeechRecognition from './hooks/useSpeechRecognition';
+import useConversationalTemplate from './hooks/useConversationalTemplate';
 import { exportToPDF, exportToWord } from './utils/exportUtils';
+import TemplateSelector from './components/TemplateSelector';
+import RichDocumentPreview from './components/RichDocumentPreview';
 import { 
   Mic, MicOff, Trash2, Copy, AlertCircle, FileText, FileDown, 
-  MessageCircle, Zap, ExternalLink, Scale 
+  ExternalLink, Scale 
 } from 'lucide-react';
 import './index.css';
 
@@ -17,12 +20,59 @@ function App() {
     stopListening,
     resetText,
     hasSupport,
-    error
+    error,
+    setAutoRestart,
+    setOnFinal
   } = useSpeechRecognition();
+
+  const handleDownload = () => {
+    const content = activeTemplate ? activeTemplate.richFormat(answers) : text;
+    exportToPDF(content);
+  };
+
+  const {
+    activeTemplate,
+    currentField,
+    answers,
+    startTemplate,
+    handleAnswer,
+    stopTemplate,
+    isBotSpeaking,
+    updateAnswers
+  } = useConversationalTemplate(
+    (newText) => {
+        setText(newText);
+    },
+    handleDownload
+  );
+
+  // Connect conversational logic to STT
+  useEffect(() => {
+    if (activeTemplate) {
+      // Don't listen while the bot is speaking to avoid feedback loops
+      if (isBotSpeaking) {
+        setAutoRestart(false);
+        stopListening();
+      } else {
+        setAutoRestart(true);
+        startListening();
+      }
+
+      setOnFinal((transcript) => {
+        // Clean transcript from common bot-echoed words
+        const cleaned = transcript
+          .replace(/^(datos del destinatario|destinatario|remitente|tu nombre|tu apellido|dni)\s*/gi, '')
+          .trim();
+        if (cleaned) handleAnswer(cleaned);
+      });
+    } else {
+      setAutoRestart(false);
+      setOnFinal(null);
+    }
+  }, [activeTemplate, handleAnswer, setAutoRestart, setOnFinal, startListening, isBotSpeaking, stopListening]);
 
   const textareaRef = useRef(null);
 
-  // Auto-scroll to bottom of textarea when new text comes in
   useEffect(() => {
     if (textareaRef.current && isListening) {
         textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
@@ -39,7 +89,6 @@ function App() {
     setText(e.target.value);
   };
 
-  // Quick Actions Logic
   const openWhatsApp = () => {
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -64,10 +113,7 @@ function App() {
     return (
       <div className="container">
         <h1 style={{ color: 'var(--danger)' }}>Navegador no soportado</h1>
-        <p className="subtitle">
-           Lo sentimos, tu navegador no soporta la API de reconocimiento de voz. 
-           Por favor intenta usar Google Chrome en Desktop o Android.
-        </p>
+        <p className="subtitle">Lo sentimos, tu navegador no soporta la API de reconocimiento de voz.</p>
       </div>
     );
   }
@@ -93,17 +139,30 @@ function App() {
         )}
 
         <div className={`transcript-card ${isListening ? 'active' : ''}`}>
-          <textarea
-            ref={textareaRef}
-            className="transcript-textarea"
-            value={text}
-            onChange={handleChange}
-            placeholder="Presiona el micrófono y comienza a hablar, o escribe aquí..."
-            spellCheck="false"
-          />
-          
-          {/* Interim results displayed separately for stability */}
-          {(interimText || isListening) && (
+          <div className="preview-scroll-container">
+            {activeTemplate ? (
+              <RichDocumentPreview 
+                data={activeTemplate ? activeTemplate.richFormat(answers) : { 
+                  title: 'Documento en Proceso', 
+                  body: [text] 
+                }}
+                updateAnswers={updateAnswers}
+                interimText={interimText}
+                activeFieldId={currentField?.id}
+              />
+            ) : (
+              <textarea
+                ref={textareaRef}
+                className="transcript-textarea"
+                value={text}
+                onChange={handleChange}
+                placeholder="Presiona el micrófono y comienza a hablar, o elige una plantilla abajo..."
+                spellCheck="false"
+              />
+            )}
+          </div>
+
+          {(interimText || isListening) && !activeTemplate && (
              <div className="interim-display">
                 {interimText ? interimText : <span style={{opacity: 0.3}}>...</span>}
              </div>
@@ -118,12 +177,12 @@ function App() {
              <span className="control-label">Borrar</span>
            </div>
 
-           <div className="control-item">
-             <button className="icon-btn" onClick={() => exportToPDF(text)} title="Exportar a PDF" disabled={!text}>
-               <FileText size={24} />
-             </button>
-             <span className="control-label">PDF</span>
-           </div>
+            <div className="control-item">
+              <button className="icon-btn" onClick={handleDownload} title="Exportar a PDF" disabled={!text && !activeTemplate}>
+                <FileText size={24} />
+              </button>
+              <span className="control-label">PDF</span>
+            </div>
 
            <div className="control-item">
              <button 
@@ -139,7 +198,7 @@ function App() {
            </div>
 
            <div className="control-item">
-             <button className="icon-btn" onClick={() => exportToWord(text)} title="Exportar a Word" disabled={!text}>
+             <button className="icon-btn" onClick={() => exportToWord(activeTemplate ? activeTemplate.richFormat(answers) : text)} title="Exportar a Word" disabled={!text}>
                <FileDown size={24} />
              </button>
              <span className="control-label">Word</span>
@@ -154,10 +213,10 @@ function App() {
         </div>
 
         <div className="voice-commands-info">
-          Comandos: "punto", "coma", "dos puntos", "nuevo párrafo"
+          Comandos: "punto", "coma", "dos puntos", "nuevo párrafo", "borrar"
+          {activeTemplate && currentField?.id === 'texto' && ', "finalizado"'}
         </div>
 
-        {/* Quick Actions Panel */}
         <div className="quick-actions-panel">
           <h3>Acciones Rápidas</h3>
           <div className="action-buttons">
@@ -177,12 +236,18 @@ function App() {
             </button>
           </div>
         </div>
+
+        <TemplateSelector 
+            onSelect={startTemplate} 
+            activeTemplate={activeTemplate}
+            currentField={currentField}
+            onCancel={stopTemplate}
+        />
       </div>
 
       <div className="footer">
         Powered by <a href="https://www.linkedin.com/in/ivan-levy/" target="_blank" rel="noopener noreferrer">Ivan Levy</a>
       </div>
-
     </>
   );
 }
