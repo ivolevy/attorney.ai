@@ -57,10 +57,15 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
             const lowerTranscript = transcript.toLowerCase();
 
             if (affirmative.some(keyword => lowerTranscript.includes(keyword))) {
-                speak("Descargando documento.");
+                speak("Descargando archivo en pdf.");
                 if (onDownload) {
                     onDownload();
                 }
+                // Reset state immediately after download
+                setActiveTemplate(null);
+                setCurrentFieldIndex(-1);
+                setIsConfirmationStep(false);
+                setAnswers({});
             } else {
                 speak("Entendido.");
             }

@@ -98,8 +98,8 @@ const useSpeechRecognition = () => {
                     'julio': 7, 'agosto': 8, 'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
                 };
 
-                // Pattern with year: "15 del 12 del 25" OR "15 de mayo de 2025"
-                processed = processed.replace(/(\d+)\s+(del|de|barra)\s+(\d+|[a-z]+)\s+(del|de|barra)\s+(\d+)/gi, (match, day, p1, month, p2, year) => {
+                // Pattern with year: "15 del 12 del 25" OR "15/12 del 25"
+                processed = processed.replace(/(\d+)(?:\s+(?:del|de|barra)\s+|[\/])(\d+|[a-z]+)(?:\s+(?:del|de|barra)\s+|[\/])(\d+)/gi, (match, day, month, year) => {
                     let mIdx = month.toLowerCase();
                     let mNum = months[mIdx] || month;
                     return `${day}/${mNum}/${year}`;

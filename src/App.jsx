@@ -28,6 +28,7 @@ function App() {
   const handleDownload = () => {
     const content = activeTemplate ? activeTemplate.richFormat(answers) : text;
     exportToPDF(content);
+    stopListening();
   };
 
   const {

@@ -35,43 +35,43 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                     <div className="tcl-overlay">
                         {/* DESTINATARIO */}
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'dest_nombre' ? 'active-field' : ''}`} 
                             style={{ top: '11.8%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_nombre', rawAnswers?.dest_nombre)}
                             onChange={(e) => handleFieldChange('dest_nombre', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'dest_ramo' ? 'active-field' : ''}`}
                             style={{ top: '15.5%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_ramo', rawAnswers?.dest_ramo)}
                             onChange={(e) => handleFieldChange('dest_ramo', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'dest_domicilio' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '8.0%', width: '28%' }}
                             value={getValue('dest_domicilio', rawAnswers?.dest_domicilio)}
                             onChange={(e) => handleFieldChange('dest_domicilio', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'dest_cp' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '36.5%', width: '6%' }}
                             value={getValue('dest_cp', rawAnswers?.dest_cp)}
                             onChange={(e) => handleFieldChange('dest_cp', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'dest_localidad' ? 'active-field' : ''}`}
                             style={{ top: '22.8%', left: '8.0%', width: '18%' }}
                             value={getValue('dest_localidad', rawAnswers?.dest_localidad)}
                             onChange={(e) => handleFieldChange('dest_localidad', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
-                            style={{ top: '22.8%', left: '32.5%', width: '14%' }}
+                            className={`field-abs-input ${activeFieldId === 'dest_provincia' ? 'active-field' : ''}`}
+                            style={{ top: '22.8%', left: '32.5%', width: '18%' }}
                             value={getValue('dest_provincia', rawAnswers?.dest_provincia)}
                             onChange={(e) => handleFieldChange('dest_provincia', e.target.value)}
                             placeholder=""
@@ -79,50 +79,50 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
 
                         {/* REMITENTE */}
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'rem_nombre' ? 'active-field' : ''}`}
                             style={{ top: '11.8%', left: '56.0%', width: '35%' }}
                             value={getValue('rem_nombre', rawAnswers?.rem_nombre)}
                             onChange={(e) => handleFieldChange('rem_nombre', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'rem_dni' ? 'active-field' : ''}`}
                             style={{ top: '15.5%', left: '56.0%', width: '24%' }}
                             value={getValue('rem_dni', rawAnswers?.rem_dni)}
                             onChange={(e) => handleFieldChange('rem_dni', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'rem_fecha' ? 'active-field' : ''}`}
                             style={{ top: '15.5%', left: '83.0%', width: '10%' }}
                             value={getValue('rem_fecha', rawAnswers?.rem_fecha)}
                             onChange={(e) => handleFieldChange('rem_fecha', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'rem_domicilio' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '56.0%', width: '28%' }}
                             value={getValue('rem_domicilio', rawAnswers?.rem_domicilio)}
                             onChange={(e) => handleFieldChange('rem_domicilio', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'rem_cp' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '85.0%', width: '6%' }}
                             value={getValue('rem_cp', rawAnswers?.rem_cp)}
                             onChange={(e) => handleFieldChange('rem_cp', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
+                            className={`field-abs-input ${activeFieldId === 'rem_localidad' ? 'active-field' : ''}`}
                             style={{ top: '22.8%', left: '56.0%', width: '18%' }}
                             value={getValue('rem_localidad', rawAnswers?.rem_localidad)}
                             onChange={(e) => handleFieldChange('rem_localidad', e.target.value)}
                             placeholder=""
                         />
                         <input 
-                            className="field-abs-input" 
-                            style={{ top: '22.8%', left: '81.0%', width: '14%' }}
+                            className={`field-abs-input ${activeFieldId === 'rem_provincia' ? 'active-field' : ''}`}
+                            style={{ top: '22.8%', left: '81.0%', width: '15.5%' }}
                             value={getValue('rem_provincia', rawAnswers?.rem_provincia)}
                             onChange={(e) => handleFieldChange('rem_provincia', e.target.value)}
                             placeholder=""
@@ -130,12 +130,19 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
 
                         {/* CUERPO - Sector Sombreado */}
                         <textarea 
-                            className="field-abs-textarea" 
+                            className={`field-abs-textarea ${activeFieldId === 'texto' ? 'active-field' : ''}`}
                             style={{ top: '30.0%', left: '8.0%', width: '81.5%', height: '54.0%' }}
                             value={getValue('texto', rawAnswers?.texto)}
                             onChange={(e) => handleFieldChange('texto', e.target.value)}
                             placeholder=""
                         />
+
+                        {activeFieldId === 'texto' && (
+                            <div className="voice-guidance-popup">
+                                <div className="pulse-recorder"></div>
+                                <span>Di <strong>"Finalizado"</strong> para terminar</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             );
@@ -258,6 +265,47 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                 .field-abs-input:focus, .field-abs-textarea:focus {
                     background: rgba(0, 0, 128, 0.1);
                     border-bottom: 1px dashed #000080;
+                }
+                .active-field {
+                    background: rgba(30, 215, 96, 0.05) !important;
+                    border: 1px solid rgba(30, 215, 96, 0.6) !important;
+                    box-shadow: 0 0 25px 5px rgba(30, 215, 96, 0.4);
+                    border-radius: 4px;
+                    transition: all 0.3s ease;
+                }
+                .voice-guidance-popup {
+                    position: absolute;
+                    top: 30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #1e1e1e;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 50px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    z-index: 100;
+                    font-size: 14px;
+                    animation: slideDown 0.5s ease-out;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                .pulse-recorder {
+                    width: 10px;
+                    height: 10px;
+                    background-color: #ff4444;
+                    border-radius: 50%;
+                    animation: pulse 1.5s infinite;
+                }
+                @keyframes pulse {
+                    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+                    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 68, 68, 0); }
+                    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+                }
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translate(-50%, -20px); }
+                    to { opacity: 1; transform: translate(-50%, 0); }
                 }
                 .field-abs-textarea {
                     resize: none;
