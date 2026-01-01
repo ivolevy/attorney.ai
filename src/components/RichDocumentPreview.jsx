@@ -4,7 +4,7 @@ import tclBg from '../assets/library/tcl30/tcl30web.png';
 const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }) => {
     if (!data) return null;
 
-    const { title, header, body, footer, isOfficial, tipo, rawAnswers } = data;
+    const { title, header, body, footer, isOfficial, rawAnswers } = data;
 
     const handleFieldChange = (fieldId, value) => {
         if (updateAnswers && rawAnswers) {

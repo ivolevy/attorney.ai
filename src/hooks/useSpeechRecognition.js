@@ -86,9 +86,12 @@ const useSpeechRecognition = () => {
 
                 // Apply commands replacements
                 Object.keys(commands).forEach(cmd => {
-                    const regex = new RegExp(`\\s?\\b${cmd}\\b`, 'gi');
-                    processed = processed.replace(regex, (match) => {
-                        return commands[cmd];
+                    // Use more flexible regex: \s* instead of \s? to handle multiple spaces if any
+                    // Also guard against partial matches where necessary, but \b should handle it.
+                    // We escape special regex chars in cmd just in case (though our list is safe currently)
+                    const regex = new RegExp(`(^|\\s+)${cmd}\\b`, 'gi');
+                    processed = processed.replace(regex, (match, prefix) => {
+                        return (prefix.includes('\n') ? prefix : ' ') + commands[cmd];
                     });
                 });
 
@@ -99,7 +102,7 @@ const useSpeechRecognition = () => {
                 };
 
                 // Pattern with year: "15 del 12 del 25" OR "15/12 del 25"
-                processed = processed.replace(/(\d+)(?:\s+(?:del|de|barra)\s+|[\/])(\d+|[a-z]+)(?:\s+(?:del|de|barra)\s+|[\/])(\d+)/gi, (match, day, month, year) => {
+                processed = processed.replace(/(\d+)(?:\s+(?:del|de|barra)\s+|[/])(\d+|[a-z]+)(?:\s+(?:del|de|barra)\s+|[/])(\d+)/gi, (match, day, month, year) => {
                     let mIdx = month.toLowerCase();
                     let mNum = months[mIdx] || month;
                     return `${day}/${mNum}/${year}`;
@@ -141,10 +144,17 @@ const useSpeechRecognition = () => {
                 let finalTranscriptChunk = '';
                 let interimTranscriptChunk = '';
 
+                let hasLowConfidence = false;
+
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
                     const transcript = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
                         finalTranscriptChunk += processCommands(transcript);
+                        // Check confidence
+                        const confidence = event.results[i][0].confidence;
+                        if (confidence && confidence < 0.6) {
+                            hasLowConfidence = true;
+                        }
                     } else {
                         interimTranscriptChunk += transcript;
                     }
@@ -153,14 +163,21 @@ const useSpeechRecognition = () => {
                 if (finalTranscriptChunk) {
                     setText(prev => {
                         const base = prev.trim();
-                        const addition = finalTranscriptChunk; // Preserve whatever processCommands returned
-                        if (!base) return addition.charAt(0).toUpperCase() + addition.slice(1);
+                        let addition = finalTranscriptChunk;
+
+                        if (!base) {
+                            addition = addition.trimStart();
+                            return addition.charAt(0).toUpperCase() + addition.slice(1);
+                        }
                         return base + ' ' + addition;
                     });
 
-                    // NEW: Pass the final text to the listener if provided
                     if (recognitionRef.current.onFinalCallback) {
-                        recognitionRef.current.onFinalCallback(finalTranscriptChunk.trim());
+                        if (hasLowConfidence) {
+                            recognitionRef.current.onFinalCallback('__LOW_CONFIDENCE__');
+                        } else {
+                            recognitionRef.current.onFinalCallback(finalTranscriptChunk.trim());
+                        }
                     }
 
                     setInterimText('');
@@ -196,7 +213,7 @@ const useSpeechRecognition = () => {
         } else {
             // Logic handled by isSupported check below
         }
-    }, []);
+    }, [setIsListening]);
 
     const startListening = useCallback(() => {
         if (recognitionRef.current && !isListeningRef.current) {

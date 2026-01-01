@@ -21,7 +21,7 @@ export const exportToPDF = async (content) => {
 
     // If it's the rich structure from templateData
     if (content && content.title && content.body) {
-        const { title, header, body, isOfficial, footer, rawAnswers, tipo } = content;
+        const { title, header, body, isOfficial, rawAnswers } = content;
 
         if (isOfficial && (title.includes('TCL 30') || title.includes('TCL +30'))) {
             // OFFICIAL PDF FILLING STRATEGY

@@ -25,11 +25,8 @@ function App() {
     setOnFinal
   } = useSpeechRecognition();
 
-  const handleDownload = () => {
-    const content = activeTemplate ? activeTemplate.richFormat(answers) : text;
-    exportToPDF(content);
-    stopListening();
-  };
+  // Ref to break circular dependency between useConversationalTemplate and handleDownload
+  const handleDownloadRef = useRef(null);
 
   const {
     activeTemplate,
@@ -44,8 +41,19 @@ function App() {
     (newText) => {
         setText(newText);
     },
-    handleDownload
+    () => handleDownloadRef.current && handleDownloadRef.current()
   );
+
+  const handleDownload = () => {
+    const content = activeTemplate ? activeTemplate.richFormat(answers) : text;
+    exportToPDF(content);
+    stopListening();
+  };
+
+  // Update ref
+  useEffect(() => {
+    handleDownloadRef.current = handleDownload;
+  }, [activeTemplate, answers, text, stopListening]);
 
   // Connect conversational logic to STT
   useEffect(() => {

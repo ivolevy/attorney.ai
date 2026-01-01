@@ -48,8 +48,30 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         }
     }, [speak]);
 
+    // Text cleaning helpers
+    const cleanNumericInput = (text) => {
+        // Keep only digits
+        return text.replace(/[^\d]/g, '');
+    };
+
+    const cleanDateInput = (text) => {
+        let processed = text.toLowerCase();
+        // Replace common verbal separators
+        processed = processed.replace(/\s+(del|de|barra)\s+/g, '/');
+        // Handle verbal "uno" or "primero"
+        processed = processed.replace(/\b(uno|primero)\b/g, '1');
+        // Keep only digits and slash
+        return processed.replace(/[^\d/]/g, '');
+    };
+
     const handleAnswer = useCallback((transcript) => {
         if (!activeTemplate) return;
+
+        // Handle low confidence signal from speech recognition
+        if (transcript === '__LOW_CONFIDENCE__') {
+            speak("No he entendido. Por favor, repítelo.");
+            return;
+        }
 
         // Final confirmation logic
         if (isConfirmationStep) {
@@ -106,6 +128,24 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         }
 
         let processedTranscript = transcript;
+
+        // Strict numeric formatting for CP and DNI
+        if (['dest_cp', 'rem_cp', 'rem_dni'].includes(currentField.id)) {
+            processedTranscript = cleanNumericInput(transcript);
+            if (!processedTranscript && transcript.trim().length > 0) {
+                speak("No he entendido. Por favor di sólo números.");
+                return;
+            }
+        }
+
+        // Strict date formatting
+        if (['rem_fecha', 'fecha'].includes(currentField.id)) {
+            processedTranscript = cleanDateInput(transcript);
+            if (!processedTranscript && transcript.trim().length > 0) {
+                speak("No he entendido. Por favor di una fecha válida.");
+                return;
+            }
+        }
 
         // Custom filter for communication type (extract number)
         if (currentField.id === 'tipo_comunicacion') {
