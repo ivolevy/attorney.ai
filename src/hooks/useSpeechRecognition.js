@@ -162,14 +162,44 @@ const useSpeechRecognition = () => {
 
                 if (finalTranscriptChunk) {
                     setText(prev => {
-                        const base = prev.trim();
-                        let addition = finalTranscriptChunk;
+                        const base = prev;
+                        const addition = finalTranscriptChunk;
 
-                        if (!base) {
-                            addition = addition.trimStart();
-                            return addition.charAt(0).toUpperCase() + addition.slice(1);
+                        // Helper to capitalize first valid char
+                        const capitalizeFirstChar = (str) => {
+                            // Find first alphanumeric char
+                            return str.replace(/^(\s*)([a-z\u00C0-\u00FF])/i, (match, separator, char) => {
+                                return separator + char.toUpperCase();
+                            });
+                        };
+
+                        // 1. If we are just starting or previous text is empty/whitespace
+                        if (!base || !base.trim()) {
+                            // Just capitalize existing addition, preserve its leading structure (like \n)
+                            return capitalizeFirstChar(addition);
                         }
-                        return base + ' ' + addition;
+
+                        // 2. Determine separator
+                        const endsWithWhitespace = /[\s\n]$/.test(base);
+                        // If base ends in whitespace, we don't need to add another space, unless it's just a standard word boundary
+                        // But usually recognition adds spaces. Let's start safe. 
+                        const separator = endsWithWhitespace ? '' : ' ';
+
+                        // 3. Check context for capitalization
+                        // Ends in . ! ? or matches a newline structure at the end
+                        const isNewSentence = /[.!?]\s*$/.test(base) || /\n\s*$/.test(base);
+
+                        let finalAddition = addition;
+                        if (isNewSentence) {
+                            finalAddition = capitalizeFirstChar(addition);
+                            // If base ends in newline, we likely don't want a leading space in addition if it exists
+                            if (/\n\s*$/.test(base)) {
+                                finalAddition = finalAddition.trimStart(); // Remove leading space if we are on a new line
+                            }
+                        }
+
+                        // 4. Join
+                        return base + separator + finalAddition;
                     });
 
                     if (recognitionRef.current.onFinalCallback) {

@@ -142,7 +142,7 @@ export const exportToPDF = async (content) => {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(22);
         doc.setTextColor(30, 215, 96); // Accent Green
-        doc.text('Asistente Juridico', 20, 20);
+        doc.text('Lexia', 20, 20);
 
         doc.setFontSize(10);
         doc.setTextColor(100, 100, 100);
@@ -199,7 +199,7 @@ export const exportToWord = async (content) => {
         sections = [{
             children: [
                 new Paragraph({
-                    text: "Asistente Juridico",
+                    text: "Lexia",
                     heading: HeadingLevel.HEADING_1,
                     alignment: AlignmentType.CENTER,
                 }),
