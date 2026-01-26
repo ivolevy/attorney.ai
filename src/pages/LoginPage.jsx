@@ -145,21 +145,17 @@ function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            ¿Olvidaste tu contraseña?
-          </span>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            <a
-              href="https://www.linkedin.com/in/ivan-levy/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'var(--accent-green)', textDecoration: 'none', fontWeight: '500' }}
-            >
-              Contacta a un administrador
-            </a>
-          </div>
-        </div>
+        <p style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          ¿Olvidaste tu contraseña?{' '}
+          <a
+            href="https://www.linkedin.com/in/ivan-levy/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--accent-green)', textDecoration: 'none', fontWeight: '500' }}
+          >
+            Contacta a un administrador
+          </a>
+        </p>
       </div>
 
       <div className="footer" style={{ position: 'fixed', bottom: 0 }}>
