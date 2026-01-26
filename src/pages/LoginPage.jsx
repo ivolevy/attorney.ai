@@ -1,0 +1,164 @@
+import { useState } from 'react';
+import { Scale, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import '../index.css';
+
+function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      // Logic would go here
+      console.log('Login attempt:', { email, password });
+    }, 1500);
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '1rem 1rem 1rem 3rem',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '12px',
+    color: 'var(--text-primary)',
+    fontSize: '1rem',
+    outline: 'none',
+    transition: 'all 0.3s ease'
+  };
+
+  const focusStyle = {
+    borderColor: 'var(--accent-green)',
+    boxShadow: '0 0 0 2px rgba(30, 215, 96, 0.2)'
+  };
+
+  return (
+    <>
+      <div className="ambient-bg">
+        <div className="blob blob-1" style={{ top: '10%', left: '20%' }}></div>
+        <div className="blob blob-2" style={{ bottom: '10%', right: '20%' }}></div>
+      </div>
+
+      <div className="container" style={{ maxWidth: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '80vh' }}>
+        <div className="legal-logo" style={{ marginBottom: '2rem' }}>
+          <Scale size={64} color="var(--accent-green)" strokeWidth={1.5} />
+        </div>
+        
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Bienvenido</h1>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Ingresa a tu cuenta de Lexia</p>
+
+        <form onSubmit={handleSubmit} style={{ 
+          background: 'var(--card-bg)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '24px',
+          padding: '2rem',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+          width: '100%'
+        }}>
+          <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
+            <Mail size={20} color="var(--text-secondary)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              type="email" 
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={inputStyle}
+              onFocus={(e) => Object.assign(e.target.style, focusStyle)}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
+              required
+            />
+          </div>
+
+          <div style={{ position: 'relative', marginBottom: '2rem' }}>
+            <Lock size={20} color="var(--text-secondary)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              type={showPassword ? "text" : "password"} 
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={inputStyle}
+              onFocus={(e) => Object.assign(e.target.style, focusStyle)}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
+              required
+            />
+            <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '1rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                padding: 0
+              }}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '1rem',
+              background: 'var(--accent-green)',
+              border: 'none',
+              borderRadius: '12px',
+              color: '#000',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: loading ? 'wait' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s ease',
+              opacity: loading ? 0.7 : 1
+            }}
+            onMouseOver={(e) => !loading && (e.target.style.transform = 'translateY(-2px)')}
+            onMouseOut={(e) => !loading && (e.target.style.transform = 'translateY(0)')}
+          >
+            {loading ? 'Ingresando...' : (
+              <>
+                Iniciar Sesión
+                <ArrowRight size={20} />
+              </>
+            )}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+           <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>
+             ¿Olvidaste tu contraseña?
+           </a>
+           <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+             ¿No tienes una cuenta? <span style={{ color: 'var(--accent-green)', fontWeight: '500', cursor: 'pointer' }}>Regístrate</span>
+           </div>
+        </div>
+      </div>
+      
+      <div className="footer" style={{ position: 'fixed', bottom: 0 }}>
+        Copyright © 2026 Lexia. Todos los derechos reservados.
+      </div>
+    </>
+  );
+}
+
+export default LoginPage;
