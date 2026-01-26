@@ -21,10 +21,11 @@ function LoginPage() {
 
   const inputStyle = {
     width: '100%',
-    padding: '1rem 1rem 1rem 3rem',
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '12px',
+    padding: '1rem 1rem 0.5rem 3rem',
+    background: 'transparent',
+    border: 'none',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '0',
     color: 'var(--text-primary)',
     fontSize: '1rem',
     outline: 'none',
@@ -47,11 +48,11 @@ function LoginPage() {
         <div className="legal-logo" style={{ marginBottom: '2rem' }}>
           <Scale size={64} color="var(--accent-green)" strokeWidth={1.5} />
         </div>
-        
+
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Bienvenido</h1>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Ingresa a tu cuenta de Lexia</p>
 
-        <form onSubmit={handleSubmit} style={{ 
+        <form onSubmit={handleSubmit} style={{
           background: 'var(--card-bg)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
@@ -63,8 +64,8 @@ function LoginPage() {
         }}>
           <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
             <Mail size={20} color="var(--text-secondary)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
-            <input 
-              type="email" 
+            <input
+              type="email"
               placeholder="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -80,8 +81,8 @@ function LoginPage() {
 
           <div style={{ position: 'relative', marginBottom: '2rem' }}>
             <Lock size={20} color="var(--text-secondary)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
-            <input 
-              type={showPassword ? "text" : "password"} 
+            <input
+              type={showPassword ? "text" : "password"}
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -93,7 +94,7 @@ function LoginPage() {
               }}
               required
             />
-            <button 
+            <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               style={{
@@ -112,8 +113,8 @@ function LoginPage() {
             </button>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             style={{
               width: '100%',
@@ -123,7 +124,7 @@ function LoginPage() {
               borderRadius: '12px',
               color: '#000',
               fontSize: '1rem',
-              fontWeight: '600',
+              fontWeight: '400',
               cursor: loading ? 'wait' : 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -145,15 +146,22 @@ function LoginPage() {
         </form>
 
         <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-           <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>
-             ¿Olvidaste tu contraseña?
-           </a>
-           <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-             ¿No tienes una cuenta? <span style={{ color: 'var(--accent-green)', fontWeight: '500', cursor: 'pointer' }}>Regístrate</span>
-           </div>
+          <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>
+            ¿Olvidaste tu contraseña?
+          </a>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+            <a
+              href="https://www.linkedin.com/in/ivan-levy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--accent-green)', textDecoration: 'none', fontWeight: '500' }}
+            >
+              Contacta a un administrador
+            </a>
+          </div>
         </div>
       </div>
-      
+
       <div className="footer" style={{ position: 'fixed', bottom: 0 }}>
         Copyright © 2026 Lexia. Todos los derechos reservados.
       </div>
