@@ -145,10 +145,10 @@ function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>
+        <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
             ¿Olvidaste tu contraseña?
-          </a>
+          </span>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
             <a
               href="https://www.linkedin.com/in/ivan-levy/"
