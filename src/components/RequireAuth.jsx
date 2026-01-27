@@ -24,7 +24,9 @@ function RequireAuth({ children }) {
     return (
         <>
             <Navbar />
-            {children}
+            <div className="auth-content-wrapper">
+                {children}
+            </div>
         </>
     );
 }

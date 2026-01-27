@@ -39,13 +39,13 @@ body {
     align-items: center;
     justify-content: flex-start;
     padding: 10px;
-    padding-top: 140px;
+    padding-top: 5vh;
 }
 
 @media (max-width: 768px) {
     #root {
         justify-content: flex-start;
-        padding-top: 100px;
+        padding-top: 20px;
     }
 }
 
@@ -589,4 +589,13 @@ h1 {
     .user-email {
         display: none;
     }
+}
+
+.auth-content-wrapper {
+    padding-top: 100px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
 }
