@@ -19,35 +19,37 @@ function Navbar() {
             top: '20px',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: '90%',
-            maxWidth: '1200px',
-            height: '70px',
-            background: 'rgba(20, 30, 20, 0.6)', // Dark semi-transparent base
+            width: 'auto',
+            minWidth: '500px', // Reduced from 600px/90%
+            maxWidth: '90%',
+            height: '56px', // Reduced height from 70px
+            background: 'rgba(20, 30, 20, 0.6)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(30, 215, 96, 0.2)', // Greenish border
-            borderRadius: '100px', // Pill shape
+            border: '1px solid rgba(30, 215, 96, 0.2)',
+            borderRadius: '100px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 2rem',
+            padding: '0 1rem', // Reduced padding
             zIndex: 1000,
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
         }}>
             {/* Left Side: Logo & Name */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{
                     background: 'var(--accent-green)',
-                    borderRadius: '12px',
-                    padding: '8px',
+                    borderRadius: '50%', // Circular logo
+                    width: '32px',
+                    height: '32px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                    <Scale size={20} color="#000" strokeWidth={2} />
+                    <Scale size={18} color="#000" strokeWidth={2} />
                 </div>
                 <span style={{
-                    fontSize: '1.2rem',
+                    fontSize: '1rem',
                     fontWeight: '600',
                     letterSpacing: '-0.5px',
                     color: '#fff'
