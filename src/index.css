@@ -39,13 +39,13 @@ body {
     align-items: center;
     justify-content: flex-start;
     padding: 10px;
-    padding-top: 5vh;
+    padding-top: 140px;
 }
 
 @media (max-width: 768px) {
     #root {
         justify-content: flex-start;
-        padding-top: 20px;
+        padding-top: 100px;
     }
 }
 
