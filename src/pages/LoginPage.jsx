@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Scale, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import '../index.css';
 
 function LoginPage() {
@@ -7,16 +9,26 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
+    setError('');
+
+    // Simulate API delay
     setTimeout(() => {
+      const result = login(email, password);
       setLoading(false);
-      // Logic would go here
-      console.log('Login attempt:', { email, password });
-    }, 1500);
+
+      if (result.success) {
+        navigate('/');
+      } else {
+        setError(result.error);
+      }
+    }, 1000);
   };
 
   const inputStyle = {
@@ -51,6 +63,21 @@ function LoginPage() {
 
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Bienvenido</h1>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Ingresa a tu cuenta de Lexia</p>
+
+        {error && (
+          <div style={{
+            background: 'rgba(255, 50, 50, 0.1)',
+            border: '1px solid rgba(255, 50, 50, 0.3)',
+            color: '#ff6b6b',
+            padding: '0.8rem',
+            borderRadius: '12px',
+            marginBottom: '1.5rem',
+            textAlign: 'center',
+            fontSize: '0.9rem'
+          }}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} style={{
           background: 'var(--card-bg)',
