@@ -592,7 +592,7 @@ h1 {
 }
 
 .auth-content-wrapper {
-    padding-top: 100px;
+    padding-top: 80px; /* Reduced from 100px to move content up */
     width: 100%;
     display: flex;
     flex-direction: column;

@@ -190,7 +190,7 @@ function LoginPage() {
       </div>
 
       <div className="footer" style={{ position: 'fixed', bottom: 0 }}>
-        Copyright © 2026 Lexia. Todos los derechos reservados.
+        Copyright © 2026 Lexia. Todos los derechos reservados. - Powered by <a href="https://www.linkedin.com/in/ivan-levy/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-green)', textDecoration: 'none' }}>Ivan Levy</a>
       </div>
     </>
   );
