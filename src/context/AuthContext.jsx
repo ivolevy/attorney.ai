@@ -65,14 +65,17 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (email, password) => {
+        setLoading(true);
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
         if (error) {
+            setLoading(false);
             return { success: false, error: 'Credenciales inválidas o error de conexión' };
         }
+        // successful login will trigger onAuthStateChange -> fetchProfileAndSubscription -> setLoading(false)
         return { success: true };
     };
 
