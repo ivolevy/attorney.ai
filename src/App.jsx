@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import Layout from './components/Layout';
+import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './context/AuthContext';
 import './index.css';
 
@@ -12,9 +12,9 @@ function App() {
         <Route
           path="/"
           element={
-            <Layout>
+            <RequireAuth>
               <HomePage />
-            </Layout>
+            </RequireAuth>
           }
         />
         <Route path="/inicia-sesion" element={<LoginPage />} />
