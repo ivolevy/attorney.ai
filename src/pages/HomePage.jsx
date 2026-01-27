@@ -135,10 +135,7 @@ function HomePage() {
       </div>
 
       <div className="container">
-        <div className="legal-logo">
-          <Scale size={48} color="var(--accent-green)" strokeWidth={1.5} />
-        </div>
-        <h1>Lexia</h1>
+
 
         {error && (
           <div style={{ color: 'var(--danger)', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
