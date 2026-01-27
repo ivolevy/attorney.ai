@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 const AuthContext = createContext(null);
 
@@ -7,31 +8,81 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check local storage on mount
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-        setLoading(false);
+        // Get initial session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                fetchProfileAndSubscription(session.user);
+            } else {
+                setLoading(false);
+            }
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (session) {
+                fetchProfileAndSubscription(session.user);
+            } else {
+                setUser(null);
+                setLoading(false);
+            }
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
-    const login = (email, password) => {
-        if (email === 'admin@admin.com' && password === 'admin') {
-            const userObj = { email, name: 'Admin User' };
-            setUser(userObj);
-            localStorage.setItem('user', JSON.stringify(userObj));
-            return { success: true };
+    const fetchProfileAndSubscription = async (authUser) => {
+        try {
+            const { data: subscription, error } = await supabase
+                .from('subscriptions')
+                .select('status')
+                .eq('user_id', authUser.id)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Error fetching subscription:', error);
+            }
+
+            setUser({
+                ...authUser,
+                subscriptionStatus: subscription?.status || 'inactive'
+            });
+        } catch (error) {
+            console.error('Error in fetchProfileAndSubscription:', error);
+        } finally {
+            setLoading(false);
         }
-        return { success: false, error: 'Credenciales inválidas' };
     };
 
-    const logout = () => {
+    const signUp = async (email, password) => {
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+        });
+
+        if (error) {
+            return { success: false, error: error.message };
+        }
+        return { success: true, message: 'Revisa tu email para confirmar tu cuenta' };
+    };
+
+    const login = async (email, password) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (error) {
+            return { success: false, error: 'Credenciales inválidas o error de conexión' };
+        }
+        return { success: true };
+    };
+
+    const logout = async () => {
+        await supabase.auth.signOut();
         setUser(null);
-        localStorage.removeItem('user');
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, signUp, login, logout, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

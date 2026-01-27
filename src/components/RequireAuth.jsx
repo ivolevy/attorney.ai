@@ -13,6 +13,13 @@ function RequireAuth({ children }) {
         return <Navigate to="/inicia-sesion" state={{ from: location }} replace />;
     }
 
+    if (user.subscriptionStatus !== 'active') {
+        // If user is logged in but subscription is not active, force logout or show error
+        // For now, redirect to login with a message (handled by UI logic or simply block)
+        // Ideally we might want a "Suspended" page.
+        return <Navigate to="/inicia-sesion" replace />;
+    }
+
     return children;
 }
 

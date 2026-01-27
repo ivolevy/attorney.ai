@@ -18,9 +18,8 @@ function LoginPage() {
     setLoading(true);
     setError('');
 
-    // Simulate API delay
-    setTimeout(() => {
-      const result = login(email, password);
+    try {
+      const result = await login(email, password);
       setLoading(false);
 
       if (result.success) {
@@ -28,7 +27,10 @@ function LoginPage() {
       } else {
         setError(result.error);
       }
-    }, 1000);
+    } catch (err) {
+      setLoading(false);
+      setError('Ocurrió un error inesperado');
+    }
   };
 
   const inputStyle = {
@@ -62,7 +64,9 @@ function LoginPage() {
         </div>
 
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Bienvenido</h1>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Ingresa a tu cuenta de Lexia</p>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+          Ingresa a tu cuenta de Lexia
+        </p>
 
         {error && (
           <div style={{
