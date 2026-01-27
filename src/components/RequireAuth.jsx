@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Navbar from './Navbar';
 
 function RequireAuth({ children }) {
     const { user } = useAuth();
@@ -20,7 +21,12 @@ function RequireAuth({ children }) {
         return <Navigate to="/inicia-sesion" replace />;
     }
 
-    return children;
+    return (
+        <>
+            <Navbar />
+            {children}
+        </>
+    );
 }
 
 export default RequireAuth;
