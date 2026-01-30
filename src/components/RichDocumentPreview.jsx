@@ -1,10 +1,22 @@
-import React from 'react';
-import tclBg from '../assets/library/tcl30/tcl30web.png';
+import React, { useEffect } from 'react';
+import tclBg from '../assets/library/laboral/tcl30/tcl30web.png';
+import ingresoCausasBg from '../assets/library/laboral/ingreso-causas/ingreso-causas.png';
 
-const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }) => {
+const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, onNextField }) => {
     if (!data) return null;
 
     const { title, header, body, footer, isOfficial, rawAnswers } = data;
+
+    useEffect(() => {
+        if (activeFieldId) {
+            // Find the element that has the active-field class or focus based on activeFieldId
+            // A simple strategy is to find the element with the active-field class
+            const activeEl = document.querySelector('.active-field');
+            if (activeEl) {
+                activeEl.focus();
+            }
+        }
+    }, [activeFieldId]);
 
     const handleFieldChange = (fieldId, value) => {
         if (updateAnswers && rawAnswers) {
@@ -12,6 +24,21 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                 ...rawAnswers,
                 [fieldId]: value
             });
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            // For textarea, Enter normally adds newline, unless it's the specific behavior we want to override
+            // If it's a regular input, or if it's a textarea and we don't want a newline (e.g., jump to next)
+            // The user wanted "salte al proximo input", so we jump.
+            // If they are in a textarea and actually WANT a newline, they can use Shift+Enter maybe?
+            // Or we just jump if it's not the last field.
+            if (e.target.tagName === 'TEXTAREA' && e.shiftKey) {
+                return; // Allow new lines with Shift+Enter
+            }
+            e.preventDefault();
+            if (onNextField) onNextField();
         }
     };
 
@@ -30,112 +57,127 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
             return (
                 <div className="tcl-pixel-perfect">
                     <img src={tclBg} alt="TCL Form" className="tcl-bg-image" />
-                    
+
                     {/* OVERLAY FIELDS */}
                     <div className="tcl-overlay">
                         {/* DESTINATARIO */}
-                        <input 
-                            className={`field-abs-input ${activeFieldId === 'dest_nombre' ? 'active-field' : ''}`} 
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'dest_nombre' ? 'active-field' : ''}`}
                             style={{ top: '11.8%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_nombre', rawAnswers?.dest_nombre)}
                             onChange={(e) => handleFieldChange('dest_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'dest_ramo' ? 'active-field' : ''}`}
                             style={{ top: '15.5%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_ramo', rawAnswers?.dest_ramo)}
                             onChange={(e) => handleFieldChange('dest_ramo', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'dest_domicilio' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '8.0%', width: '28%' }}
                             value={getValue('dest_domicilio', rawAnswers?.dest_domicilio)}
                             onChange={(e) => handleFieldChange('dest_domicilio', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'dest_cp' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '36.5%', width: '6%' }}
                             value={getValue('dest_cp', rawAnswers?.dest_cp)}
                             onChange={(e) => handleFieldChange('dest_cp', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'dest_localidad' ? 'active-field' : ''}`}
                             style={{ top: '22.8%', left: '8.0%', width: '18%' }}
                             value={getValue('dest_localidad', rawAnswers?.dest_localidad)}
                             onChange={(e) => handleFieldChange('dest_localidad', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'dest_provincia' ? 'active-field' : ''}`}
                             style={{ top: '22.8%', left: '32.5%', width: '18%' }}
                             value={getValue('dest_provincia', rawAnswers?.dest_provincia)}
                             onChange={(e) => handleFieldChange('dest_provincia', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
 
                         {/* REMITENTE */}
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_nombre' ? 'active-field' : ''}`}
                             style={{ top: '11.8%', left: '56.0%', width: '35%' }}
                             value={getValue('rem_nombre', rawAnswers?.rem_nombre)}
                             onChange={(e) => handleFieldChange('rem_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_dni' ? 'active-field' : ''}`}
                             style={{ top: '15.5%', left: '56.0%', width: '24%' }}
                             value={getValue('rem_dni', rawAnswers?.rem_dni)}
                             onChange={(e) => handleFieldChange('rem_dni', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_fecha' ? 'active-field' : ''}`}
                             style={{ top: '15.5%', left: '83.0%', width: '10%' }}
                             value={getValue('rem_fecha', rawAnswers?.rem_fecha)}
                             onChange={(e) => handleFieldChange('rem_fecha', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_domicilio' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '56.0%', width: '28%' }}
                             value={getValue('rem_domicilio', rawAnswers?.rem_domicilio)}
                             onChange={(e) => handleFieldChange('rem_domicilio', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_cp' ? 'active-field' : ''}`}
                             style={{ top: '19.1%', left: '85.0%', width: '6%' }}
                             value={getValue('rem_cp', rawAnswers?.rem_cp)}
                             onChange={(e) => handleFieldChange('rem_cp', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_localidad' ? 'active-field' : ''}`}
                             style={{ top: '22.8%', left: '56.0%', width: '18%' }}
                             value={getValue('rem_localidad', rawAnswers?.rem_localidad)}
                             onChange={(e) => handleFieldChange('rem_localidad', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
-                        <input 
+                        <input
                             className={`field-abs-input ${activeFieldId === 'rem_provincia' ? 'active-field' : ''}`}
                             style={{ top: '22.8%', left: '81.0%', width: '15.5%' }}
                             value={getValue('rem_provincia', rawAnswers?.rem_provincia)}
                             onChange={(e) => handleFieldChange('rem_provincia', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
 
                         {/* CUERPO - Sector Sombreado */}
-                        <textarea 
+                        <textarea
                             className={`field-abs-textarea ${activeFieldId === 'texto' ? 'active-field' : ''}`}
                             style={{ top: '30.0%', left: '8.0%', width: '81.5%', height: '54.0%' }}
                             value={getValue('texto', rawAnswers?.texto)}
                             onChange={(e) => handleFieldChange('texto', e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder=""
                         />
+
 
                         {activeFieldId === 'texto' && (
                             <div className="voice-guidance-popup">
@@ -143,6 +185,90 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                                 <span>Di <strong>"Finalizado"</strong> para terminar</span>
                             </div>
                         )}
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && data.isIngresoCausas) {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={ingresoCausasBg} alt="Ingreso Causas Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        {/* ABOGADO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_tomo' ? 'active-field' : ''}`}
+                            style={{ top: '40.2%', left: '26.8%', width: '7%' }}
+                            value={getValue('abogado_tomo', rawAnswers?.abogado_tomo)}
+                            onChange={(e) => handleFieldChange('abogado_tomo', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_folio' ? 'active-field' : ''}`}
+                            style={{ top: '40.2%', left: '33.8%', width: '7%' }}
+                            value={getValue('abogado_folio', rawAnswers?.abogado_folio)}
+                            onChange={(e) => handleFieldChange('abogado_folio', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '40.2%', left: '42.8%', width: '40%' }}
+                            value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
+                            onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* ACTOR */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '55.6%', left: '17.8%', width: '25%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_ieric' ? 'active-field' : ''}`}
+                            style={{ top: '55.6%', left: '42.8%', width: '40%' }}
+                            value={getValue('actor_ieric', rawAnswers?.actor_ieric)}
+                            onChange={(e) => handleFieldChange('actor_ieric', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_dni' ? 'active-field' : ''}`}
+                            style={{ top: '57.4%', left: '17.8%', width: '25%' }}
+                            value={getValue('actor_dni', rawAnswers?.actor_dni)}
+                            onChange={(e) => handleFieldChange('actor_dni', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* SEXO CHECKBOX */}
+                        <div style={{ position: 'absolute', top: '59.2%', left: '45.1%', color: '#000080', fontWeight: 'bold', fontSize: '16px' }}>
+                            {rawAnswers?.actor_sexo?.toLowerCase().includes('fem') ? 'X' : ''}
+                        </div>
+                        <div style={{ position: 'absolute', top: '59.2%', left: '60.1%', color: '#000080', fontWeight: 'bold', fontSize: '16px' }}>
+                            {rawAnswers?.actor_sexo?.toLowerCase().includes('masc') ? 'X' : ''}
+                        </div>
+                        <div style={{ position: 'absolute', top: '59.2%', left: '88.3%', color: '#000080', fontWeight: 'bold', fontSize: '16px' }}>
+                            {(!rawAnswers?.actor_sexo?.toLowerCase().includes('fem') && !rawAnswers?.actor_sexo?.toLowerCase().includes('masc') && rawAnswers?.actor_sexo) ? 'X' : ''}
+                        </div>
+
+                        {/* DEMANDADO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'demandado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '67.0%', left: '17.8%', width: '33%' }}
+                            value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
+                            onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* EXPEDIENTE */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'expte_numero' ? 'active-field' : ''}`}
+                            style={{ top: '80.5%', left: '17.8%', width: '36%' }}
+                            value={getValue('expte_numero', rawAnswers?.expte_numero)}
+                            onChange={(e) => handleFieldChange('expte_numero', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
                     </div>
                 </div>
             );
@@ -168,7 +294,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
     return (
         <div className="rich-preview-container">
             <div className="document-page">
-                <div className="official-stamp">BORRADOR</div>
+                {/* <div className="official-stamp">BORRADOR</div> */}
                 <h2 className="preview-title">{title}</h2>
                 <div className="document-content-area">
                     {renderContent()}
@@ -177,8 +303,8 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
 
             <style>{`
                 .rich-preview-container {
-                    background: #1a1a1a;
-                    padding: 1rem;
+                    background: #111;
+                    padding: 0;
                     border-radius: 12px;
                     color: white;
                     display: flex;
@@ -188,40 +314,41 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                 .document-page {
                     background: white;
                     width: 100%;
-                    max-width: 650px;
-                    min-height: 800px;
+                    max-width: 1000px;
+                    margin: 0 auto;
                     padding: 0;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                    box-shadow: 0 10px 50px rgba(0,0,0,0.7);
                     color: #333;
                     position: relative;
-                    overflow: hidden;
                     display: flex;
                     flex-direction: column;
                 }
                 .official-stamp {
                     position: absolute;
-                    top: 20px;
-                    right: -30px;
+                    top: 25px;
+                    right: -35px;
                     transform: rotate(45deg);
-                    background: rgba(255, 0, 0, 0.05);
-                    color: rgba(255, 0, 0, 0.2);
-                    border: 1px solid rgba(255, 0, 0, 0.2);
-                    padding: 2px 30px;
-                    font-weight: 700;
-                    font-size: 14px;
-                    letter-spacing: 2px;
+                    background: rgba(255, 0, 0, 0.03);
+                    color: rgba(255, 0, 0, 0.15);
+                    border: 1px solid rgba(255, 0, 0, 0.1);
+                    padding: 4px 40px;
+                    font-weight: 800;
+                    font-size: 11px;
+                    letter-spacing: 3px;
                     pointer-events: none;
                     z-index: 10;
+                    text-transform: uppercase;
                 }
                 .preview-title {
-                    font-size: 14px;
+                    font-size: 13px;
                     text-transform: uppercase;
-                    color: #666;
-                    padding: 20px 40px;
-                    border-bottom: 1px solid #eee;
+                    color: #888;
+                    padding: 15px 40px;
+                    border-bottom: 1px solid #f0f0f0;
                     margin: 0;
                     text-align: center;
-                    background: #fcfcfc;
+                    background: #fafafa;
+                    font-weight: 500;
                 }
                 .document-content-area {
                     flex: 1;
@@ -231,11 +358,11 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                 .tcl-pixel-perfect {
                     position: relative;
                     width: 100%;
-                    height: 100%;
                 }
                 .tcl-bg-image {
                     width: 100%;
                     display: block;
+                    image-rendering: -webkit-optimize-contrast;
                 }
                 .tcl-overlay {
                     position: absolute;
@@ -253,11 +380,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId }
                     color: #000080;
                     font-family: 'Courier New', Courier, monospace;
                     font-weight: bold;
-                    font-size: clamp(7px, 0.95vw, 11px);
+                    font-size: 14px;
                     letter-spacing: -0.01em;
                     pointer-events: auto;
-                    padding: 0;
+                    padding: 2px 4px;
                     margin: 0;
+                    transition: background 0.2s ease;
                 }
                 .field-abs-input:hover, .field-abs-textarea:hover {
                     background: rgba(0, 0, 128, 0.05);

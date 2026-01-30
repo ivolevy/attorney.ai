@@ -22,8 +22,8 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel }) 
                 </div>
                 <div className="category-scroll">
                     {categories.map(cat => (
-                        <button 
-                            key={cat} 
+                        <button
+                            key={cat}
                             className={`cat-pill ${selectedCategory === cat ? 'active' : ''}`}
                             onClick={() => setSelectedCategory(cat)}
                         >
@@ -41,9 +41,9 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel }) 
             {!activeTemplate ? (
                 <div className="template-list-compact">
                     {filteredTemplates.map((template) => (
-                        <div 
-                            key={template.id} 
-                            className={`compact-card ${template.disabled ? 'disabled' : ''}`} 
+                        <div
+                            key={template.id}
+                            className={`compact-card ${template.disabled ? 'disabled' : ''}`}
                             onClick={() => !template.disabled && onSelect(template.id)}
                         >
                             <div className="card-main">
@@ -82,7 +82,9 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel }) 
                     background: rgba(255, 255, 255, 0.02);
                     border: 1px solid rgba(255, 255, 255, 0.05);
                     border-radius: 16px;
-                    margin-top: 2.5rem;
+                    margin: 0.5rem auto 0 auto;
+                    max-width: 800px;
+                    width: 100%;
                     overflow: hidden;
                     text-align: left;
                 }

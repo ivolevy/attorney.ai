@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 import { saveAs } from 'file-saver';
 import { PDFDocument, rgb } from 'pdf-lib';
-import tclPdfUrl from '../assets/library/tcl30/tcl30web.pdf?url';
+import tclPdfUrl from '../assets/library/laboral/tcl30/tcl30web.pdf?url';
 
 /**
  * Exports text to a PDF file with basic branding or rich formatting

@@ -65,17 +65,28 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (email, password) => {
-        setLoading(true);
+        // Mock fallback for development/demo
+        if (email === 'admin@admin.com' && password === 'admin') {
+            // Add a small delay to simulate network request
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            const mockUser = {
+                id: 'mock-id',
+                email: 'admin@admin.com',
+                subscriptionStatus: 'active'
+            };
+            setUser(mockUser);
+            return { success: true };
+        }
+
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
         if (error) {
-            setLoading(false);
             return { success: false, error: 'Credenciales inválidas o error de conexión' };
         }
-        // successful login will trigger onAuthStateChange -> fetchProfileAndSubscription -> setLoading(false)
         return { success: true };
     };
 
@@ -86,7 +97,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, signUp, login, logout, loading }}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 };

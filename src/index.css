@@ -76,16 +76,18 @@ h1 {
 
 /* Layout Containers */
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     width: 100%;
+    margin: 0 auto;
     text-align: center;
     position: relative;
     z-index: 10;
-    padding: 0.5rem 0;
+    padding: 0 1rem;
     /* Allow container to take available space but let footer sit below */
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 /* Glassmorphism Card for Transcript */
@@ -96,15 +98,15 @@ h1 {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     padding: 1rem;
-    max-height: 75vh;
-    margin: 0.75rem 0;
+    max-height: 80vh;
+    margin: 0;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     position: relative;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    flex: 1;
     overflow: hidden;
-    /* Card itself doesn't scroll */
 }
 
 .preview-scroll-container {
@@ -151,21 +153,11 @@ h1 {
 }
 
 /* Controls */
-.controls {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: space-evenly;
-    align-items: flex-end;
-    margin-top: 0.5rem;
-    width: 100%;
-}
-
-.control-item {
+.secondary-controls-grid .control-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.2rem;
-    flex: 1;
+    gap: 0.4rem;
 }
 
 .control-label {
@@ -461,6 +453,7 @@ h1 {
 .footer a:hover {
     opacity: 0.8;
 }
+
 /* Navbar Styles */
 .navbar-container {
     position: fixed;
@@ -592,10 +585,412 @@ h1 {
 }
 
 .auth-content-wrapper {
-    padding-top: 80px; /* Reduced from 100px to move content up */
+    padding-top: 80px;
+    /* Reduced from 100px to move content up */
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     flex: 1;
+}
+
+/* Minimal Start View */
+.minimal-start-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    gap: 3rem;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top: 2px solid #000;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.03) 25%,
+            rgba(255, 255, 255, 0.08) 50%,
+            rgba(255, 255, 255, 0.03) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+    border-radius: 8px;
+}
+
+.skeleton-circle {
+    border-radius: 50%;
+}
+
+.skeleton-text {
+    height: 1rem;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.skeleton-title {
+    height: 2rem;
+    width: 60%;
+    margin: 16px 0;
+}
+
+.skeleton-card {
+    height: 200px;
+    width: 100%;
+    border-radius: 24px;
+}
+
+.skeleton-button {
+    height: 50px;
+    width: 100%;
+    border-radius: 12px;
+}
+
+.free-thinking-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.free-thinking-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-green);
+    transform: translateY(-2px);
+}
+
+/* Enhanced Pulse for Large Mic */
+@keyframes pulse-large {
+    0% {
+        box-shadow: 0 0 0 0 rgba(30, 215, 96, 0.5);
+    }
+
+    70% {
+        box-shadow: 0 0 0 30px rgba(30, 215, 96, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(30, 215, 96, 0);
+    }
+}
+
+.back-to-library-btn {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.back-to-library-btn:hover {
+    color: var(--accent-green);
+}
+
+/* Focus Mode Side-by-Side Layout */
+.focus-mode-layout {
+    display: flex;
+    gap: 3rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    animation: fadeIn 0.5s ease-out;
+    align-items: stretch;
+}
+
+.focus-left-area {
+    flex: 1.4;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.focus-right-controls {
+    flex: 0.6;
+    width: 320px;
+    position: sticky;
+    top: 2rem;
+}
+
+.controls-stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.main-mic-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mic-button-large {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mic-button-large:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+    border-color: var(--accent-green);
+}
+
+.mic-button-large.listening {
+    background: var(--accent-green);
+    color: black;
+    box-shadow: 0 0 30px rgba(30, 215, 96, 0.4);
+    animation: pulse-large 2s infinite;
+}
+
+.control-label-main {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.secondary-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem 0.5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.active-field {
+    border-color: var(--accent-green) !important;
+    box-shadow: 0 0 15px rgba(30, 215, 96, 0.3) !important;
+    background: rgba(30, 215, 96, 0.05) !important;
+    outline: none;
+}
+
+.focus-info {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-align: center;
+    line-height: 1.4;
+    padding-top: 0.5rem;
+}
+
+.focus-panel {
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+}
+
+.focus-panel h3 {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.action-buttons.horizontal {
+    justify-content: center;
+    gap: 1rem;
+}
+
+.action-btn.mini {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    min-width: auto;
+}
+
+.icon-btn.danger:hover {
+    background: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    border-color: #ff4444;
+}
+
+@media (max-width: 1000px) {
+    .focus-mode-layout {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 1rem;
+    }
+
+    .focus-right-controls {
+        width: 100%;
+        max-width: 500px;
+        position: static;
+        margin-top: 2rem;
+    }
+}
+
+.finalize-btn-side {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    transition: transform 0.2s ease;
+}
+
+.finalize-btn-side:hover {
+    transform: translateY(-1px);
+    opacity: 0.8;
+}
+
+.finalize-btn-side span {
+    color: var(--accent-green);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
+}
+
+.finalize-btn-side.completed span {
+    color: #888;
+}
+
+.finalize-btn-side.completed {
+    cursor: default;
+}
+
+.red-circle-btn {
+    width: 7px;
+    height: 7px;
+    background: #ff4444;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+    transition: all 0.3s ease;
+}
+
+.red-circle-btn.green {
+    background: var(--accent-green);
+    box-shadow: 0 0 10px rgba(30, 215, 96, 0.6);
+}
+
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.login-transition-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.login-success-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.success-content {
+    text-align: center;
+    color: white;
+}
+
+.success-icon-spin {
+    color: var(--accent-green);
+    margin-bottom: 1.5rem;
+    animation: spin-slow 3s linear infinite;
+    filter: drop-shadow(0 0 15px rgba(30, 215, 96, 0.4));
+}
+
+.success-content h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    background: none;
+    -webkit-text-fill-color: white;
+}
+
+.success-content p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.loader-spinner.large {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+    margin-bottom: 1.5rem;
+    border-top-color: var(--accent-green);
 }

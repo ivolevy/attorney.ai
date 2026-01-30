@@ -30,7 +30,7 @@ const useSpeechRecognition = () => {
             const recognition = new SpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'es-ES';
+            recognition.lang = 'es-AR';
 
             const processCommands = (transcript) => {
                 let processed = transcript;
@@ -54,12 +54,18 @@ const useSpeechRecognition = () => {
                     'nueva linea': '\n',
                     'abrir signo de interrogación': '¿',
                     'cerrar signo de interrogación': '?',
+                    'signo de pregunta': '?',
+                    'signo de interrogación': '?',
                     'signo de exclamación': '!',
+                    'punto de exclamación': '!',
                     'abrir paréntesis': '(',
                     'cerrar paréntesis': ')',
                     'comillas': '"',
                     'guion': '-',
                     'guión': '-',
+                    'guion medio': '-',
+                    'barra': '/',
+
                 };
 
                 // Verbal numbers to digits (simple common ones)
@@ -217,23 +223,29 @@ const useSpeechRecognition = () => {
             };
 
             recognition.onerror = (event) => {
-                console.error("Speech usage error", event.error);
-                if (event.error === 'no-speech') {
+                // Ignore 'aborted' and 'no-speech' to prevent error state spam and loops
+                if (event.error === 'no-speech' || event.error === 'aborted') {
                     return;
                 }
+                console.error("Speech usage error", event.error);
                 setError(event.error);
                 setIsListening(false);
             };
 
             recognition.onend = () => {
                 if (autoRestartRef.current) {
-                    try {
-                        recognition.start();
-                        setIsListening(true);
-                    } catch (e) {
-                        console.error("Auto-restart failed", e);
-                        setIsListening(false);
-                    }
+                    // Small delay to prevent rapid-fire loops on certain browsers/error states
+                    setTimeout(() => {
+                        if (autoRestartRef.current) {
+                            try {
+                                recognition.start();
+                                setIsListening(true);
+                            } catch (e) {
+                                console.error("Auto-restart failed", e);
+                                setIsListening(false);
+                            }
+                        }
+                    }, 100);
                 } else {
                     setIsListening(false);
                 }

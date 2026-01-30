@@ -3,8 +3,8 @@ export const LEGAL_TEMPLATES = [
     {
         id: 'telegrama-laboral',
         category: 'Laboral',
-        name: 'Telegrama Laboral Ley N° 23.789',
-        description: 'Formulario oficial para más de 30 palabras.',
+        name: 'Telegrama Ley 23.789',
+        description: 'Formulario oficial para comunicaciones laborales (+30 palabras).',
         fields: [
             // DESTINATARIO (COLUMNA IZQUIERDA)
             { id: 'dest_nombre', name: 'Destinatario: Nombre', prompt: '¿Nombre del destinatario?', placeholder: 'Empresa S.A.' },
@@ -23,8 +23,6 @@ export const LEGAL_TEMPLATES = [
             { id: 'rem_localidad', name: 'Remitente: Localidad', prompt: '¿Tu localidad?', placeholder: 'Avellaneda' },
             { id: 'rem_provincia', name: 'Remitente: Provincia', prompt: '¿Tu provincia?', placeholder: 'Buenos Aires' },
 
-            // TIPO DE COMUNICACION (BOTTOM)
-
             // CUERPO (SECTOR SOMBREADO)
             { id: 'texto', name: 'Cuerpo', prompt: 'Dictame el texto del telegrama.', placeholder: 'Por medio de la presente...' }
         ],
@@ -41,31 +39,47 @@ export const LEGAL_TEMPLATES = [
         format: (answers) => `TCL 30 - LEY 23.789\n\nDEST: ${answers.dest_nombre}\nADDR: ${answers.dest_domicilio}\n\nTEXTO: ${answers.texto}\n\nREM: ${answers.rem_nombre}\nDNI: ${answers.rem_dni}`
     },
     {
-        id: 'demanda-laboral',
+        id: 'ingreso-causas',
         category: 'Laboral',
-        name: 'Demanda Laboral',
-        disabled: true,
-        description: 'Inicio de demanda por despido incausado.',
+        name: 'Ingreso de Causas',
+        description: 'Recurso Directo a Cámara - Sorteo de Sala (Formulario Oficial).',
         fields: [
-            { id: 'actor', name: 'Actor', prompt: '¿Nombre del trabajador?', placeholder: '' },
-            { id: 'demandado', name: 'Demandado', prompt: '¿Nombre de la empresa?', placeholder: '' },
-            { id: 'monto', name: 'Monto Reclamado', prompt: '¿Monto total de la liquidación?', placeholder: '$...' }
+            // ABOGADO
+            { id: 'abogado_nombre', name: 'Abogado: Nombre', prompt: '¿Nombre completo del abogado patrocinante?', placeholder: 'Dr. Lucas García' },
+            { id: 'abogado_tomo', name: 'Abogado: Tomo', prompt: '¿Número de Tomo?', placeholder: '123' },
+            { id: 'abogado_folio', name: 'Abogado: Folio', prompt: '¿Número de Folio?', placeholder: '456' },
+
+            // ACTOR
+            { id: 'actor_nombre', name: 'Actor: Nombre/Razón Social', prompt: '¿Nombre o Razón Social del actor?', placeholder: 'Juan Pérez' },
+            { id: 'actor_ieric', name: 'Actor: I.E.R.I.C.', prompt: '¿Número de I.E.R.I.C.?', placeholder: '12345/6' },
+            { id: 'actor_dni', name: 'Actor: DNI', prompt: '¿DNI del actor?', placeholder: '12.345.678' },
+            { id: 'actor_sexo', name: 'Actor: Sexo', prompt: '¿Sexo? (Femenino, Masculino u Otro)', placeholder: 'Masculino' },
+
+            // DEMANDADO
+            { id: 'demandado_nombre', name: 'Demandado: Nombre', prompt: '¿Nombre o Razón Social del demandado?', placeholder: 'Empresa S.A.' },
+
+            // EXPEDIENTE
+            { id: 'expte_numero', name: 'Expte. Administrativo', prompt: '¿Número de Expediente Administrativo y Año?', placeholder: '9999/2024' }
         ],
+        isOfficialForm: 'INGRESO_CAUSAS',
         richFormat: (answers) => ({
-            title: 'INICIA DEMANDA LABORAL',
-            header: `${answers.actor || '___'} c/ ${answers.demandado || '___'} s/ DESPIDO`,
-            body: [`Vengo a promover demanda laboral por el monto de ${answers.monto || '___'}.`]
+            title: 'FORMULARIO PARA INGRESO DE CAUSAS (RECURSO DIRECTO A CÁMARA)',
+            isOfficial: true,
+            isIngresoCausas: true,
+            header: 'Cámara Nacional de Apelaciones del Trabajo',
+            body: [],
+            rawAnswers: answers
         }),
-        format: (answers) => `DEMANDA LABORAL: ${answers.actor} c/ ${answers.demandado}`
+        format: (answers) => `INGRESO DE CAUSAS\n\nACTOR: ${answers.actor_nombre}\nDEMANDADO: ${answers.demandado_nombre}\nEXPTE: ${answers.expte_numero}`
     },
 
     // CIVIL
     {
         id: 'demanda-danos',
         category: 'Civil',
-        name: 'Demanda Daños',
+        name: 'Daños y Perjuicios',
         disabled: true,
-        description: 'Daños y perjuicios por accidente de tránsito.',
+        description: 'Demanda por accidente de tránsito y daños civiles.',
         fields: [
             { id: 'actor', name: 'Actor', prompt: '¿Quién demanda?', placeholder: '' },
             { id: 'hecho', name: 'El Hecho', prompt: '¿Cómo fue el accidente?', placeholder: '' }
@@ -80,9 +94,9 @@ export const LEGAL_TEMPLATES = [
     {
         id: 'alquiler-vivienda',
         category: 'Civil',
-        name: 'Contrato de Alquiler',
+        name: 'Contrato Alquiler',
         disabled: true,
-        description: 'Convenio de locación para vivienda.',
+        description: 'Convenio de locación para vivienda particular.',
         fields: [
             { id: 'locador', name: 'Locador', prompt: '¿Nombre del dueño?', placeholder: '' },
             { id: 'locatario', name: 'Locatario', prompt: '¿Nombre del inquilino?', placeholder: '' },
@@ -100,9 +114,9 @@ export const LEGAL_TEMPLATES = [
     {
         id: 'constitucion-sa',
         category: 'Comercial',
-        name: 'Estatuto S.A.',
+        name: 'Sociedad Anónima',
         disabled: true,
-        description: 'Constitución de Sociedad Anónima.',
+        description: 'Estatuto social y acta de constitución de S.A.',
         fields: [
             { id: 'denominacion', name: 'Nombre', prompt: '¿Nombre de la sociedad?', placeholder: '' },
             { id: 'capital', name: 'Capital Social', prompt: '¿Monto del capital inicial?', placeholder: '' }
@@ -119,7 +133,7 @@ export const LEGAL_TEMPLATES = [
         category: 'Comercial',
         name: 'Pagaré',
         disabled: true,
-        description: 'Título ejecutivo de pago.',
+        description: 'Título ejecutivo de pago sin protesto.',
         fields: [
             { id: 'monto', name: 'Monto', prompt: '¿Cuál es el importe?', placeholder: '' },
             { id: 'fecha', name: 'Vencimiento', prompt: '¿Cuándo vence?', placeholder: '' }
@@ -136,9 +150,9 @@ export const LEGAL_TEMPLATES = [
     {
         id: 'nda-it',
         category: 'Informático',
-        name: 'Acuerdo NDA',
+        name: 'Confidencialidad',
         disabled: true,
-        description: 'Acuerdo de confidencialidad para software.',
+        description: 'Acuerdo NDA para software y desarrollo de sistemas.',
         fields: [
             { id: 'partes', name: 'Partes', prompt: '¿Quiénes firman el acuerdo?', placeholder: '' },
             { id: 'duracion', name: 'Duración', prompt: '¿Por cuánto tiempo es confidencial?', placeholder: '' }
@@ -153,9 +167,9 @@ export const LEGAL_TEMPLATES = [
     {
         id: 'terminos-condiciones',
         category: 'Informático',
-        name: 'TyC Website',
+        name: 'TyC Web/App',
         disabled: true,
-        description: 'Términos y condiciones para App/Web.',
+        description: 'Términos y condiciones para plataformas digitales.',
         fields: [
             { id: 'sitio', name: 'Sitio Web', prompt: '¿Cuál es la URL o nombre del sitio?', placeholder: '' }
         ],
@@ -171,9 +185,9 @@ export const LEGAL_TEMPLATES = [
     {
         id: 'registro-marca',
         category: 'Patentes',
-        name: 'Registro de Marca',
+        name: 'Registro Marca',
         disabled: true,
-        description: 'Solicitud de registro ante el INPI.',
+        description: 'Solicitud formal de registro ante el INPI.',
         fields: [
             { id: 'marca', name: 'Marca', prompt: '¿Cuál es el nombre de la marca?', placeholder: '' },
             { id: 'clase', name: 'Clase', prompt: '¿En qué clase (Niza) se registra?', placeholder: '' }
@@ -192,7 +206,7 @@ export const LEGAL_TEMPLATES = [
         category: 'Penal',
         name: 'Denuncia Penal',
         disabled: true,
-        description: 'Presentación formal por hecho delictivo.',
+        description: 'Presentación formal por presunto hecho delictivo.',
         fields: [
             { id: 'delito', name: 'Delito', prompt: '¿Cuál es el presunto delito?', placeholder: '' },
             { id: 'relato', name: 'Relato', prompt: 'Contame detalladamente qué pasó.', placeholder: '' }

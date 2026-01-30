@@ -40,13 +40,18 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
             setAnswers({});
             setCurrentFieldIndex(0);
             setIsConfirmationStep(false);
-
-            const firstField = template.fields[0];
-            speak(`Iniciando ${template.name}.`, () => {
-                speak(firstField.prompt);
-            });
+            if (onUpdateText) onUpdateText(template.format({}));
         }
-    }, [speak]);
+    }, [onUpdateText]);
+
+    const startBot = useCallback(() => {
+        if (!activeTemplate || currentFieldIndex === -1) return;
+
+        const firstField = activeTemplate.fields[0];
+        speak(`Iniciando ${activeTemplate.name}.`, () => {
+            speak(firstField.prompt);
+        });
+    }, [activeTemplate, currentFieldIndex, speak]);
 
     // Text cleaning helpers
     const cleanNumericInput = (text) => {
@@ -63,6 +68,13 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         // Keep only digits and slash
         return processed.replace(/[^\d/]/g, '');
     };
+
+    const finalizeTemplate = useCallback(() => {
+        if (!activeTemplate) return;
+        speak("Documento completado. ¿Deseas descargar el archivo?");
+        setIsConfirmationStep(true);
+        setCurrentFieldIndex(-1);
+    }, [activeTemplate, speak]);
 
     const advanceToNextField = useCallback(() => {
         if (!activeTemplate || currentFieldIndex === -1) return;
@@ -86,6 +98,46 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
             setCurrentFieldIndex(-1);
         }
     }, [activeTemplate, currentFieldIndex, speak]);
+
+    const goToPreviousField = useCallback(() => {
+        if (!activeTemplate) return;
+
+        // If we are in confirmation step, go back to the last field
+        if (isConfirmationStep) {
+            setIsConfirmationStep(false);
+            const lastIndex = activeTemplate.fields.length - 1;
+            setCurrentFieldIndex(lastIndex);
+            speak(activeTemplate.fields[lastIndex].prompt);
+            return;
+        }
+
+        if (currentFieldIndex > 0) {
+            const prevIndex = currentFieldIndex - 1;
+            setCurrentFieldIndex(prevIndex);
+            speak(activeTemplate.fields[prevIndex].prompt);
+        }
+    }, [activeTemplate, currentFieldIndex, isConfirmationStep, speak]);
+
+    const resetTemplate = useCallback(() => {
+        if (!activeTemplate) return;
+        setAnswers({});
+        setCurrentFieldIndex(0);
+        setIsConfirmationStep(false);
+        if (onUpdateText) onUpdateText('');
+        speak(`Reiniciando ${activeTemplate.name}.`, () => {
+            speak(activeTemplate.fields[0].prompt);
+        });
+    }, [activeTemplate, speak, onUpdateText]);
+
+    const goToField = useCallback((fieldId) => {
+        if (!activeTemplate) return;
+        const index = activeTemplate.fields.findIndex(f => f.id === fieldId);
+        if (index !== -1) {
+            setCurrentFieldIndex(index);
+            setIsConfirmationStep(false);
+            speak(activeTemplate.fields[index].prompt);
+        }
+    }, [activeTemplate, speak]);
 
 
     const handleAnswer = useCallback((transcript) => {
@@ -271,7 +323,13 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         isHandsFree,
         setIsHandsFree,
         isBotSpeaking,
-        advanceToNextField // Expose this for the silence timer
+        advanceToNextField,
+        goToPreviousField,
+        resetTemplate,
+        goToField,
+        startBot,
+        finalizeTemplate,
+        isConfirmationStep
     };
 };
 

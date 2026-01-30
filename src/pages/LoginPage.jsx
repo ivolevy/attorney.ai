@@ -2,30 +2,68 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Scale, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Skeleton from '../components/Skeleton';
 import '../index.css';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { login, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  if (authLoading) {
+    return <Skeleton type="page-login" />;
+  }
+
+  if (loginSuccess) {
+    return (
+      <div className="login-transition-container">
+        <Skeleton type="page-home" />
+        <div className="login-success-overlay">
+          <div className="success-content">
+            <Scale size={48} className="success-icon-spin" />
+            <h2>Sesión Iniciada</h2>
+            <p>Entrando al sistema principal...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
+
+    if (!validateEmail(email)) {
+      setError('Por favor, ingresa un correo electrónico válido');
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const result = await login(email, password);
-      setLoading(false);
 
       if (result.success) {
-        navigate('/');
+        setLoginSuccess(true);
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
       } else {
-        setError(result.error);
+        setError(result.error || 'Credenciales incorrectas');
+        setLoading(false);
       }
     } catch (err) {
       setLoading(false);
@@ -167,7 +205,12 @@ function LoginPage() {
             onMouseOver={(e) => !loading && (e.target.style.transform = 'translateY(-2px)')}
             onMouseOut={(e) => !loading && (e.target.style.transform = 'translateY(0)')}
           >
-            {loading ? 'Ingresando...' : (
+            {loading ? (
+              <>
+                <div className="loader-spinner"></div>
+                Iniciando sesión...
+              </>
+            ) : (
               <>
                 Iniciar Sesión
                 <ArrowRight size={20} />
