@@ -64,6 +64,30 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         return processed.replace(/[^\d/]/g, '');
     };
 
+    const advanceToNextField = useCallback(() => {
+        if (!activeTemplate || currentFieldIndex === -1) return;
+
+        const nextIndex = currentFieldIndex + 1;
+        if (nextIndex < activeTemplate.fields.length) {
+            setCurrentFieldIndex(nextIndex);
+            const nextField = activeTemplate.fields[nextIndex];
+
+            let message = nextField.prompt;
+            // Transition cue for sender data
+            if (nextField.id === 'rem_nombre') {
+                message = "Ahora los datos del remitente. " + message;
+            }
+
+            speak(message);
+        } else {
+            // Trigger completion immediately
+            speak("Documento completado. ¿Deseas descargar el archivo?");
+            setIsConfirmationStep(true);
+            setCurrentFieldIndex(-1);
+        }
+    }, [activeTemplate, currentFieldIndex, speak]);
+
+
     const handleAnswer = useCallback((transcript) => {
         if (!activeTemplate) return;
 
@@ -203,31 +227,22 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
             return; // Stay in the same field or move to confirmation
         }
 
-        const newAnswers = { ...answers, [currentField.id]: processedTranscript };
+        // For regular fields, APPEND text too, to allow corrections or multi-part answers before timeout
+        const existingVal = answers[currentField.id] || '';
+        // If existing value is not empty, add a space (unless it's like a date maybe? but safer to add space)
+        // Actually for fields like DNI or CP, we might want to concatenate without space if it's digit by digit,
+        // but user usually says full number. Let's assume space is safer.
+        const separator = existingVal ? ' ' : '';
+        const newVal = existingVal + separator + processedTranscript;
+
+        const newAnswers = { ...answers, [currentField.id]: newVal };
         setAnswers(newAnswers);
 
         if (onUpdateText) {
             onUpdateText(activeTemplate.format(newAnswers));
         }
 
-        const nextIndex = currentFieldIndex + 1;
-        if (nextIndex < activeTemplate.fields.length) {
-            setCurrentFieldIndex(nextIndex);
-            const nextField = activeTemplate.fields[nextIndex];
-
-            let message = nextField.prompt;
-            // Transition cue for sender data
-            if (nextField.id === 'rem_nombre') {
-                message = "Ahora los datos del remitente. " + message;
-            }
-
-            speak(message);
-        } else {
-            // Trigger completion immediately
-            speak("Documento completado. ¿Deseas descargar el archivo?");
-            setIsConfirmationStep(true);
-            setCurrentFieldIndex(-1);
-        }
+        // DO NOT AUTO ADVANCE HERE. Handled by silence timer in HomePage.
     }, [activeTemplate, currentFieldIndex, answers, speak, onUpdateText, isConfirmationStep, onDownload]);
 
     const stopTemplate = useCallback(() => {
@@ -255,7 +270,8 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         stopTemplate,
         isHandsFree,
         setIsHandsFree,
-        isBotSpeaking
+        isBotSpeaking,
+        advanceToNextField // Expose this for the silence timer
     };
 };
 

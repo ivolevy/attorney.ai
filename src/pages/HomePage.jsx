@@ -36,7 +36,8 @@ function HomePage() {
     handleAnswer,
     stopTemplate,
     isBotSpeaking,
-    updateAnswers
+    updateAnswers,
+    advanceToNextField
   } = useConversationalTemplate(
     (newText) => {
       setText(newText);
@@ -79,6 +80,41 @@ function HomePage() {
       setOnFinal(null);
     }
   }, [activeTemplate, handleAnswer, setAutoRestart, setOnFinal, startListening, isBotSpeaking, stopListening]);
+
+  // Silence timer for auto-advance
+  const silenceTimerRef = useRef(null);
+  const wasSpeakingRef = useRef(false);
+
+  useEffect(() => {
+    // If bot is speaking or invalid state, clear timer
+    if (!activeTemplate || !currentField || currentField.id === 'texto' || isBotSpeaking) {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+      return;
+    }
+
+    if (interimText) {
+      // User is speaking
+      wasSpeakingRef.current = true;
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    } else {
+      // User is not speaking (interimText empty)
+      if (wasSpeakingRef.current) {
+        // We just finished speaking
+        wasSpeakingRef.current = false;
+
+        // Only set timer if we have some answer for the current field
+        if (answers[currentField.id]) {
+          silenceTimerRef.current = setTimeout(() => {
+            advanceToNextField();
+          }, 1500);
+        }
+      }
+    }
+
+    return () => {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    };
+  }, [interimText, activeTemplate, currentField, isBotSpeaking, advanceToNextField, answers]);
 
   const textareaRef = useRef(null);
 
