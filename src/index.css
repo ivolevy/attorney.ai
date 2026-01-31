@@ -876,6 +876,77 @@ h1 {
     }
 }
 
+@media (max-width: 600px) {
+    .focus-mode-layout {
+        margin: 1rem auto;
+        gap: 1.5rem;
+    }
+
+    .focus-left-area {
+        width: 100%;
+    }
+
+    .transcript-card {
+        width: 100%;
+        min-height: 350px;
+        /* Increase minimum height */
+        padding: 1.25rem;
+    }
+
+    .transcript-textarea {
+        font-size: 1rem;
+        min-height: 250px;
+        /* Make textarea taller */
+    }
+
+    .controls-stack {
+        padding: 1.5rem;
+        gap: 1.2rem;
+        border-radius: 20px;
+    }
+
+    .mic-button-large {
+        width: 75px;
+        height: 75px;
+    }
+
+    .mic-button-large svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .control-label-main {
+        font-size: 0.8rem;
+    }
+
+    .finalize-btn-side {
+        margin-top: 0.2rem;
+    }
+
+    .secondary-controls-grid {
+        gap: 1rem 0.5rem;
+        padding: 1rem 0;
+    }
+
+    .icon-btn {
+        padding: 0.5rem;
+    }
+
+    .icon-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .control-label {
+        font-size: 0.55rem;
+    }
+
+    .voice-commands-info {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+}
+
 .finalize-btn-side {
     margin-top: 0.5rem;
     display: flex;

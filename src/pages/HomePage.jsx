@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import useSpeechRecognition from '../hooks/useSpeechRecognition';
 import useConversationalTemplate from '../hooks/useConversationalTemplate';
-import { exportToPDF, exportToWord } from '../utils/exportUtils';
+import { exportToPDF } from '../utils/exportUtils';
 import TemplateSelector from '../components/TemplateSelector';
 import RichDocumentPreview from '../components/RichDocumentPreview';
 import Skeleton from '../components/Skeleton';
@@ -339,12 +339,7 @@ function HomePage() {
                       <span className="control-label">PDF</span>
                     </div>
 
-                    <div className="control-item">
-                      <button className="icon-btn" onClick={() => exportToWord(activeTemplate ? activeTemplate.richFormat(answers) : text)} title="Exportar a Word" disabled={!text && !activeTemplate}>
-                        <FileDown size={24} />
-                      </button>
-                      <span className="control-label">Word</span>
-                    </div>
+
 
                     {!activeTemplate && (
                       <div className="control-item">

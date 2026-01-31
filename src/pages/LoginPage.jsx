@@ -9,6 +9,7 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -54,7 +55,7 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await login(email, password, rememberMe);
 
       if (result.success) {
         setLoginSuccess(true);
@@ -148,7 +149,7 @@ function LoginPage() {
             />
           </div>
 
-          <div style={{ position: 'relative', marginBottom: '2rem' }}>
+          <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
             <Lock size={20} color="var(--text-secondary)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type={showPassword ? "text" : "password"}
@@ -178,8 +179,38 @@ function LoginPage() {
                 padding: 0
               }}
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '1.25rem',
+            padding: '0 0.5rem'
+          }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              cursor: 'pointer',
+              color: 'var(--text-secondary)',
+              fontSize: '0.9rem',
+              userSelect: 'none'
+            }}>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  accentColor: 'var(--accent-green)',
+                  cursor: 'pointer'
+                }}
+              />
+              Mantener sesión iniciada
+            </label>
           </div>
 
           <button

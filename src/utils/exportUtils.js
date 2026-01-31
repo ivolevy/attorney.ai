@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
+
 import { saveAs } from 'file-saver';
 import { PDFDocument, rgb } from 'pdf-lib';
 import tclPdfUrl from '../assets/library/laboral/tcl30/tcl30web.pdf?url';
@@ -159,66 +159,4 @@ export const exportToPDF = async (content) => {
     doc.save(`Documento_Legal_${date.replace(/\//g, '-')}.pdf`);
 };
 
-/**
- * Exports text to a Word (.docx) file
- * @param {string|object} content - The transcript text or rich content object
- */
-export const exportToWord = async (content) => {
-    const date = new Date().toLocaleDateString();
-    let sections = [];
 
-    if (content && content.title && content.body) {
-        const { title, header, body } = content;
-
-        sections = [{
-            properties: {
-                page: {
-                    margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } // 1 inch margins
-                }
-            },
-            children: [
-                new Paragraph({
-                    children: [new TextRun({ text: title, bold: true, underline: {}, size: 32 })],
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 400 },
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: header, bold: true, size: 24 })],
-                    spacing: { after: 400 },
-                }),
-                ...body.map(para => new Paragraph({
-                    children: [new TextRun({ text: para, size: 24 })],
-                    alignment: AlignmentType.JUSTIFIED,
-                    indent: { firstLine: 720 }, // 0.5 inch indent
-                    spacing: { after: 200 },
-                })),
-            ]
-        }];
-    } else {
-        const text = typeof content === 'string' ? content : JSON.stringify(content);
-        sections = [{
-            children: [
-                new Paragraph({
-                    text: "Lexia",
-                    heading: HeadingLevel.HEADING_1,
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    text: `Transcripción - ${date}`,
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 400 },
-                }),
-                ...text.split('\n').map(line =>
-                    new Paragraph({
-                        children: [new TextRun(line)],
-                        spacing: { after: 200 },
-                    })
-                ),
-            ],
-        }];
-    }
-
-    const doc = new Document({ sections });
-    const blob = await Packer.toBlob(doc);
-    saveAs(blob, `Documento_Legal_${date.replace(/\//g, '-')}.docx`);
-};

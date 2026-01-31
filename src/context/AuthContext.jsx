@@ -13,6 +13,15 @@ export const AuthProvider = ({ children }) => {
             if (session) {
                 fetchProfileAndSubscription(session.user);
             } else {
+                // Check for persisted mock user
+                const savedUser = localStorage.getItem('lexia_mock_user');
+                if (savedUser) {
+                    try {
+                        setUser(JSON.parse(savedUser));
+                    } catch (e) {
+                        localStorage.removeItem('lexia_mock_user');
+                    }
+                }
                 setLoading(false);
             }
         });
@@ -64,17 +73,22 @@ export const AuthProvider = ({ children }) => {
         return { success: true, message: 'Revisa tu email para confirmar tu cuenta' };
     };
 
-    const login = async (email, password) => {
+    const login = async (email, password, remember = true) => {
         // Mock fallback for development/demo
-        if (email === 'admin@admin.com' && password === 'admin') {
+        if ((email === 'admin@admin.com' || email === 'lexia@admin.com') && password === 'admin') {
             // Add a small delay to simulate network request
             await new Promise(resolve => setTimeout(resolve, 1500));
 
             const mockUser = {
                 id: 'mock-id',
-                email: 'admin@admin.com',
+                email: email,
                 subscriptionStatus: 'active'
             };
+
+            if (remember) {
+                localStorage.setItem('lexia_mock_user', JSON.stringify(mockUser));
+            }
+
             setUser(mockUser);
             return { success: true };
         }
@@ -92,6 +106,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         await supabase.auth.signOut();
+        localStorage.removeItem('lexia_mock_user');
         setUser(null);
     };
 
