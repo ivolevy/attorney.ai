@@ -68,6 +68,7 @@ function HomePage() {
   };
 
   const handleStartFreeThinking = () => {
+    setText('');
     setShowFreeText(true);
     // Removed automatic startListening()
   };
@@ -93,8 +94,7 @@ function HomePage() {
       setOnFinal((transcript) => {
         // Clean transcript from common bot-echoed words
         const cleaned = transcript
-          .replace(/^(datos del destinatario|destinatario|remitente|tu nombre|tu apellido|dni)\s*/gi, '')
-          .trim();
+          .replace(/^(datos del destinatario|destinatario|remitente|tu nombre|tu apellido|dni)\s*/gi, '');
         if (cleaned) handleAnswer(cleaned);
       });
     } else {
@@ -350,7 +350,7 @@ function HomePage() {
                       </div>
                     )}
 
-                    {!activeTemplate && (
+                    {!activeTemplate && !showFreeText && (
                       <div className="control-item">
                         <button className="icon-btn danger" onClick={handleBack} title="Cerrar">
                           <Trash2 size={24} />
@@ -365,8 +365,8 @@ function HomePage() {
                     {activeTemplate && currentField?.id === 'texto' && ', "finalizado"'}
                   </div>
 
-                  {/* Conditionally hide quick actions panel */}
-                  {!activeTemplate && !showFreeText && (
+                  {/* Conditionally hide quick actions panel - SHOW in Free Thinking */}
+                  {!activeTemplate && (
                     <div className="quick-actions-panel focus-panel">
                       <h3>Acciones Rápidas</h3>
                       <div className="action-buttons horizontal">

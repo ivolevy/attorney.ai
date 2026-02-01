@@ -284,7 +284,14 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         // If existing value is not empty, add a space (unless it's like a date maybe? but safer to add space)
         // Actually for fields like DNI or CP, we might want to concatenate without space if it's digit by digit,
         // but user usually says full number. Let's assume space is safer.
-        const separator = existingVal ? ' ' : '';
+        // If existing value is not empty, check if we need a separator
+        // If transcript starts with newline, no space needed.
+        // If existingVal ends with newline, no space needed.
+        const needsSpace = existingVal &&
+            !existingVal.match(/\s$/) &&
+            !processedTranscript.match(/^\s/);
+
+        const separator = needsSpace ? ' ' : '';
         const newVal = existingVal + separator + processedTranscript;
 
         const newAnswers = { ...answers, [currentField.id]: newVal };

@@ -212,7 +212,7 @@ const useSpeechRecognition = () => {
                         if (hasLowConfidence) {
                             recognitionRef.current.onFinalCallback('__LOW_CONFIDENCE__');
                         } else {
-                            recognitionRef.current.onFinalCallback(finalTranscriptChunk.trim());
+                            recognitionRef.current.onFinalCallback(finalTranscriptChunk);
                         }
                     }
 

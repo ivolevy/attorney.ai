@@ -72,8 +72,32 @@ export const LEGAL_TEMPLATES = [
         }),
         format: (answers) => `INGRESO DE CAUSAS\n\nACTOR: ${answers.actor_nombre}\nDEMANDADO: ${answers.demandado_nombre}\nEXPTE: ${answers.expte_numero}`
     },
+    {
+        id: 'inicio-demanda',
+        category: 'Laboral',
+        name: 'Inicio de Demanda',
+        description: 'Formulario de inicio de demanda.',
+        fields: [
+            { id: 'fuero', name: 'Fuero', prompt: '¿Fuero o Juzgado?', placeholder: 'Laboral' },
+            { id: 'objeto', name: 'Objeto', prompt: '¿Objeto del juicio?', placeholder: 'Despido' },
+            { id: 'monto', name: 'Monto', prompt: '¿Monto reclamado?', placeholder: '$1.000.000' },
+            { id: 'actor_nombre', name: 'Actor: Nombre', prompt: '¿Nombre del actor?', placeholder: 'Juan Pérez' },
+            { id: 'actor_dni', name: 'Actor: DNI', prompt: '¿DNI del actor?', placeholder: '12.345.678' },
+            { id: 'demandado_nombre', name: 'Demandado', prompt: '¿Nombre del demandado?', placeholder: 'Empresa S.A.' },
+            { id: 'abogado_nombre', name: 'Abogado', prompt: '¿Nombre del abogado?', placeholder: 'Dr. Lucas García' }
+        ],
+        isOfficialForm: 'INICIO_DEMANDA',
+        richFormat: (answers) => ({
+            title: 'FORMULARIO DE INICIO DE DEMANDA',
+            isOfficial: true,
+            isInicioDemanda: true,
+            header: 'INICIO DE DEMANDA',
+            body: [],
+            rawAnswers: answers
+        }),
+        format: (answers) => `INICIO DEMANDA\n\nACTOR: ${answers.actor_nombre}\nDEMANDADO: ${answers.demandado_nombre}\nOBJETO: ${answers.objeto}`
 
-    // CIVIL
+    },
     {
         id: 'demanda-danos',
         category: 'Civil',

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import tclBg from '../assets/library/laboral/tcl30/tcl30web.png';
 import ingresoCausasBg from '../assets/library/laboral/ingreso-causas/ingreso-causas.png';
+import inicioDemandaBg from '../assets/library/laboral/inicio-demanda/formulario inicio demanda.png';
 
 const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, onNextField }) => {
     if (!data) return null;
@@ -267,6 +268,76 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             style={{ top: '80.5%', left: '17.8%', width: '36%' }}
                             value={getValue('expte_numero', rawAnswers?.expte_numero)}
                             onChange={(e) => handleFieldChange('expte_numero', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && data.isInicioDemanda) {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={inicioDemandaBg} alt="Inicio Demanda Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        {/* FUERO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'fuero' ? 'active-field' : ''}`}
+                            style={{ top: '15%', left: '20%', width: '30%' }}
+                            value={getValue('fuero', rawAnswers?.fuero)}
+                            onChange={(e) => handleFieldChange('fuero', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* OBJETO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'objeto' ? 'active-field' : ''}`}
+                            style={{ top: '20%', left: '20%', width: '60%' }}
+                            value={getValue('objeto', rawAnswers?.objeto)}
+                            onChange={(e) => handleFieldChange('objeto', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* MONTO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'monto' ? 'active-field' : ''}`}
+                            style={{ top: '25%', left: '20%', width: '20%' }}
+                            value={getValue('monto', rawAnswers?.monto)}
+                            onChange={(e) => handleFieldChange('monto', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* ACTOR */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '30%', left: '20%', width: '40%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_dni' ? 'active-field' : ''}`}
+                            style={{ top: '30%', left: '65%', width: '20%' }}
+                            value={getValue('actor_dni', rawAnswers?.actor_dni)}
+                            onChange={(e) => handleFieldChange('actor_dni', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* DEMANDADO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'demandado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '35%', left: '20%', width: '40%' }}
+                            value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
+                            onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+
+                        {/* ABOGADO */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '40%', left: '20%', width: '40%' }}
+                            value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
+                            onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
                         />
                     </div>
