@@ -242,6 +242,15 @@ function HomePage() {
           </>
         ) : (
           <>
+            <button
+              className="back-to-library-btn"
+              onClick={handleBack}
+              title="Volver"
+              style={{ marginBottom: '0.25rem', marginLeft: '1rem' }}
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+              Volver
+            </button>
             <div className={`focus-mode-layout ${isListening ? 'listening' : ''}`}>
               <div className="focus-left-area">
                 <div className={`transcript-card ${isListening ? 'active' : ''}`}>
@@ -310,16 +319,6 @@ function HomePage() {
                   </div>
 
                   <div className="secondary-controls-grid">
-                    <div className="control-item">
-                      <button
-                        className="icon-btn"
-                        onClick={handleBack}
-                        title="Volver a la Librería"
-                      >
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-                      </button>
-                      <span className="control-label">Volver</span>
-                    </div>
 
                     <div className="control-item">
                       <button

@@ -747,8 +747,6 @@ h1 {
 .focus-right-controls {
     flex: 0.6;
     width: 320px;
-    position: sticky;
-    top: 2rem;
 }
 
 .controls-stack {
@@ -805,9 +803,9 @@ h1 {
 }
 
 .secondary-controls-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
     padding: 1.5rem 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
