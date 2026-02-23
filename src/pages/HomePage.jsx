@@ -46,6 +46,7 @@ function HomePage() {
     goToPreviousField,
     resetTemplate,
     startBot,
+    wakeSpeak,
     finalizeTemplate,
     isConfirmationStep
   } = useConversationalTemplate(
@@ -70,7 +71,7 @@ function HomePage() {
   const handleStartFreeThinking = () => {
     setText('');
     setShowFreeText(true);
-    // Removed automatic startListening()
+    startListening(); // Re-enabled as requested
   };
 
   // Update ref
@@ -78,21 +79,33 @@ function HomePage() {
     handleDownloadRef.current = handleDownload;
   }, [activeTemplate, answers, text, stopListening]);
 
+  const [micManuallyStopped, setMicManuallyStopped] = useState(false);
+
+  const startListeningWithChoice = () => {
+    setMicManuallyStopped(false);
+    startListening();
+  };
+
+  const stopListeningWithChoice = () => {
+    setMicManuallyStopped(true);
+    stopListening();
+  };
+
   // Connect conversational logic to STT
   useEffect(() => {
     if (activeTemplate) {
-      // Don't listen while the bot is speaking to avoid feedback loops
       if (isBotSpeaking) {
         setAutoRestart(false);
         stopListening();
       } else {
-        // Only auto-restart if the user had the mic enabled (isListening)
-        // or just set auto-restart to true so it persists IF they turn it on.
         setAutoRestart(true);
+        // If not speaking and mic wasn't manually stopped, ensure it's on
+        if (!micManuallyStopped && !isListening) {
+          startListening();
+        }
       }
 
       setOnFinal((transcript) => {
-        // Clean transcript from common bot-echoed words
         const cleaned = transcript
           .replace(/^(datos del destinatario|destinatario|remitente|tu nombre|tu apellido|dni)\s*/gi, '');
         if (cleaned) handleAnswer(cleaned);
@@ -101,33 +114,33 @@ function HomePage() {
       setAutoRestart(false);
       setOnFinal(null);
     }
-  }, [activeTemplate, handleAnswer, setAutoRestart, setOnFinal, startListening, isBotSpeaking, stopListening]);
+  }, [activeTemplate, handleAnswer, setAutoRestart, setOnFinal, startListening, isBotSpeaking, stopListening, micManuallyStopped, isListening]);
 
   // Silence timer for auto-advance
   const silenceTimerRef = useRef(null);
   const wasSpeakingRef = useRef(false);
 
+  // Handle silence and advance
   useEffect(() => {
-    // If bot is speaking or invalid state, clear timer
     if (!activeTemplate || !currentField || currentField.id === 'texto' || isBotSpeaking) {
+      if (isBotSpeaking) wasSpeakingRef.current = false;
       if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       return;
     }
 
     if (interimText) {
-      // User is speaking
       wasSpeakingRef.current = true;
       if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
     } else {
-      // User is not speaking (interimText empty)
       if (wasSpeakingRef.current) {
-        // We just finished speaking
         wasSpeakingRef.current = false;
-
-        // Only set timer if we have some answer for the current field
+        // Only advance if there's actually a value in the current field
         if (answers[currentField.id]) {
           silenceTimerRef.current = setTimeout(() => {
-            advanceToNextField();
+            advanceToNextField(() => {
+              // Ensure mic stays on/restarts after bot prompt
+              if (!micManuallyStopped) startListening();
+            });
           }, 1500);
         }
       }
@@ -136,7 +149,7 @@ function HomePage() {
     return () => {
       if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
     };
-  }, [interimText, activeTemplate, currentField, isBotSpeaking, advanceToNextField, answers]);
+  }, [interimText, activeTemplate, currentField, isBotSpeaking, advanceToNextField, answers, micManuallyStopped, startListening]);
 
   const textareaRef = useRef(null);
 
@@ -146,24 +159,26 @@ function HomePage() {
     }
   }, [text, isListening]);
 
-  // Handle Loading Transition for Template Start
-  useEffect(() => {
-    let timer;
-    if (isTemplateLoading && pendingTemplateId) {
-      // 1. Show skeleton for 1s
-      timer = setTimeout(() => {
-        startTemplate(pendingTemplateId);
-        setIsTemplateLoading(false);
-        setPendingTemplateId(null);
+  // Handle template selection
+  const handleSelectTemplate = (templateId) => {
+    wakeSpeak();
+    setShowFreeText(false);
+    startTemplate(templateId);
+  };
 
-        // 2. Wait 1s with document visible before bot speaks
-        setTimeout(() => {
-          startBot();
-        }, 1000);
-      }, 1000);
+  // Auto-start bot when template is loaded
+  const botStartedRef = useRef(null);
+  useEffect(() => {
+    if (activeTemplate && botStartedRef.current !== activeTemplate.id) {
+      botStartedRef.current = activeTemplate.id;
+      // Small delay to ensure hook state settles
+      const timer = setTimeout(() => startBot(), 150);
+      return () => clearTimeout(timer);
     }
-    return () => clearTimeout(timer);
-  }, [isTemplateLoading, pendingTemplateId, startTemplate, startBot]);
+    if (!activeTemplate) {
+      botStartedRef.current = null;
+    }
+  }, [activeTemplate, startBot]);
 
   const handleCopy = () => {
     if (text) {
@@ -221,17 +236,14 @@ function HomePage() {
           </div>
         )}
 
-        {!(activeTemplate || showFreeText || isTemplateLoading) ? (
+        {!(activeTemplate || showFreeText) ? (
           <>
             <TemplateSelector
-              onSelect={(id) => {
-                setShowFreeText(false);
-                setIsTemplateLoading(true);
-                setPendingTemplateId(id);
-              }}
+              onSelect={handleSelectTemplate}
               activeTemplate={activeTemplate}
               currentField={currentField}
               onCancel={stopTemplate}
+              isListening={isListening}
             />
             <div className="minimal-start-view">
               <button className="free-thinking-btn" onClick={handleStartFreeThinking}>
@@ -255,7 +267,15 @@ function HomePage() {
               <div className="focus-left-area">
                 <div className={`transcript-card ${isListening ? 'active' : ''}`}>
                   {isTemplateLoading ? (
-                    <Skeleton type="document" />
+                    <div className="skeleton-overlay-container">
+                      <Skeleton type="document" />
+                      <div className="loading-overlay-text">
+                        <div className="loading-spinner-dots">
+                          <span></span><span></span><span></span>
+                        </div>
+                        Iniciando...
+                      </div>
+                    </div>
                   ) : (
                     <div className="preview-scroll-container">
                       {activeTemplate ? (
@@ -293,10 +313,12 @@ function HomePage() {
 
               <div className="focus-right-controls">
                 <div className="controls-stack">
+
+
                   <div className="main-mic-control">
                     <button
                       className={`mic-button-large ${isListening ? 'listening' : ''}`}
-                      onClick={isListening ? stopListening : startListening}
+                      onClick={isListening ? stopListeningWithChoice : startListeningWithChoice}
                       title={isListening ? "Pausar" : "Escuchar"}
                     >
                       {isListening ? <MicOff size={40} /> : <Mic size={40} />}
@@ -323,7 +345,15 @@ function HomePage() {
                     <div className="control-item">
                       <button
                         className="icon-btn"
-                        onClick={activeTemplate ? resetTemplate : resetText}
+                        onClick={() => {
+                          if (activeTemplate) {
+                            resetTemplate(() => {
+                              if (!micManuallyStopped) startListening();
+                            });
+                          } else {
+                            resetText();
+                          }
+                        }}
                         title="Reiniciar"
                       >
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>

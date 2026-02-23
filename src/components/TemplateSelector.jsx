@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { LEGAL_TEMPLATES } from '../utils/templateData';
 import { BookOpen, Play, X, Mic, ChevronRight } from 'lucide-react';
 
-const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel }) => {
-    const [selectedCategory, setSelectedCategory] = useState('Laboral'); // Start with a specific category for cleaner initial view
+const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, isListening }) => {
+    const [selectedCategory, setSelectedCategory] = useState('Laboral');
 
     const categories = useMemo(() => {
         return [...new Set(LEGAL_TEMPLATES.map(t => t.category))];
@@ -20,19 +20,21 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel }) 
                     <BookOpen size={16} color="var(--accent-green)" />
                     <span>Librería Legal</span>
                 </div>
-                <div className="category-scroll">
-                    {categories.map(cat => (
-                        <button
-                            key={cat}
-                            className={`cat-pill ${selectedCategory === cat ? 'active' : ''}`}
-                            onClick={() => setSelectedCategory(cat)}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
+                {!activeTemplate && (
+                    <div className="category-scroll">
+                        {categories.map(cat => (
+                            <button
+                                key={cat}
+                                className={`cat-pill ${selectedCategory === cat ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory(cat)}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+                )}
                 {activeTemplate && (
-                    <button className="close-circle" onClick={onCancel}>
+                    <button className="close-circle" onClick={onCancel} style={{ marginLeft: 'auto' }}>
                         <X size={14} />
                     </button>
                 )}
@@ -62,12 +64,13 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel }) 
                     </div>
                     {currentField ? (
                         <div className="mini-prompt-box">
-                            <span className="field-label">{currentField.name}</span>
                             <p className="prompt-txt">{currentField.prompt}</p>
-                            <div className="mic-wave">
-                                <span></span><span></span><span></span>
-                                <small>Escuchando...</small>
-                            </div>
+                            {isListening && (
+                                <div className="mic-wave">
+                                    <span></span><span></span><span></span>
+                                    <small>Escuchando...</small>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="mini-prompt-box success">

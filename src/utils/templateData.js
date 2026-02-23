@@ -7,21 +7,21 @@ export const LEGAL_TEMPLATES = [
         description: 'Formulario oficial para comunicaciones laborales (+30 palabras).',
         fields: [
             // DESTINATARIO (COLUMNA IZQUIERDA)
-            { id: 'dest_nombre', name: 'Destinatario: Nombre', prompt: '¿Nombre del destinatario?', placeholder: 'Empresa S.A.' },
-            { id: 'dest_ramo', name: 'Destinatario: Ramo', prompt: '¿Ramo o actividad?', placeholder: 'Comercio' },
-            { id: 'dest_domicilio', name: 'Destinatario: Domicilio', prompt: '¿Domicilio laboral?', placeholder: 'Av. Corrientes 1234' },
-            { id: 'dest_cp', name: 'Destinatario: C.P.', prompt: '¿Código Postal?', placeholder: '1414' },
-            { id: 'dest_localidad', name: 'Destinatario: Localidad', prompt: '¿Localidad?', placeholder: 'CABA' },
-            { id: 'dest_provincia', name: 'Destinatario: Provincia', prompt: '¿Provincia?', placeholder: 'Buenos Aires' },
+            { id: 'dest_nombre', name: 'Nombre Destinatario', prompt: '', placeholder: 'Empresa S.A.' },
+            { id: 'dest_ramo', name: 'Rama', prompt: '', placeholder: 'Comercio' },
+            { id: 'dest_domicilio', name: 'Domicilio', prompt: '', placeholder: 'Av. Corrientes 1234' },
+            { id: 'dest_cp', name: 'Código Postal', prompt: '', placeholder: '1414' },
+            { id: 'dest_localidad', name: 'Localidad', prompt: '', placeholder: 'CABA' },
+            { id: 'dest_provincia', name: 'Provincia', prompt: '', placeholder: 'Buenos Aires' },
 
             // REMITENTE (COLUMNA DERECHA)
-            { id: 'rem_nombre', name: 'Remitente: Nombre', prompt: '¿Tu nombre completo?', placeholder: 'Juan Pérez' },
-            { id: 'rem_dni', name: 'Remitente: DNI', prompt: '¿Tu número de DNI?', placeholder: '12.345.678' },
-            { id: 'rem_fecha', name: 'Remitente: Fecha', prompt: '¿Fecha de hoy?', placeholder: 'DD/MM/AAAA' },
-            { id: 'rem_domicilio', name: 'Remitente: Domicilio', prompt: '¿Tu domicilio?', placeholder: 'Calle Falsa 123' },
-            { id: 'rem_cp', name: 'Remitente: C.P.', prompt: '¿Tu código postal?', placeholder: '1870' },
-            { id: 'rem_localidad', name: 'Remitente: Localidad', prompt: '¿Tu localidad?', placeholder: 'Avellaneda' },
-            { id: 'rem_provincia', name: 'Remitente: Provincia', prompt: '¿Tu provincia?', placeholder: 'Buenos Aires' },
+            { id: 'rem_nombre', name: 'Tu Nombre', prompt: '', placeholder: 'Juan Pérez' },
+            { id: 'rem_dni', name: 'Tu DNI', prompt: '', placeholder: '12.345.678' },
+            { id: 'rem_fecha', name: 'Fecha', prompt: '', placeholder: 'DD/MM/AAAA' },
+            { id: 'rem_domicilio', name: 'Tu Domicilio', prompt: '', placeholder: 'Calle Falsa 123' },
+            { id: 'rem_cp', name: 'Tu Código Postal', prompt: '', placeholder: '1870' },
+            { id: 'rem_localidad', name: 'Tu Localidad', prompt: '', placeholder: 'Avellaneda' },
+            { id: 'rem_provincia', name: 'Tu Provincia', prompt: '', placeholder: 'Buenos Aires' },
 
             // CUERPO (SECTOR SOMBREADO)
             { id: 'texto', name: 'Cuerpo', prompt: 'Dictame el texto del telegrama.', placeholder: 'Por medio de la presente...' }

@@ -12,24 +12,59 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
     const synthRef = useRef(window.speechSynthesis);
 
     const speak = useCallback((text, onEnd) => {
-        if (!synthRef.current) return;
-
-        synthRef.current.cancel();
-        setIsBotSpeaking(true);
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'es-ES';
-        utterance.rate = 1.0;
-
-        utterance.onend = () => {
-            setIsBotSpeaking(false);
+        if (!synthRef.current) {
             if (onEnd) onEnd();
+            return;
+        }
+
+        const runSpeak = () => {
+            synthRef.current.cancel();
+            setIsBotSpeaking(true);
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 1.0;
+
+            utterance.onend = () => {
+                setIsBotSpeaking(false);
+                if (onEnd) onEnd();
+            };
+
+            utterance.onerror = (e) => {
+                console.error("Speech error:", e);
+                setIsBotSpeaking(false);
+                if (onEnd) onEnd();
+            };
+
+            synthRef.current.speak(utterance);
         };
 
-        utterance.onerror = () => {
-            setIsBotSpeaking(false);
-        };
+        const voices = synthRef.current.getVoices();
+        if (voices.length === 0) {
+            // Wait briefly for voices, but don't block forever
+            let timeoutTriggered = false;
+            const voicesTimeout = setTimeout(() => {
+                timeoutTriggered = true;
+                runSpeak();
+            }, 500);
 
+            const handleVoicesChanged = () => {
+                if (!timeoutTriggered) {
+                    clearTimeout(voicesTimeout);
+                    synthRef.current.onvoiceschanged = null;
+                    runSpeak();
+                }
+            };
+            synthRef.current.onvoiceschanged = handleVoicesChanged;
+        } else {
+            runSpeak();
+        }
+    }, []);
+
+    const wakeSpeak = useCallback(() => {
+        if (!synthRef.current) return;
+        const utterance = new SpeechSynthesisUtterance("");
+        utterance.volume = 0;
         synthRef.current.speak(utterance);
     }, []);
 
@@ -44,28 +79,28 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         }
     }, [onUpdateText]);
 
-    const startBot = useCallback(() => {
-        if (!activeTemplate || currentFieldIndex === -1) return;
+    const startBot = useCallback((onEnd) => {
+        if (!activeTemplate || currentFieldIndex === -1) {
+            if (onEnd) onEnd();
+            return;
+        }
 
         const firstField = activeTemplate.fields[0];
-        speak(`Iniciando ${activeTemplate.name}.`, () => {
-            speak(firstField.prompt);
-        });
+        const firstFieldText = firstField.prompt ? `${firstField.name}. ${firstField.prompt}` : firstField.name;
+        const introText = `Iniciando ${activeTemplate.name}. ${firstFieldText}`;
+
+        speak(introText, onEnd);
     }, [activeTemplate, currentFieldIndex, speak]);
 
     // Text cleaning helpers
     const cleanNumericInput = (text) => {
-        // Keep only digits
         return text.replace(/[^\d]/g, '');
     };
 
     const cleanDateInput = (text) => {
         let processed = text.toLowerCase();
-        // Replace common verbal separators
         processed = processed.replace(/\s+(del|de|barra)\s+/g, '/');
-        // Handle verbal "uno" or "primero"
         processed = processed.replace(/\b(uno|primero)\b/g, '1');
-        // Keep only digits and slash
         return processed.replace(/[^\d/]/g, '');
     };
 
@@ -76,24 +111,27 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         setCurrentFieldIndex(-1);
     }, [activeTemplate, speak]);
 
-    const advanceToNextField = useCallback(() => {
-        if (!activeTemplate || currentFieldIndex === -1) return;
+    const advanceToNextField = useCallback((onEnd) => {
+        if (!activeTemplate || currentFieldIndex === -1) {
+            if (onEnd) onEnd();
+            return;
+        }
 
         const nextIndex = currentFieldIndex + 1;
         if (nextIndex < activeTemplate.fields.length) {
             setCurrentFieldIndex(nextIndex);
             const nextField = activeTemplate.fields[nextIndex];
 
-            let message = nextField.prompt;
-            // Transition cue for sender data
+            // Only speak name + prompt if prompt exists. Otherwise just the name.
+            let promptText = nextField.prompt ? `${nextField.name}. ${nextField.prompt}` : nextField.name;
+
             if (nextField.id === 'rem_nombre') {
-                message = "Ahora los datos del remitente. " + message;
+                promptText = "Ahora los datos del remitente. " + promptText;
             }
 
-            speak(message);
+            speak(promptText, onEnd);
         } else {
-            // Trigger completion immediately
-            speak("Documento completado. ¿Deseas descargar el archivo?");
+            speak("Documento completado. ¿Deseas descargar el archivo?", onEnd);
             setIsConfirmationStep(true);
             setCurrentFieldIndex(-1);
         }
@@ -102,30 +140,36 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
     const goToPreviousField = useCallback(() => {
         if (!activeTemplate) return;
 
-        // If we are in confirmation step, go back to the last field
         if (isConfirmationStep) {
             setIsConfirmationStep(false);
             const lastIndex = activeTemplate.fields.length - 1;
             setCurrentFieldIndex(lastIndex);
-            speak(activeTemplate.fields[lastIndex].prompt);
+            const field = activeTemplate.fields[lastIndex];
+            speak(field.prompt);
             return;
         }
 
         if (currentFieldIndex > 0) {
             const prevIndex = currentFieldIndex - 1;
             setCurrentFieldIndex(prevIndex);
-            speak(activeTemplate.fields[prevIndex].prompt);
+            const field = activeTemplate.fields[prevIndex];
+            speak(field.prompt);
         }
     }, [activeTemplate, currentFieldIndex, isConfirmationStep, speak]);
 
-    const resetTemplate = useCallback(() => {
-        if (!activeTemplate) return;
+    const resetTemplate = useCallback((onEnd) => {
+        if (!activeTemplate) {
+            if (onEnd) onEnd();
+            return;
+        }
         setAnswers({});
         setCurrentFieldIndex(0);
         setIsConfirmationStep(false);
         if (onUpdateText) onUpdateText('');
+
+        const firstField = activeTemplate.fields[0];
         speak(`Reiniciando ${activeTemplate.name}.`, () => {
-            speak(activeTemplate.fields[0].prompt);
+            speak(firstField.prompt, onEnd);
         });
     }, [activeTemplate, speak, onUpdateText]);
 
@@ -135,7 +179,8 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         if (index !== -1) {
             setCurrentFieldIndex(index);
             setIsConfirmationStep(false);
-            speak(activeTemplate.fields[index].prompt);
+            const field = activeTemplate.fields[index];
+            speak(field.prompt);
         }
     }, [activeTemplate, speak]);
 
@@ -335,6 +380,7 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
         resetTemplate,
         goToField,
         startBot,
+        wakeSpeak,
         finalizeTemplate,
         isConfirmationStep
     };

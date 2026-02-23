@@ -10,8 +10,6 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
 
     useEffect(() => {
         if (activeFieldId) {
-            // Find the element that has the active-field class or focus based on activeFieldId
-            // A simple strategy is to find the element with the active-field class
             const activeEl = document.querySelector('.active-field');
             if (activeEl) {
                 activeEl.focus();
@@ -30,13 +28,8 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
-            // For textarea, Enter normally adds newline, unless it's the specific behavior we want to override
-            // If it's a regular input, or if it's a textarea and we don't want a newline (e.g., jump to next)
-            // The user wanted "salte al proximo input", so we jump.
-            // If they are in a textarea and actually WANT a newline, they can use Shift+Enter maybe?
-            // Or we just jump if it's not the last field.
             if (e.target.tagName === 'TEXTAREA' && e.shiftKey) {
-                return; // Allow new lines with Shift+Enter
+                return;
             }
             e.preventDefault();
             if (onNextField) onNextField();
@@ -46,7 +39,6 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
     const getValue = (fieldId, baseValue) => {
         const val = baseValue || '';
         if (activeFieldId === fieldId && interimText) {
-            // Append interim text visually
             const separator = (val && !val.endsWith(' ') && !interimText.startsWith('\n')) ? ' ' : '';
             return val + separator + interimText;
         }
@@ -59,7 +51,6 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                 <div className="tcl-pixel-perfect">
                     <img src={tclBg} alt="TCL Form" className="tcl-bg-image" />
 
-                    {/* OVERLAY FIELDS */}
                     <div className="tcl-overlay">
                         {/* DESTINATARIO */}
                         <input
@@ -68,7 +59,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('dest_nombre', rawAnswers?.dest_nombre)}
                             onChange={(e) => handleFieldChange('dest_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Nombre Destinatario"
+                            name="dest_nombre"
+                            aria-label="Nombre del Destinatario"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_ramo' ? 'active-field' : ''}`}
@@ -76,7 +69,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('dest_ramo', rawAnswers?.dest_ramo)}
                             onChange={(e) => handleFieldChange('dest_ramo', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Ramo/Actividad"
+                            name="dest_ramo"
+                            aria-label="Ramo o actividad principal del destinatario"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_domicilio' ? 'active-field' : ''}`}
@@ -84,7 +79,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('dest_domicilio', rawAnswers?.dest_domicilio)}
                             onChange={(e) => handleFieldChange('dest_domicilio', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Domicilio"
+                            name="dest_domicilio"
+                            aria-label="Domicilio del destinatario"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_cp' ? 'active-field' : ''}`}
@@ -92,7 +89,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('dest_cp', rawAnswers?.dest_cp)}
                             onChange={(e) => handleFieldChange('dest_cp', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="CP"
+                            name="dest_cp"
+                            aria-label="Código Postal del destinatario"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_localidad' ? 'active-field' : ''}`}
@@ -100,7 +99,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('dest_localidad', rawAnswers?.dest_localidad)}
                             onChange={(e) => handleFieldChange('dest_localidad', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Localidad"
+                            name="dest_localidad"
+                            aria-label="Localidad del destinatario"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_provincia' ? 'active-field' : ''}`}
@@ -108,7 +109,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('dest_provincia', rawAnswers?.dest_provincia)}
                             onChange={(e) => handleFieldChange('dest_provincia', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Provincia"
+                            name="dest_provincia"
+                            aria-label="Provincia del destinatario"
                         />
 
                         {/* REMITENTE */}
@@ -118,7 +121,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_nombre', rawAnswers?.rem_nombre)}
                             onChange={(e) => handleFieldChange('rem_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Nombre Remitente"
+                            name="rem_nombre"
+                            aria-label="Nombre del Remitente"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_dni' ? 'active-field' : ''}`}
@@ -126,7 +131,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_dni', rawAnswers?.rem_dni)}
                             onChange={(e) => handleFieldChange('rem_dni', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="DNI"
+                            name="rem_dni"
+                            aria-label="DNI del remitente"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_fecha' ? 'active-field' : ''}`}
@@ -134,7 +141,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_fecha', rawAnswers?.rem_fecha)}
                             onChange={(e) => handleFieldChange('rem_fecha', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Fecha"
+                            name="rem_fecha"
+                            aria-label="Fecha"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_domicilio' ? 'active-field' : ''}`}
@@ -142,7 +151,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_domicilio', rawAnswers?.rem_domicilio)}
                             onChange={(e) => handleFieldChange('rem_domicilio', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Domicilio"
+                            name="rem_domicilio"
+                            aria-label="Domicilio del remitente"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_cp' ? 'active-field' : ''}`}
@@ -150,7 +161,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_cp', rawAnswers?.rem_cp)}
                             onChange={(e) => handleFieldChange('rem_cp', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="CP"
+                            name="rem_cp"
+                            aria-label="Código Postal del remitente"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_localidad' ? 'active-field' : ''}`}
@@ -158,7 +171,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_localidad', rawAnswers?.rem_localidad)}
                             onChange={(e) => handleFieldChange('rem_localidad', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Localidad"
+                            name="rem_localidad"
+                            aria-label="Localidad del remitente"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_provincia' ? 'active-field' : ''}`}
@@ -166,7 +181,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('rem_provincia', rawAnswers?.rem_provincia)}
                             onChange={(e) => handleFieldChange('rem_provincia', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Provincia"
+                            name="rem_provincia"
+                            aria-label="Provincia del remitente"
                         />
 
                         {/* CUERPO - Sector Sombreado */}
@@ -176,7 +193,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('texto', rawAnswers?.texto)}
                             onChange={(e) => handleFieldChange('texto', e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder=""
+                            placeholder="Escribe aquí el cuerpo del mensaje..."
+                            name="texto"
+                            aria-label="Cuerpo del mensaje"
                         />
 
 
@@ -203,6 +222,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('abogado_tomo', rawAnswers?.abogado_tomo)}
                             onChange={(e) => handleFieldChange('abogado_tomo', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="abogado_tomo"
+                            aria-label="Tomo del Abogado"
+                            placeholder="Tomo"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'abogado_folio' ? 'active-field' : ''}`}
@@ -210,6 +232,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('abogado_folio', rawAnswers?.abogado_folio)}
                             onChange={(e) => handleFieldChange('abogado_folio', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="abogado_folio"
+                            aria-label="Folio del Abogado"
+                            placeholder="Folio"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'abogado_nombre' ? 'active-field' : ''}`}
@@ -217,6 +242,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
                             onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="abogado_nombre"
+                            aria-label="Nombre del Abogado"
+                            placeholder="Nombre del Abogado"
                         />
 
                         {/* ACTOR */}
@@ -226,6 +254,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
                             onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="actor_nombre"
+                            aria-label="Nombre del Actor"
+                            placeholder="Nombre del Actor"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'actor_ieric' ? 'active-field' : ''}`}
@@ -233,6 +264,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('actor_ieric', rawAnswers?.actor_ieric)}
                             onChange={(e) => handleFieldChange('actor_ieric', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="actor_ieric"
+                            aria-label="IERIC"
+                            placeholder="IERIC"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'actor_dni' ? 'active-field' : ''}`}
@@ -240,18 +274,10 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('actor_dni', rawAnswers?.actor_dni)}
                             onChange={(e) => handleFieldChange('actor_dni', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="actor_dni"
+                            aria-label="DNI del Actor"
+                            placeholder="DNI"
                         />
-
-                        {/* SEXO CHECKBOX */}
-                        <div style={{ position: 'absolute', top: '59.2%', left: '45.1%', color: '#000080', fontWeight: 'bold', fontSize: '16px' }}>
-                            {rawAnswers?.actor_sexo?.toLowerCase().includes('fem') ? 'X' : ''}
-                        </div>
-                        <div style={{ position: 'absolute', top: '59.2%', left: '60.1%', color: '#000080', fontWeight: 'bold', fontSize: '16px' }}>
-                            {rawAnswers?.actor_sexo?.toLowerCase().includes('masc') ? 'X' : ''}
-                        </div>
-                        <div style={{ position: 'absolute', top: '59.2%', left: '88.3%', color: '#000080', fontWeight: 'bold', fontSize: '16px' }}>
-                            {(!rawAnswers?.actor_sexo?.toLowerCase().includes('fem') && !rawAnswers?.actor_sexo?.toLowerCase().includes('masc') && rawAnswers?.actor_sexo) ? 'X' : ''}
-                        </div>
 
                         {/* DEMANDADO */}
                         <input
@@ -260,6 +286,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
                             onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="demandado_nombre"
+                            aria-label="Nombre del Demandado"
+                            placeholder="Nombre del Demandado"
                         />
 
                         {/* EXPEDIENTE */}
@@ -269,6 +298,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('expte_numero', rawAnswers?.expte_numero)}
                             onChange={(e) => handleFieldChange('expte_numero', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="expte_numero"
+                            aria-label="Número de Expediente"
+                            placeholder="Número de Expediente"
                         />
                     </div>
                 </div>
@@ -287,6 +319,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('fuero', rawAnswers?.fuero)}
                             onChange={(e) => handleFieldChange('fuero', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="fuero"
+                            aria-label="Fuero"
+                            placeholder="Fuero"
                         />
 
                         {/* OBJETO */}
@@ -296,6 +331,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('objeto', rawAnswers?.objeto)}
                             onChange={(e) => handleFieldChange('objeto', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="objeto"
+                            aria-label="Objeto de la demanda"
+                            placeholder="Objeto de la demanda"
                         />
 
                         {/* MONTO */}
@@ -305,6 +343,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('monto', rawAnswers?.monto)}
                             onChange={(e) => handleFieldChange('monto', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="monto"
+                            aria-label="Monto"
+                            placeholder="$ Monto"
                         />
 
                         {/* ACTOR */}
@@ -314,6 +355,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
                             onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="actor_nombre"
+                            aria-label="Nombre del Actor"
+                            placeholder="Nombre del Actor"
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'actor_dni' ? 'active-field' : ''}`}
@@ -321,6 +365,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('actor_dni', rawAnswers?.actor_dni)}
                             onChange={(e) => handleFieldChange('actor_dni', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="actor_dni"
+                            aria-label="DNI del Actor"
+                            placeholder="DNI"
                         />
 
                         {/* DEMANDADO */}
@@ -330,6 +377,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
                             onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="demandado_nombre"
+                            aria-label="Nombre del Demandado"
+                            placeholder="Nombre del Demandado"
                         />
 
                         {/* ABOGADO */}
@@ -339,6 +389,9 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
                             onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
+                            name="abogado_nombre"
+                            aria-label="Nombre del Abogado"
+                            placeholder="Nombre del Abogado"
                         />
                     </div>
                 </div>
