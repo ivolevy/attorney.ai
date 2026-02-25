@@ -692,6 +692,15 @@ h1 {
     transform: translateY(-2px);
 }
 
+.signature-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.signature-btn:hover {
+    border-color: #3b82f6 !important;
+}
+
 /* Enhanced Pulse for Large Mic */
 @keyframes pulse-large {
     0% {
@@ -1141,4 +1150,276 @@ h1 {
         opacity: 1;
         transform: translate(-50%, -50%);
     }
+}
+
+/* Signature Extractor Styles */
+.signature-extractor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.signature-extractor-container {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.se-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.se-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0;
+}
+
+.se-icon {
+    color: var(--accent-green);
+}
+
+.se-body {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.se-upload-area {
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+    min-height: 300px;
+}
+
+.se-upload-area:hover {
+    border-color: var(--accent-green);
+    background: rgba(30, 215, 96, 0.05);
+}
+
+.upload-icon {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    transition: color 0.3s ease;
+}
+
+.se-upload-area:hover .upload-icon {
+    color: var(--accent-green);
+}
+
+.se-upload-area p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.se-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.se-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .se-workspace {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+}
+
+.se-controls {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 250px;
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.slider-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.threshold-slider {
+    width: 100%;
+    accent-color: var(--accent-green);
+    cursor: pointer;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 1rem 1.2rem !important;
+    border-radius: 50px !important;
+    border: 1px solid transparent !important;
+    transition: all 0.3s ease;
+}
+
+.mode-btn.active {
+    border-color: var(--accent-green) !important;
+    background: rgba(30, 215, 96, 0.05) !important;
+}
+
+.mode-btn:hover:not(.active) {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.08) !important;
+    transform: translateY(-2px);
+}
+
+.se-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.se-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.primary-btn {
+    background: var(--accent-green);
+    color: #000;
+}
+
+.primary-btn:hover:not(:disabled) {
+    background: var(--accent-green-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(30, 215, 96, 0.3);
+}
+
+.primary-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.se-preview-area {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.se-preview-box {
+    background: #ffffff;
+    /* White background to see the isolated signature */
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+.se-preview-title {
+    color: #000;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.se-image-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScgLz4KPC9zdmc+');
+    background-size: 20px 20px;
+}
+
+.se-result-img {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    /* Optional trick to ensure nice white background rendering */
+}
+
+.se-loading {
+    color: #666;
+    font-weight: 500;
+    font-size: 0.9rem;
+    animation: pulse 1.5s infinite;
 }

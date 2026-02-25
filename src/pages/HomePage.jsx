@@ -7,9 +7,11 @@ import RichDocumentPreview from '../components/RichDocumentPreview';
 import Skeleton from '../components/Skeleton';
 import {
   Mic, MicOff, Trash2, Copy, AlertCircle, FileText, FileDown,
-  ExternalLink, Scale, CheckCircle2
+  ExternalLink, Scale, CheckCircle2, PenTool
 } from 'lucide-react';
 import '../index.css';
+
+import SignatureExtractor from '../components/SignatureExtractor';
 
 function HomePage() {
   const {
@@ -27,6 +29,7 @@ function HomePage() {
   } = useSpeechRecognition();
 
   const [showFreeText, setShowFreeText] = useState(false);
+  const [showSignatureExtractor, setShowSignatureExtractor] = useState(false);
   const [isTemplateLoading, setIsTemplateLoading] = useState(false);
   const [pendingTemplateId, setPendingTemplateId] = useState(null);
 
@@ -245,10 +248,18 @@ function HomePage() {
               onCancel={stopTemplate}
               isListening={isListening}
             />
-            <div className="minimal-start-view">
+            <div className="minimal-start-view" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button className="free-thinking-btn" onClick={handleStartFreeThinking}>
                 <Scale size={18} />
                 <span>Pensar libremente</span>
+              </button>
+
+              <button
+                className="free-thinking-btn signature-btn"
+                onClick={() => setShowSignatureExtractor(true)}
+              >
+                <PenTool size={18} />
+                <span>Extraer Firma</span>
               </button>
             </div>
           </>
@@ -419,6 +430,10 @@ function HomePage() {
           </>
         )}
       </div>
+
+      {showSignatureExtractor && (
+        <SignatureExtractor onClose={() => setShowSignatureExtractor(false)} />
+      )}
 
       <div className="footer">
         Powered by <a href="https://www.linkedin.com/in/ivan-levy/" target="_blank" rel="noopener noreferrer">Ivan Levy</a>
