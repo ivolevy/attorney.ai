@@ -233,9 +233,22 @@ function HomePage() {
 
 
         {error && (
-          <div style={{ color: 'var(--danger)', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-            <AlertCircle size={20} />
-            <span>{error === 'not-allowed' ? 'Acceso al micrófono denegado' : 'Error: ' + error}</span>
+          <div className="error-alert" style={{ 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            border: '1px solid var(--danger)',
+            color: 'var(--danger)', 
+            padding: '1rem',
+            borderRadius: '12px',
+            marginBottom: '1.5rem', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '0.75rem',
+            maxWidth: '600px',
+            margin: '0 auto 1.5rem'
+          }}>
+            <AlertCircle size={24} />
+            <span style={{ fontWeight: '500', fontSize: '0.95rem' }}>{error}</span>
           </div>
         )}
 

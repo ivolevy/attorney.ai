@@ -227,8 +227,16 @@ const useSpeechRecognition = () => {
                 if (event.error === 'no-speech' || event.error === 'aborted') {
                     return;
                 }
-                console.error("Speech usage error", event.error);
-                setError(event.error);
+                
+                let errorMsg = event.error;
+                if (event.error === 'service-not-allowed') {
+                    errorMsg = 'Error: Servicio no permitido. Si estás en iPhone, por favor usá Safari.';
+                } else if (event.error === 'not-allowed') {
+                    errorMsg = 'Error: Micrófono bloqueado. Por favor, habilitá los permisos.';
+                }
+
+                console.error("Speech usage error:", event.error);
+                setError(errorMsg);
                 setIsListening(false);
             };
 
