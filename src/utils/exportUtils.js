@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 import { PDFDocument, rgb } from 'pdf-lib';
 import tclPdfUrl from '../assets/library/laboral/tcl30/tcl30web.pdf?url';
 import ingresoCausasPngUrl from '../assets/library/laboral/ingreso-causas/ingreso-causas.png?url';
-import inicioDemandaPngUrl from '../assets/library/laboral/inicio-demanda/formulario inicio demanda.png?url';
+import inicioDemandaPngUrl from '../assets/library/laboral/inicio-demanda/inicio-demanda.png?url';
 import sucesiones3003PngUrl from '../assets/library/civil/sucesiones-3003.png?url';
 import inicioComercialPngUrl from '../assets/library/comercial/inicio-comercial.png?url';
 import secloInicioPngUrl from '../assets/library/seclo/seclo-inicio.png?url';

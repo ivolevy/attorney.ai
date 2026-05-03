@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import tclBg from '../assets/library/laboral/tcl30/tcl30web.png';
 import ingresoCausasBg from '../assets/library/laboral/ingreso-causas/ingreso-causas.png';
-import inicioDemandaBg from '../assets/library/laboral/inicio-demanda/formulario inicio demanda.png';
+import inicioDemandaBg from '../assets/library/laboral/inicio-demanda/inicio-demanda.png';
 import sucesiones3003Bg from '../assets/library/civil/sucesiones-3003.png';
 import inicioComercialBg from '../assets/library/comercial/inicio-comercial.png';
 import secloInicioBg from '../assets/library/seclo/seclo-inicio.png';
