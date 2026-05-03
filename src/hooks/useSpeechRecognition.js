@@ -28,9 +28,11 @@ const useSpeechRecognition = () => {
 
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.continuous = true;
+            // On mobile/Safari, continuous mode can sometimes trigger service-not-allowed
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            recognition.continuous = !isMobile; 
             recognition.interimResults = true;
-            recognition.lang = 'es-AR';
+            recognition.lang = 'es'; // Use generic Spanish for broader support
 
             const processCommands = (transcript) => {
                 let processed = transcript;
@@ -268,11 +270,18 @@ const useSpeechRecognition = () => {
     const startListening = useCallback(() => {
         if (recognitionRef.current && !isListeningRef.current) {
             try {
+                // Ensure we reset error before trying again
+                setError(null);
                 recognitionRef.current.start();
                 setIsListening(true);
-                setError(null);
             } catch (err) {
                 console.error("Manual start failed", err);
+                // If it fails because it's already started, just sync state
+                if (err.name === 'InvalidStateError') {
+                    setIsListening(true);
+                } else {
+                    setError("No se pudo iniciar el micrófono: " + err.message);
+                }
             }
         }
     }, [setIsListening]);
