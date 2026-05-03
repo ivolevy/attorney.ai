@@ -17,6 +17,14 @@ export const exportToPDF = async (content) => {
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
     let currentY = 20;
 
+    // Track export in PostHog
+    if (typeof window !== 'undefined' && window.posthog) {
+        window.posthog.capture('document_exported', {
+            is_rich_content: typeof content === 'object',
+            title: typeof content === 'object' ? content.title : 'Simple Transcript'
+        });
+    }
+
     // Helper to sanitize filename
     const getFilename = (title) => {
         if (!title) return `Documento_Legal_${date}.pdf`;
@@ -30,6 +38,14 @@ export const exportToPDF = async (content) => {
         const filename = getFilename(title);
 
         if (isOfficial) {
+            // Track event in PostHog
+            if (window.posthog) {
+                window.posthog.capture('document_exported', {
+                    template_id: data?.id || 'unknown',
+                    template_name: title,
+                    is_official: true
+                });
+            }
 
             // 1. TCL 30
             if (title.includes('TCL 30') || title.includes('TCL +30')) {
