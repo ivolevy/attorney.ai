@@ -2,6 +2,12 @@ import React, { useEffect } from 'react';
 import tclBg from '../assets/library/laboral/tcl30/tcl30web.png';
 import ingresoCausasBg from '../assets/library/laboral/ingreso-causas/ingreso-causas.png';
 import inicioDemandaBg from '../assets/library/laboral/inicio-demanda/formulario inicio demanda.png';
+import sucesiones3003Bg from '../assets/library/civil/sucesiones-3003.png';
+import inicioComercialBg from '../assets/library/comercial/inicio-comercial.png';
+import secloInicioBg from '../assets/library/seclo/seclo-inicio.png';
+import ssIngresoBg from '../assets/library/ss/ss-ingreso.png';
+import penalQuejaBg from '../assets/library/penal/casacion-queja.png';
+import quiebras3003Bg from '../assets/library/comercial/quiebras-3003.png';
 
 const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, onNextField }) => {
     if (!data) return null;
@@ -393,6 +399,218 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             aria-label="Nombre del Abogado"
                             placeholder="Nombre del Abogado"
                         />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === '3003_SUCESIONES') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={sucesiones3003Bg} alt="Sucesiones 3003 Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '34.0%', left: '27.5%', width: '60%' }}
+                            value={getValue('causante_nombre', rawAnswers?.causante_nombre)}
+                            onChange={(e) => handleFieldChange('causante_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Nombre del Causante"
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'causante_dni' ? 'active-field' : ''}`}
+                            style={{ top: '39.0%', left: '27.5%', width: '30%' }}
+                            value={getValue('causante_dni', rawAnswers?.causante_dni)}
+                            onChange={(e) => handleFieldChange('causante_dni', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="DNI"
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'fecha_fallecimiento' ? 'active-field' : ''}`}
+                            style={{ top: '59.5%', left: '27.5%', width: '20%' }}
+                            value={getValue('fecha_fallecimiento', rawAnswers?.fecha_fallecimiento)}
+                            onChange={(e) => handleFieldChange('fecha_fallecimiento', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Fecha"
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'lugar_fallecimiento' ? 'active-field' : ''}`}
+                            style={{ top: '59.5%', left: '72.5%', width: '20%' }}
+                            value={getValue('lugar_fallecimiento', rawAnswers?.lugar_fallecimiento)}
+                            onChange={(e) => handleFieldChange('lugar_fallecimiento', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Lugar"
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'ultimo_domicilio' ? 'active-field' : ''}`}
+                            style={{ top: '64.5%', left: '27.5%', width: '60%' }}
+                            value={getValue('ultimo_domicilio', rawAnswers?.ultimo_domicilio)}
+                            onChange={(e) => handleFieldChange('ultimo_domicilio', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Último Domicilio"
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '83.5%', left: '27.5%', width: '60%' }}
+                            value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
+                            onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Abogado"
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_COMERCIAL') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={inicioComercialBg} alt="Inicio Comercial Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '55.5%', left: '21.0%', width: '30%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'demandado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '67.0%', left: '21.0%', width: '30%' }}
+                            value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
+                            onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'objeto' ? 'active-field' : ''}`}
+                            style={{ top: '71.5%', left: '21.0%', width: '40%' }}
+                            value={getValue('objeto', rawAnswers?.objeto)}
+                            onChange={(e) => handleFieldChange('objeto', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'monto' ? 'active-field' : ''}`}
+                            style={{ top: '75.5%', left: '21.0%', width: '20%' }}
+                            value={getValue('monto', rawAnswers?.monto)}
+                            onChange={(e) => handleFieldChange('monto', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'SECLO_INICIO') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={secloInicioBg} alt="SECLO Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '32.0%', left: '25.0%', width: '50%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_cuil' ? 'active-field' : ''}`}
+                            style={{ top: '35.5%', left: '25.0%', width: '30%' }}
+                            value={getValue('actor_cuil', rawAnswers?.actor_cuil)}
+                            onChange={(e) => handleFieldChange('actor_cuil', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'empleador_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '53.5%', left: '25.0%', width: '50%' }}
+                            value={getValue('empleador_nombre', rawAnswers?.empleador_nombre)}
+                            onChange={(e) => handleFieldChange('empleador_nombre', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'motivo' ? 'active-field' : ''}`}
+                            style={{ top: '78.5%', left: '10.0%', width: '80%' }}
+                            value={getValue('motivo', rawAnswers?.motivo)}
+                            onChange={(e) => handleFieldChange('motivo', e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'SS_INGRESO') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={ssIngresoBg} alt="SS Ingreso Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '35.0%', left: '18.0%', width: '40%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'CASACION_QUEJA') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={penalQuejaBg} alt="Penal Queja Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'imputado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '30.0%', left: '20.0%', width: '40%' }}
+                            value={getValue('imputado_nombre', rawAnswers?.imputado_nombre)}
+                            onChange={(e) => handleFieldChange('imputado_nombre', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'QUIEBRAS_3003') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img src={quiebras3003Bg} alt="Quiebras 3003 Form" className="tcl-bg-image" />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'razon_social' ? 'active-field' : ''}`}
+                            style={{ top: '34.0%', left: '27.5%', width: '60%' }}
+                            value={getValue('razon_social', rawAnswers?.razon_social)}
+                            onChange={(e) => handleFieldChange('razon_social', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'PBA_3003') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <div style={{ padding: '40px', background: '#f9f9f9', minHeight: '600px', color: '#000' }}>
+                        <h3 style={{ borderBottom: '2px solid #000', paddingBottom: '10px' }}>REGISTRO DE JUICIOS UNIVERSALES - PBA</h3>
+                        <div style={{ marginTop: '30px' }}>
+                            <p>DEPARTAMENTO JUDICIAL: <strong>{getValue('departamento', rawAnswers?.departamento)}</strong></p>
+                            <p style={{ marginTop: '40px' }}>Nombre del Causante: <strong>{getValue('causante_nombre', rawAnswers?.causante_nombre)}</strong></p>
+                            <p>DNI: <strong>{getValue('causante_dni', rawAnswers?.causante_dni)}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'IGJ_RETIRO') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <div style={{ padding: '60px', background: 'white', minHeight: '500px', border: '1px solid #ddd', color: '#000' }}>
+                        <h2 style={{ textAlign: 'center', textDecoration: 'underline' }}>ANEXO I - AUTORIZACIÓN DE RETIRO</h2>
+                        <div style={{ marginTop: '50px', lineHeight: '2' }}>
+                            Yo, <span className="active-field" style={{ padding: '0 10px' }}>{getValue('profesional_nombre', rawAnswers?.profesional_nombre)}</span>, 
+                            autorizo a <span className="active-field" style={{ padding: '0 10px' }}>{getValue('autorizado_nombre', rawAnswers?.autorizado_nombre)}</span> a retirar 
+                            el trámite correlativa N° <span className="active-field" style={{ padding: '0 10px' }}>{getValue('tramite_nro', rawAnswers?.tramite_nro)}</span> en la sede del CPACF.
+                        </div>
                     </div>
                 </div>
             );

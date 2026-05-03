@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password, remember = true) => {
         // Mock fallback for development/demo
-        if ((email === 'admin@admin.com' || email === 'lexia@admin.com') && password === 'admin') {
+        if ((email === 'admin@admin.com' || email === 'lexia@admin.com') && (password === 'admin' || password === 'lexia_password')) {
             // Add a small delay to simulate network request
             await new Promise(resolve => setTimeout(resolve, 1500));
 

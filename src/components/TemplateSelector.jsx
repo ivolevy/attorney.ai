@@ -4,14 +4,22 @@ import { BookOpen, Play, X, Mic, ChevronRight } from 'lucide-react';
 
 const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, isListening }) => {
     const [selectedCategory, setSelectedCategory] = useState('Laboral');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const categories = useMemo(() => {
-        return [...new Set(LEGAL_TEMPLATES.map(t => t.category))];
+        const cats = [...new Set(LEGAL_TEMPLATES.map(t => t.category))];
+        // Ensure Laboral is first if it exists, otherwise keep order
+        return cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
     }, []);
 
     const filteredTemplates = useMemo(() => {
-        return LEGAL_TEMPLATES.filter(t => t.category === selectedCategory);
-    }, [selectedCategory]);
+        return LEGAL_TEMPLATES.filter(t => {
+            const matchesCategory = selectedCategory === 'Todos' || t.category === selectedCategory;
+            const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 t.description.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
+    }, [selectedCategory, searchTerm]);
 
     return (
         <div className="library-container">
@@ -21,7 +29,24 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
                     <span>Librería Legal</span>
                 </div>
                 {!activeTemplate && (
+                    <div className="search-container">
+                        <input 
+                            type="text" 
+                            placeholder="Buscar formulario..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
+                )}
+                {!activeTemplate && (
                     <div className="category-scroll">
+                        <button
+                            className={`cat-pill ${selectedCategory === 'Todos' ? 'active' : ''}`}
+                            onClick={() => setSelectedCategory('Todos')}
+                        >
+                            Todos
+                        </button>
                         {categories.map(cat => (
                             <button
                                 key={cat}
@@ -100,14 +125,28 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
                     gap: 1rem;
                 }
                 .header-title {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    font-size: 0.75rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
                     color: #888;
                     white-space: nowrap;
+                }
+                .search-container {
+                    flex: 1;
+                    min-width: 150px;
+                }
+                .search-input {
+                    width: 100%;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    padding: 0.4rem 0.75rem;
+                    color: #fff;
+                    font-size: 0.8rem;
+                    outline: none;
+                    transition: all 0.2s;
+                }
+                .search-input:focus {
+                    border-color: var(--accent-green);
+                    background: rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 0 10px rgba(30, 215, 96, 0.1);
                 }
                 .category-scroll {
                     display: flex;

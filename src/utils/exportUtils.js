@@ -4,6 +4,9 @@ import { PDFDocument, rgb } from 'pdf-lib';
 import tclPdfUrl from '../assets/library/laboral/tcl30/tcl30web.pdf?url';
 import ingresoCausasPngUrl from '../assets/library/laboral/ingreso-causas/ingreso-causas.png?url';
 import inicioDemandaPngUrl from '../assets/library/laboral/inicio-demanda/formulario inicio demanda.png?url';
+import sucesiones3003PngUrl from '../assets/library/civil/sucesiones-3003.png?url';
+import inicioComercialPngUrl from '../assets/library/comercial/inicio-comercial.png?url';
+import secloInicioPngUrl from '../assets/library/seclo/seclo-inicio.png?url';
 
 /**
  * Exports text to a PDF file with basic branding or rich formatting
@@ -187,6 +190,104 @@ export const exportToPDF = async (content) => {
                 } catch (err) {
                     console.error('Error with Inicio Demanda PDF:', err);
                 }
+            }
+
+            // 4. SUCESIONES 3003
+            else if (data.isOfficialForm === '3003_SUCESIONES') {
+                try {
+                    const pdfDoc = await PDFDocument.create();
+                    const page = pdfDoc.addPage();
+                    const { width, height } = page.getSize();
+                    const response = await fetch(sucesiones3003PngUrl);
+                    const pngImageBytes = await response.arrayBuffer();
+                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
+                    page.drawImage(pngImage, { x: 0, y: 0, width: width, height: height });
+
+                    const draw = (text, xPct, yPct, size = 11) => {
+                        if (!text) return;
+                        page.drawText(text.toString().toUpperCase(), {
+                            x: (xPct / 100) * width,
+                            y: (1 - (yPct / 100)) * height,
+                            size: size,
+                            color: rgb(0, 0, 0.4)
+                        });
+                    };
+
+                    draw(rawAnswers.causante_nombre, 27.5, 34.0);
+                    draw(rawAnswers.causante_dni, 27.5, 39.0);
+                    draw(rawAnswers.fecha_fallecimiento, 27.5, 59.5);
+                    draw(rawAnswers.lugar_fallecimiento, 72.5, 59.5);
+                    draw(rawAnswers.ultimo_domicilio, 27.5, 64.5);
+                    draw(rawAnswers.abogado_nombre, 27.5, 83.5);
+
+                    const pdfBytes = await pdfDoc.save();
+                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
+                    return;
+                } catch (err) { console.error('Error with Sucesiones PDF:', err); }
+            }
+
+            // 5. INICIO COMERCIAL
+            else if (data.isOfficialForm === 'INICIO_COMERCIAL') {
+                try {
+                    const pdfDoc = await PDFDocument.create();
+                    const page = pdfDoc.addPage();
+                    const { width, height } = page.getSize();
+                    const response = await fetch(inicioComercialPngUrl);
+                    const pngImageBytes = await response.arrayBuffer();
+                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
+                    page.drawImage(pngImage, { x: 0, y: 0, width: width, height: height });
+
+                    const draw = (text, xPct, yPct, size = 11) => {
+                        if (!text) return;
+                        page.drawText(text.toString().toUpperCase(), {
+                            x: (xPct / 100) * width,
+                            y: (1 - (yPct / 100)) * height,
+                            size: size,
+                            color: rgb(0, 0, 0.4)
+                        });
+                    };
+
+                    draw(rawAnswers.actor_nombre, 21.0, 55.5);
+                    draw(rawAnswers.demandado_nombre, 21.0, 67.0);
+                    draw(rawAnswers.objeto, 21.0, 71.5);
+                    draw(rawAnswers.monto, 21.0, 75.5);
+
+                    const pdfBytes = await pdfDoc.save();
+                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
+                    return;
+                } catch (err) { console.error('Error with Inicio Comercial PDF:', err); }
+            }
+
+            // 6. SECLO INICIO
+            else if (data.isOfficialForm === 'SECLO_INICIO') {
+                try {
+                    const pdfDoc = await PDFDocument.create();
+                    const page = pdfDoc.addPage();
+                    const { width, height } = page.getSize();
+                    const response = await fetch(secloInicioPngUrl);
+                    const pngImageBytes = await response.arrayBuffer();
+                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
+                    page.drawImage(pngImage, { x: 0, y: 0, width: width, height: height });
+
+                    const draw = (text, xPct, yPct, size = 11) => {
+                        if (!text) return;
+                        page.drawText(text.toString().toUpperCase(), {
+                            x: (xPct / 100) * width,
+                            y: (1 - (yPct / 100)) * height,
+                            size: size,
+                            color: rgb(0, 0, 0.4)
+                        });
+                    };
+
+                    draw(rawAnswers.actor_nombre, 25.0, 32.0);
+                    draw(rawAnswers.actor_cuil, 25.0, 35.5);
+                    draw(rawAnswers.empleador_nombre, 25.0, 53.5);
+                    draw(rawAnswers.motivo, 10.0, 78.5);
+
+                    const pdfBytes = await pdfDoc.save();
+                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
+                    return;
+                } catch (err) { console.error('Error with SECLO PDF:', err); }
             }
         }
 

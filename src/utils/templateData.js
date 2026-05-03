@@ -96,7 +96,152 @@ export const LEGAL_TEMPLATES = [
             rawAnswers: answers
         }),
         format: (answers) => `INICIO DEMANDA\n\nACTOR: ${answers.actor_nombre}\nDEMANDADO: ${answers.demandado_nombre}\nOBJETO: ${answers.objeto}`
-
+    },
+    // PROVINCIA DE BUENOS AIRES
+    {
+        id: 'pba-3003',
+        category: 'PBA',
+        name: 'Registro Juicios Universales (PBA)',
+        description: 'Formulario de inicio para sucesiones en Provincia de Buenos Aires.',
+        fields: [
+            { id: 'causante_nombre', name: 'Causante', prompt: '¿Nombre del causante?', placeholder: 'Juan Pérez' },
+            { id: 'causante_dni', name: 'DNI', prompt: '¿DNI?', placeholder: '12.345.678' },
+            { id: 'departamento', name: 'Depto. Judicial', prompt: '¿Departamento Judicial?', placeholder: 'San Isidro / Lomas de Zamora' }
+        ],
+        isOfficialForm: 'PBA_3003',
+        richFormat: (answers) => ({
+            title: 'REGISTRO DE JUICIOS UNIVERSALES - PBA',
+            isOfficial: true,
+            header: `DEPTO. JUDICIAL: ${answers.departamento || '___'}`,
+            body: [`Causante: ${answers.causante_nombre || '___'} (DNI: ${answers.causante_dni || '___'})`],
+            rawAnswers: answers
+        }),
+        format: (answers) => `PBA 3003 - ${answers.causante_nombre}`
+    },
+    // IGJ
+    {
+        id: 'igj-retiro',
+        category: 'IGJ',
+        name: 'Autorización Retiro Sede CPACF',
+        description: 'Formulario de autorización para retirar trámites de IGJ en el Colegio.',
+        fields: [
+            { id: 'profesional_nombre', name: 'Abogado/a', prompt: '¿Nombre del profesional?', placeholder: 'Dr. Lucas García' },
+            { id: 'autorizado_nombre', name: 'Autorizado/a', prompt: '¿A quién autorizás a retirar?', placeholder: 'Nombre del gestor/empleado' },
+            { id: 'tramite_nro', name: 'N° Trámite', prompt: '¿Número de correlativa o trámite?', placeholder: '1234567' }
+        ],
+        isOfficialForm: 'IGJ_RETIRO',
+        richFormat: (answers) => ({
+            title: 'AUTORIZACIÓN RETIRO IGJ - SEDE CPACF',
+            isOfficial: true,
+            header: 'ANEXO I - AUTORIZACIÓN DE RETIRO',
+            body: [
+                `Yo, ${answers.profesional_nombre || '___'}, autorizo a ${answers.autorizado_nombre || '___'} a retirar el trámite N° ${answers.tramite_nro || '___'}.`
+            ],
+            rawAnswers: answers
+        }),
+        format: (answers) => `IGJ RETIRO - TRAMITE ${answers.tramite_nro}`
+    },
+    // SECLO CARTA PODER
+    {
+        id: 'seclo-carta-poder',
+        category: 'Laboral',
+        name: 'SECLO - Carta Poder',
+        description: 'Carta poder para representación en conciliación laboral SECLO.',
+        fields: [
+            { id: 'otorgante_nombre', name: 'Otorgante', prompt: '¿Nombre del trabajador que otorga el poder?', placeholder: 'Juan Pérez' },
+            { id: 'abogado_nombre', name: 'Abogado/a', prompt: '¿Nombre del abogado apoderado?', placeholder: 'Dra. María López' },
+            { id: 'tomo_folio', name: 'Tomo/Folio', prompt: '¿Tomo y Folio del abogado?', placeholder: '123/456' }
+        ],
+        isOfficialForm: 'SECLO_CARTA_PODER',
+        richFormat: (answers) => ({
+            title: 'CARTA PODER SECLO',
+            isOfficial: true,
+            header: 'MINISTERIO DE TRABAJO, EMPLEO Y SEGURIDAD SOCIAL',
+            body: [
+                `Por la presente, ${answers.otorgante_nombre || '___'} otorga poder a ${answers.abogado_nombre || '___'} (T° ${answers.tomo_folio || '___'}) para actuar ante el SECLO.`
+            ],
+            rawAnswers: answers
+        }),
+        format: (answers) => `CARTA PODER SECLO - ${answers.otorgante_nombre}`
+    },
+    // AGIP
+    {
+        id: 'agip-deuda',
+        category: 'AGIP',
+        name: 'Inexistencia Deuda (Automotor)',
+        description: 'Solicitud de certificado de inexistencia de deuda tributaria.',
+        fields: [
+            { id: 'dominio', name: 'Dominio/Patente', prompt: '¿Dominio del vehículo?', placeholder: 'ABC 123' },
+            { id: 'titular', name: 'Titular', prompt: '¿Nombre del titular?', placeholder: 'Juan Pérez' }
+        ],
+        isOfficialForm: 'AGIP_DEUDA',
+        richFormat: (answers) => ({
+            title: 'SOLICITUD CERTIFICADO INEXISTENCIA DEUDA - AGIP',
+            isOfficial: true,
+            header: 'ADMINISTRACIÓN GUBERNAMENTAL DE INGRESOS PÚBLICOS',
+            body: [`Se solicita certificado para el dominio ${answers.dominio || '___'}, titular ${answers.titular || '___'}.`],
+            rawAnswers: answers
+        }),
+        format: (answers) => `AGIP DEUDA - ${answers.dominio}`
+    },
+    // SEGURIDAD SOCIAL
+    {
+        id: 'ss-ingreso',
+        category: 'Seguridad Social',
+        name: 'Ingreso de Causas (SS)',
+        description: 'Formulario de ingreso de expedientes para la Cámara Federal de la Seguridad Social.',
+        fields: [
+            { id: 'actor_nombre', name: 'Actor', prompt: '¿Nombre del actor?', placeholder: 'Juan Pérez' },
+            { id: 'actor_cuil', name: 'CUIL', prompt: '¿CUIL del actor?', placeholder: '20-12345678-9' },
+            { id: 'objeto', name: 'Objeto', prompt: '¿Objeto del juicio?', placeholder: 'Reajustes Varios' }
+        ],
+        isOfficialForm: 'SS_INGRESO',
+        richFormat: (answers) => ({
+            title: 'INGRESO DE CAUSAS - SEGURIDAD SOCIAL',
+            isOfficial: true,
+            body: [`Actor: ${answers.actor_nombre || '___'} (CUIL: ${answers.actor_cuil || '___'})`, `Objeto: ${answers.objeto || '___'}`],
+            rawAnswers: answers
+        }),
+        format: (answers) => `SS INGRESO - ${answers.actor_nombre}`
+    },
+    // PENAL
+    {
+        id: 'casacion-queja',
+        category: 'Penal',
+        name: 'Recurso de Queja (Casación)',
+        description: 'Formulario para recurso de queja ante la Cámara Nacional de Casación Penal.',
+        fields: [
+            { id: 'imputado_nombre', name: 'Imputado', prompt: '¿Nombre del imputado?', placeholder: 'Juan Pérez' },
+            { id: 'causa_nro', name: 'Causa N°', prompt: '¿Número de causa?', placeholder: '1234/2024' },
+            { id: 'tribunal_origen', name: 'Tribunal Origen', prompt: '¿Tribunal de origen?', placeholder: 'TOC N° 5' }
+        ],
+        isOfficialForm: 'CASACION_QUEJA',
+        richFormat: (answers) => ({
+            title: 'RECURSO DE QUEJA - CASACIÓN PENAL',
+            isOfficial: true,
+            body: [`Imputado: ${answers.imputado_nombre || '___'}`, `Causa: ${answers.causa_nro || '___'}`, `Origen: ${answers.tribunal_origen || '___'}`],
+            rawAnswers: answers
+        }),
+        format: (answers) => `CASACION QUEJA - ${answers.imputado_nombre}`
+    },
+    // QUIEBRAS 3003
+    {
+        id: 'quiebras-3003',
+        category: 'Comercial',
+        name: 'Registro Quiebras (3003)',
+        description: 'Formulario 3003 para Quiebras y Juicios Universales Comerciales.',
+        fields: [
+            { id: 'razon_social', name: 'Razón Social/Nombre', prompt: '¿Nombre o Razón Social?', placeholder: 'Empresa S.A.' },
+            { id: 'cuit_dni', name: 'CUIT/DNI', prompt: '¿CUIT o DNI?', placeholder: '30-12345678-9' }
+        ],
+        isOfficialForm: 'QUIEBRAS_3003',
+        richFormat: (answers) => ({
+            title: 'REGISTRO DE JUICIOS UNIVERSALES (QUIEBRAS)',
+            isOfficial: true,
+            body: [`Entidad: ${answers.razon_social || '___'} (ID: ${answers.cuit_dni || '___'})`],
+            rawAnswers: answers
+        }),
+        format: (answers) => `QUIEBRAS 3003 - ${answers.razon_social}`
     },
     {
         id: 'demanda-danos',
@@ -241,5 +386,155 @@ export const LEGAL_TEMPLATES = [
             body: [`Relato de los hechos: ${answers.relato || '___'}. Se solicita investigación.`]
         }),
         format: (answers) => `DENUNCIA PENAL por ${answers.delito}`
+    },
+    // NUEVOS FORMULARIOS CPACF
+    {
+        id: 'sucesiones-3003',
+        category: 'Civil',
+        name: 'Sucesiones (3003/56)',
+        description: 'Formulario de Juicios Universales para inicio de sucesiones.',
+        fields: [
+            { id: 'causante_nombre', name: 'Nombre del Causante', prompt: '¿Nombre completo de la persona fallecida?', placeholder: 'Juan Domingo Pérez' },
+            { id: 'causante_dni', name: 'DNI del Causante', prompt: '¿DNI del fallecido?', placeholder: '12.345.678' },
+            { id: 'fecha_fallecimiento', name: 'Fecha Fallecimiento', prompt: '¿En qué fecha falleció?', placeholder: 'DD/MM/AAAA' },
+            { id: 'lugar_fallecimiento', name: 'Lugar', prompt: '¿En qué localidad falleció?', placeholder: 'CABA' },
+            { id: 'ultimo_domicilio', name: 'Último Domicilio', prompt: '¿Cuál fue su último domicilio real?', placeholder: 'Calle Falsa 123' },
+            { id: 'abogado_nombre', name: 'Abogado', prompt: '¿Nombre del abogado que inicia?', placeholder: 'Dr. Lucas García' }
+        ],
+        isOfficialForm: '3003_SUCESIONES',
+        richFormat: (answers) => ({
+            title: 'FORMULARIO DECRETO-LEY 3003/56 (SUCESIONES)',
+            isOfficial: true,
+            header: 'REGISTRO DE JUICIOS UNIVERSALES',
+            body: [
+                `Nombre del Causante: ${answers.causante_nombre || '___'}`,
+                `DNI: ${answers.causante_dni || '___'}`,
+                `Fallecido en: ${answers.lugar_fallecimiento || '___'} el día ${answers.fecha_fallecimiento || '___'}`
+            ],
+            footer: `Presentado por: ${answers.abogado_nombre || '___'}`,
+            rawAnswers: answers
+        }),
+        format: (answers) => `SUCESIÓN 3003/56 - CAUSANTE: ${answers.causante_nombre}`
+    },
+    {
+        id: 'cedula-civil',
+        category: 'Civil',
+        name: 'Cédula de Notificación',
+        description: 'Cédula oficial del Poder Judicial de la Nación (Fuero Civil).',
+        fields: [
+            { id: 'destinatario', name: 'Destinatario', prompt: '¿A quién va dirigida la cédula?', placeholder: 'Nombre y Apellido' },
+            { id: 'domicilio', name: 'Domicilio', prompt: '¿Domicilio de notificación?', placeholder: 'Calle 123, CABA' },
+            { id: 'juzgado', name: 'Juzgado', prompt: '¿Número de juzgado?', placeholder: 'Juzgado Civil N° 15' },
+            { id: 'secretaria', name: 'Secretaría', prompt: '¿Secretaría?', placeholder: 'Secretaría Única' },
+            { id: 'expediente', name: 'Expediente', prompt: '¿Número de expediente?', placeholder: '12345/2024' },
+            { id: 'texto', name: 'Transcripción', prompt: 'Dictame el texto del auto o resolución a transcribir.', placeholder: 'Buenos Aires, 20 de mayo...' }
+        ],
+        isOfficialForm: 'CEDULA_CIVIL',
+        richFormat: (answers) => ({
+            title: 'CÉDULA DE NOTIFICACIÓN (PJN CIVIL)',
+            isOfficial: true,
+            header: `PARA: ${answers.destinatario || '___'}\nDOMICILIO: ${answers.domicilio || '___'}\nEXPTE: ${answers.expediente || '___'}`,
+            body: [answers.texto || '___'],
+            rawAnswers: answers
+        }),
+        format: (answers) => `CÉDULA CIVIL - EXPTE: ${answers.expediente}`
+    },
+    {
+        id: 'inicio-comercial',
+        category: 'Comercial',
+        name: 'Inicio Demanda Comercial',
+        description: 'Formulario de inicio de causas para el fuero comercial.',
+        fields: [
+            { id: 'actor_nombre', name: 'Actor', prompt: '¿Nombre o Razón Social del actor?', placeholder: 'Empresa S.A.' },
+            { id: 'demandado_nombre', name: 'Demandado', prompt: '¿Contra quién es la demanda?', placeholder: 'Juan Pérez' },
+            { id: 'objeto', name: 'Objeto', prompt: '¿Objeto del juicio?', placeholder: 'Ejecutivo / Quiebra' },
+            { id: 'monto', name: 'Monto', prompt: '¿Monto del reclamo?', placeholder: '$1.000.000' }
+        ],
+        isOfficialForm: 'INICIO_COMERCIAL',
+        richFormat: (answers) => ({
+            title: 'FORMULARIO DE INICIO - FUERO COMERCIAL',
+            isOfficial: true,
+            header: 'CÁMARA NACIONAL DE APELACIONES EN LO COMERCIAL',
+            body: [
+                `Actor: ${answers.actor_nombre || '___'}`,
+                `Demandado: ${answers.demandado_nombre || '___'}`,
+                `Objeto: ${answers.objeto || '___'}`
+            ],
+            rawAnswers: answers
+        }),
+        format: (answers) => `INICIO COMERCIAL - OBJETO: ${answers.objeto}`
+    },
+    {
+        id: 'seclo-inicio',
+        category: 'Laboral',
+        name: 'SECLO - Inicio Reclamo',
+        description: 'Formulario de iniciación del reclamo ante el SECLO.',
+        fields: [
+            { id: 'actor_nombre', name: 'Trabajador', prompt: '¿Nombre del trabajador?', placeholder: 'Juan Pérez' },
+            { id: 'actor_cuil', name: 'CUIL', prompt: '¿CUIL del trabajador?', placeholder: '20-12345678-9' },
+            { id: 'empleador_nombre', name: 'Empleador', prompt: '¿Nombre o Razón Social del empleador?', placeholder: 'Empresa S.A.' },
+            { id: 'empleador_cuit', name: 'CUIT Empleador', prompt: '¿CUIT del empleador?', placeholder: '30-99999999-9' },
+            { id: 'motivo', name: 'Motivo', prompt: '¿Motivo del reclamo?', placeholder: 'Despido incausado / Diferencias salariales' }
+        ],
+        isOfficialForm: 'SECLO_INICIO',
+        richFormat: (answers) => ({
+            title: 'SECLO - FORMULARIO DE INICIACIÓN DE RECLAMO',
+            isOfficial: true,
+            header: 'SERVICIO DE CONCILIACIÓN LABORAL OBLIGATORIA',
+            body: [
+                `RECLAMANTE: ${answers.actor_nombre || '___'} (CUIL: ${answers.actor_cuil || '___'})`,
+                `RECLAMADO: ${answers.empleador_nombre || '___'} (CUIT: ${answers.empleador_cuit || '___'})`,
+                `MOTIVO: ${answers.motivo || '___'}`
+            ],
+            rawAnswers: answers
+        }),
+        format: (answers) => `SECLO INICIO - RECLAMANTE: ${answers.actor_nombre}`
+    },
+    {
+        id: 'inicio-seguridad-social',
+        category: 'Seguridad Social',
+        name: 'Inicio de Actuaciones',
+        description: 'Formulario para el inicio de causas en el fuero de la Seguridad Social.',
+        fields: [
+            { id: 'actor_nombre', name: 'Actor', prompt: '¿Nombre del beneficiario/actor?', placeholder: 'Juan Pérez' },
+            { id: 'actor_cuil', name: 'CUIL', prompt: '¿CUIL?', placeholder: '20-12345678-9' },
+            { id: 'beneficio', name: 'N° Beneficio', prompt: '¿Número de beneficio o expediente ANSES?', placeholder: '00-0-0000000-0' },
+            { id: 'objeto', name: 'Objeto', prompt: '¿Objeto del reclamo?', placeholder: 'Reajuste de Haberes' }
+        ],
+        isOfficialForm: 'INICIO_SS',
+        richFormat: (answers) => ({
+            title: 'FORMULARIO DE INICIO - SEGURIDAD SOCIAL',
+            isOfficial: true,
+            header: 'CÁMARA FEDERAL DE LA SEGURIDAD SOCIAL',
+            body: [
+                `Actor: ${answers.actor_nombre || '___'} (CUIL: ${answers.actor_cuil || '___'})`,
+                `Beneficio: ${answers.beneficio || '___'}`,
+                `Objeto: ${answers.objeto || '___'}`
+            ],
+            rawAnswers: answers
+        }),
+        format: (answers) => `INICIO SS - OBJETO: ${answers.objeto}`
+    },
+    {
+        id: 'cedula-penal',
+        category: 'Penal',
+        name: 'Cédula Penal Federal',
+        description: 'Cédula de notificación para el Fuero Criminal y Correccional Federal.',
+        fields: [
+            { id: 'destinatario', name: 'Destinatario', prompt: '¿A quién notificamos?', placeholder: 'Nombre' },
+            { id: 'domicilio', name: 'Domicilio', prompt: '¿Domicilio?', placeholder: 'Calle 123' },
+            { id: 'causa', name: 'Causa N°', prompt: '¿Número de causa?', placeholder: '9999/2024' },
+            { id: 'juzgado', name: 'Juzgado', prompt: '¿Juzgado Federal N°?', placeholder: 'Juzgado N° 1' },
+            { id: 'texto', name: 'Resolución', prompt: 'Dictame la resolución a notificar.', placeholder: 'Hágase saber que...' }
+        ],
+        isOfficialForm: 'CEDULA_PENAL',
+        richFormat: (answers) => ({
+            title: 'CÉDULA DE NOTIFICACIÓN (PENAL FEDERAL)',
+            isOfficial: true,
+            header: `PARA: ${answers.destinatario || '___'}\nCAUSA: ${answers.causa || '___'}\nJUZGADO: ${answers.juzgado || '___'}`,
+            body: [answers.texto || '___'],
+            rawAnswers: answers
+        }),
+        format: (answers) => `CÉDULA PENAL - CAUSA: ${answers.causa}`
     }
 ];
