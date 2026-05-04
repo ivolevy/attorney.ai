@@ -3,20 +3,19 @@ import { useState, useMemo } from 'react';
 import { BookOpen, Play, X, Mic, ChevronRight } from 'lucide-react';
 
 const TemplateSelector = ({ templates, onSelect, activeTemplate, currentField, onCancel, isListening, onMicStart }) => {
-    const [selectedCategory, setSelectedCategory] = useState('Todos');
+    const [selectedCategory, setSelectedCategory] = useState('Laboral');
     const [searchTerm, setSearchTerm] = useState('');
 
     const categories = useMemo(() => {
-        if (!templates) return ['Todos'];
+        if (!templates) return [];
         const cats = [...new Set(templates.map(t => t.category))];
-        const sortedCats = cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
-        return ['Todos', ...sortedCats];
+        return cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
     }, [templates]);
 
     const filteredTemplates = useMemo(() => {
         if (!templates) return [];
         return templates.filter(t => {
-            const matchesCategory = selectedCategory === 'Todos' || t.category === selectedCategory;
+            const matchesCategory = t.category === selectedCategory;
             const name = t.name || '';
             const desc = t.description || '';
             const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
