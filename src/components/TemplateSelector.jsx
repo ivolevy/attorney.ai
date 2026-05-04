@@ -17,8 +17,10 @@ const TemplateSelector = ({ templates, onSelect, activeTemplate, currentField, o
         if (!templates) return [];
         return templates.filter(t => {
             const matchesCategory = selectedCategory === 'Todos' || t.category === selectedCategory;
-            const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                 t.description.toLowerCase().includes(searchTerm.toLowerCase());
+            const name = t.name || '';
+            const desc = t.description || '';
+            const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 desc.toLowerCase().includes(searchTerm.toLowerCase());
             return matchesCategory && matchesSearch;
         });
     }, [templates, selectedCategory, searchTerm]);
