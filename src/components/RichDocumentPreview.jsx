@@ -72,7 +72,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         {/* DESTINATARIO */}
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '11.8%', left: '8.0%', width: '35%' }}
+                            style={{ top: '12.8%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_nombre', rawAnswers?.dest_nombre)}
                             onChange={(e) => handleFieldChange('dest_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -82,7 +82,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_ramo' ? 'active-field' : ''}`}
-                            style={{ top: '15.5%', left: '8.0%', width: '35%' }}
+                            style={{ top: '16.5%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_ramo', rawAnswers?.dest_ramo)}
                             onChange={(e) => handleFieldChange('dest_ramo', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -92,7 +92,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_domicilio' ? 'active-field' : ''}`}
-                            style={{ top: '19.1%', left: '8.0%', width: '28%' }}
+                            style={{ top: '20.1%', left: '8.0%', width: '28%' }}
                             value={getValue('dest_domicilio', rawAnswers?.dest_domicilio)}
                             onChange={(e) => handleFieldChange('dest_domicilio', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -729,15 +729,31 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         alt="PBA 3003 Form" 
                         className="tcl-bg-image" 
                     />
-                    <div className="tcl-overlay">
-                        <div style={{ position: 'absolute', top: '15%', left: '40%', fontSize: '20px', fontWeight: 'bold' }}>PBA</div>
+                        <div style={{ position: 'absolute', top: '15%', left: '40%', fontSize: '20px', fontWeight: 'bold', color: '#888' }}>3003/56</div>
                         <input
                             className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '35.0%', left: '27.5%', width: '60%' }}
+                            style={{ top: '37.0%', left: '27.5%', width: '60%' }}
                             value={getValue('causante_nombre', rawAnswers?.causante_nombre)}
                             onChange={(e) => handleFieldChange('causante_nombre', e.target.value)}
                         />
-                    </div>
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'causante_dni' ? 'active-field' : ''}`}
+                            style={{ top: '44.5%', left: '27.5%', width: '25%' }}
+                            value={getValue('causante_dni', rawAnswers?.causante_dni)}
+                            onChange={(e) => handleFieldChange('causante_dni', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'fecha_fallecimiento' ? 'active-field' : ''}`}
+                            style={{ top: '44.5%', left: '65.0%', width: '25%' }}
+                            value={getValue('fecha_fallecimiento', rawAnswers?.fecha_fallecimiento)}
+                            onChange={(e) => handleFieldChange('fecha_fallecimiento', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'lugar_fallecimiento' ? 'active-field' : ''}`}
+                            style={{ top: '51.5%', left: '27.5%', width: '60%' }}
+                            value={getValue('lugar_fallecimiento', rawAnswers?.lugar_fallecimiento)}
+                            onChange={(e) => handleFieldChange('lugar_fallecimiento', e.target.value)}
+                        />
                 </div>
             );
         }
@@ -754,13 +770,13 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                     <div className="tcl-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'profesional_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '48.0%', left: '15.0%', width: '70%' }}
+                            style={{ top: '50.0%', left: '15.0%', width: '70%' }}
                             value={getValue('profesional_nombre', rawAnswers?.profesional_nombre)}
                             onChange={(e) => handleFieldChange('profesional_nombre', e.target.value)}
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'autorizado_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '56.0%', left: '15.0%', width: '70%' }}
+                            style={{ top: '58.0%', left: '15.0%', width: '70%' }}
                             value={getValue('autorizado_nombre', rawAnswers?.autorizado_nombre)}
                             onChange={(e) => handleFieldChange('autorizado_nombre', e.target.value)}
                         />
