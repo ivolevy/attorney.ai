@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { LEGAL_TEMPLATES } from '../utils/templateData';
 
-const useConversationalTemplate = (onUpdateText, onDownload) => {
+const useConversationalTemplate = (templates, onUpdateText, onDownload) => {
     const [activeTemplate, setActiveTemplate] = useState(null);
     const [currentFieldIndex, setCurrentFieldIndex] = useState(-1);
     const [answers, setAnswers] = useState({});
@@ -69,15 +69,25 @@ const useConversationalTemplate = (onUpdateText, onDownload) => {
     }, []);
 
     const startTemplate = useCallback((templateId) => {
-        const template = LEGAL_TEMPLATES.find(t => t.id === templateId);
+        const template = (templates || LEGAL_TEMPLATES).find(t => t.id === templateId);
         if (template) {
             setActiveTemplate(template);
             setAnswers({});
             setCurrentFieldIndex(0);
             setIsConfirmationStep(false);
-            if (onUpdateText) onUpdateText(template.format({}));
+            
+            // Dynamic format if not present
+            const formatFn = template.format || ((ans) => {
+                const title = template.title || template.name;
+                const body = Object.entries(ans)
+                    .map(([k, v]) => `${k.toUpperCase()}: ${v}`)
+                    .join('\n');
+                return `${title}\n\n${body}`;
+            });
+            
+            if (onUpdateText) onUpdateText(formatFn({}));
         }
-    }, [onUpdateText]);
+    }, [templates, onUpdateText]);
 
     const startBot = useCallback((onEnd) => {
         if (!activeTemplate || currentFieldIndex === -1) {

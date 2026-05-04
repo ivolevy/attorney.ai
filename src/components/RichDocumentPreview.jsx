@@ -55,7 +55,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && (title.includes('TCL 30') || title.includes('TCL +30'))) {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={tclBg} alt="TCL Form" className="tcl-bg-image" />
+                    <img src={data.backgroundUrl || tclBg} alt="TCL Form" className="tcl-bg-image" />
 
                     <div className="tcl-overlay">
                         {/* DESTINATARIO */}
@@ -218,9 +218,10 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
 
         if (isOfficial && data.isIngresoCausas) {
             return (
-                <div className="tcl-pixel-perfect">
-                    <img src={ingresoCausasBg} alt="Ingreso Causas Form" className="tcl-bg-image" />
-                    <div className="tcl-overlay">
+                <div className="ingreso-causas-pixel-perfect">
+                    <img src={data.backgroundUrl || ingresoCausasBg} alt="Ingreso Causas Form" className="ingreso-causas-bg-image" />
+
+                    <div className="ingreso-causas-overlay">
                         {/* ABOGADO */}
                         <input
                             className={`field-abs-input ${activeFieldId === 'abogado_tomo' ? 'active-field' : ''}`}
@@ -315,9 +316,10 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
 
         if (isOfficial && data.isInicioDemanda) {
             return (
-                <div className="tcl-pixel-perfect">
-                    <img src={inicioDemandaBg} alt="Inicio Demanda Form" className="tcl-bg-image" />
-                    <div className="tcl-overlay">
+                <div className="inicio-demanda-pixel-perfect">
+                    <img src={data.backgroundUrl || inicioDemandaBg} alt="Inicio Demanda Form" className="inicio-demanda-bg-image" />
+
+                    <div className="inicio-demanda-overlay">
                         {/* FUERO */}
                         <input
                             className={`field-abs-input ${activeFieldId === 'fuero' ? 'active-field' : ''}`}
@@ -406,9 +408,10 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
 
         if (isOfficial && rawAnswers && data.isOfficialForm === '3003_SUCESIONES') {
             return (
-                <div className="tcl-pixel-perfect">
-                    <img src={sucesiones3003Bg} alt="Sucesiones 3003 Form" className="tcl-bg-image" />
-                    <div className="tcl-overlay">
+                <div className="sucesiones-pixel-perfect">
+                    <img src={data.backgroundUrl || sucesiones3003Bg} alt="Sucesiones Form" className="sucesiones-bg-image" />
+
+                    <div className="sucesiones-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
                             style={{ top: '34.0%', left: '27.5%', width: '60%' }}

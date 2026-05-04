@@ -1,12 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver';
 import { PDFDocument, rgb } from 'pdf-lib';
-import tclPdfUrl from '../assets/library/laboral/tcl30/tcl30web.pdf?url';
-import ingresoCausasPngUrl from '../assets/library/laboral/ingreso-causas/ingreso-causas.png?url';
-import inicioDemandaPngUrl from '../assets/library/laboral/inicio-demanda/inicio-demanda.png?url';
-import sucesiones3003PngUrl from '../assets/library/civil/sucesiones-3003.png?url';
-import inicioComercialPngUrl from '../assets/library/comercial/inicio-comercial.png?url';
-import secloInicioPngUrl from '../assets/library/seclo/seclo-inicio.png?url';
 
 /**
  * Exports text to a PDF file with basic branding or rich formatting
@@ -41,7 +35,7 @@ export const exportToPDF = async (content) => {
             // Track event in PostHog
             if (window.posthog) {
                 window.posthog.capture('document_exported', {
-                    template_id: data?.id || 'unknown',
+                    template_id: content.isOfficialForm || 'unknown',
                     template_name: title,
                     is_official: true
                 });
@@ -50,7 +44,8 @@ export const exportToPDF = async (content) => {
             // 1. TCL 30
             if (title.includes('TCL 30') || title.includes('TCL +30')) {
                 try {
-                    const response = await fetch(tclPdfUrl);
+                    const pdfUrl = content.pdfUrl || content.backgroundUrl; // Use PDF if available, fallback to PNG
+                    const response = await fetch(pdfUrl);
                     const existingPdfBytes = await response.arrayBuffer();
                     const pdfDoc = await PDFDocument.load(existingPdfBytes);
                     const pages = pdfDoc.getPages();
@@ -109,67 +104,15 @@ export const exportToPDF = async (content) => {
                 }
             }
 
-            // 2. INGRESO DE CAUSAS
-            else if (content.isIngresoCausas) {
+            // 2. INGRESO DE CAUSAS, INICIO DE DEMANDA, etc. (PNG Based)
+            else if (content.backgroundUrl) {
                 try {
                     const pdfDoc = await PDFDocument.create();
                     const page = pdfDoc.addPage();
                     const { width, height } = page.getSize();
 
-                    // Embed PNG
-                    const response = await fetch(ingresoCausasPngUrl);
-                    const pngImageBytes = await response.arrayBuffer();
-                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
-                    page.drawImage(pngImage, {
-                        x: 0,
-                        y: 0,
-                        width: width,
-                        height: height,
-                    });
-
-                    const draw = (text, xPct, yPct, size = 11) => {
-                        if (!text) return;
-                        page.drawText(text.toString().toUpperCase(), {
-                            x: (xPct / 100) * width,
-                            y: (1 - (yPct / 100)) * height,
-                            size: size,
-                            color: rgb(0, 0, 0.4) // Navy like the app
-                        });
-                    };
-
-                    draw(rawAnswers.abogado_tomo, 27.5, 40.2);
-                    draw(rawAnswers.abogado_folio, 34.5, 40.2);
-                    draw(rawAnswers.abogado_nombre, 43.5, 40.2);
-                    draw(rawAnswers.actor_nombre, 18.5, 55.6);
-                    draw(rawAnswers.actor_ieric, 43.5, 55.6);
-                    draw(rawAnswers.actor_dni, 18.5, 57.4);
-
-                    // Sexo checkboxes (Approximate X positions)
-                    const s = (rawAnswers.actor_sexo || '').toLowerCase();
-                    if (s.includes('fem')) draw('X', 45.1, 59.2, 14);
-                    else if (s.includes('masc')) draw('X', 60.1, 59.2, 14);
-                    else if (s) draw('X', 88.3, 59.2, 14);
-
-                    draw(rawAnswers.demandado_nombre, 18.5, 67.0);
-                    draw(rawAnswers.expte_numero, 18.5, 80.5);
-
-                    const pdfBytes = await pdfDoc.save();
-                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
-                    return;
-                } catch (err) {
-                    console.error('Error with Ingreso Causas PDF:', err);
-                }
-            }
-
-            // 3. INICIO DE DEMANDA
-            else if (content.isInicioDemanda) {
-                try {
-                    const pdfDoc = await PDFDocument.create();
-                    const page = pdfDoc.addPage();
-                    const { width, height } = page.getSize();
-
-                    // Embed PNG
-                    const response = await fetch(inicioDemandaPngUrl);
+                    // Embed PNG from Supabase URL
+                    const response = await fetch(content.backgroundUrl);
                     const pngImageBytes = await response.arrayBuffer();
                     const pngImage = await pdfDoc.embedPng(pngImageBytes);
                     page.drawImage(pngImage, {
@@ -189,121 +132,52 @@ export const exportToPDF = async (content) => {
                         });
                     };
 
-                    // Coordinates mapped from RichDocumentPreview (top/left) to PDF (x/y)
-                    // PDF Y is from bottom-up, so y = 1 - (top / 100)
-                    // PDF X is left-right, so x = left / 100
-                    draw(rawAnswers.fuero, 20, 15);
-                    draw(rawAnswers.objeto, 20, 20);
-                    draw(rawAnswers.monto, 20, 25);
-                    draw(rawAnswers.actor_nombre, 20, 30);
-                    draw(rawAnswers.actor_dni, 65, 30);
-                    draw(rawAnswers.demandado_nombre, 20, 35);
-                    draw(rawAnswers.abogado_nombre, 20, 40);
+                    if (content.isIngresoCausas) {
+                        draw(rawAnswers.abogado_tomo, 27.5, 40.2);
+                        draw(rawAnswers.abogado_folio, 34.5, 40.2);
+                        draw(rawAnswers.abogado_nombre, 43.5, 40.2);
+                        draw(rawAnswers.actor_nombre, 18.5, 55.6);
+                        draw(rawAnswers.actor_ieric, 43.5, 55.6);
+                        draw(rawAnswers.actor_dni, 18.5, 57.4);
+                        const s = (rawAnswers.actor_sexo || '').toLowerCase();
+                        if (s.includes('fem')) draw('X', 45.1, 59.2, 14);
+                        else if (s.includes('masc')) draw('X', 60.1, 59.2, 14);
+                        else if (s) draw('X', 88.3, 59.2, 14);
+                        draw(rawAnswers.demandado_nombre, 18.5, 67.0);
+                        draw(rawAnswers.expte_numero, 18.5, 80.5);
+                    } else if (content.isInicioDemanda) {
+                        draw(rawAnswers.fuero, 20, 15);
+                        draw(rawAnswers.objeto, 20, 20);
+                        draw(rawAnswers.monto, 20, 25);
+                        draw(rawAnswers.actor_nombre, 20, 30);
+                        draw(rawAnswers.actor_dni, 65, 30);
+                        draw(rawAnswers.demandado_nombre, 20, 35);
+                        draw(rawAnswers.abogado_nombre, 20, 40);
+                    } else if (content.isOfficialForm === '3003_SUCESIONES') {
+                        draw(rawAnswers.causante_nombre, 27.5, 34.0);
+                        draw(rawAnswers.causante_dni, 27.5, 39.0);
+                        draw(rawAnswers.fecha_fallecimiento, 27.5, 59.5);
+                        draw(rawAnswers.lugar_fallecimiento, 72.5, 59.5);
+                        draw(rawAnswers.ultimo_domicilio, 27.5, 64.5);
+                        draw(rawAnswers.abogado_nombre, 27.5, 83.5);
+                    } else if (content.isOfficialForm === 'INICIO_COMERCIAL') {
+                        draw(rawAnswers.actor_nombre, 21.0, 55.5);
+                        draw(rawAnswers.demandado_nombre, 21.0, 67.0);
+                        draw(rawAnswers.objeto, 21.0, 71.5);
+                        draw(rawAnswers.monto, 21.0, 75.5);
+                    } else if (content.isOfficialForm === 'SECLO_INICIO') {
+                        draw(rawAnswers.actor_nombre, 25.0, 32.0);
+                        draw(rawAnswers.actor_cuil, 25.0, 35.5);
+                        draw(rawAnswers.empleador_nombre, 25.0, 53.5);
+                        draw(rawAnswers.motivo, 10.0, 78.5);
+                    }
 
                     const pdfBytes = await pdfDoc.save();
                     saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
                     return;
                 } catch (err) {
-                    console.error('Error with Inicio Demanda PDF:', err);
+                    console.error('Error with PNG based PDF:', err);
                 }
-            }
-
-            // 4. SUCESIONES 3003
-            else if (data.isOfficialForm === '3003_SUCESIONES') {
-                try {
-                    const pdfDoc = await PDFDocument.create();
-                    const page = pdfDoc.addPage();
-                    const { width, height } = page.getSize();
-                    const response = await fetch(sucesiones3003PngUrl);
-                    const pngImageBytes = await response.arrayBuffer();
-                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
-                    page.drawImage(pngImage, { x: 0, y: 0, width: width, height: height });
-
-                    const draw = (text, xPct, yPct, size = 11) => {
-                        if (!text) return;
-                        page.drawText(text.toString().toUpperCase(), {
-                            x: (xPct / 100) * width,
-                            y: (1 - (yPct / 100)) * height,
-                            size: size,
-                            color: rgb(0, 0, 0.4)
-                        });
-                    };
-
-                    draw(rawAnswers.causante_nombre, 27.5, 34.0);
-                    draw(rawAnswers.causante_dni, 27.5, 39.0);
-                    draw(rawAnswers.fecha_fallecimiento, 27.5, 59.5);
-                    draw(rawAnswers.lugar_fallecimiento, 72.5, 59.5);
-                    draw(rawAnswers.ultimo_domicilio, 27.5, 64.5);
-                    draw(rawAnswers.abogado_nombre, 27.5, 83.5);
-
-                    const pdfBytes = await pdfDoc.save();
-                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
-                    return;
-                } catch (err) { console.error('Error with Sucesiones PDF:', err); }
-            }
-
-            // 5. INICIO COMERCIAL
-            else if (data.isOfficialForm === 'INICIO_COMERCIAL') {
-                try {
-                    const pdfDoc = await PDFDocument.create();
-                    const page = pdfDoc.addPage();
-                    const { width, height } = page.getSize();
-                    const response = await fetch(inicioComercialPngUrl);
-                    const pngImageBytes = await response.arrayBuffer();
-                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
-                    page.drawImage(pngImage, { x: 0, y: 0, width: width, height: height });
-
-                    const draw = (text, xPct, yPct, size = 11) => {
-                        if (!text) return;
-                        page.drawText(text.toString().toUpperCase(), {
-                            x: (xPct / 100) * width,
-                            y: (1 - (yPct / 100)) * height,
-                            size: size,
-                            color: rgb(0, 0, 0.4)
-                        });
-                    };
-
-                    draw(rawAnswers.actor_nombre, 21.0, 55.5);
-                    draw(rawAnswers.demandado_nombre, 21.0, 67.0);
-                    draw(rawAnswers.objeto, 21.0, 71.5);
-                    draw(rawAnswers.monto, 21.0, 75.5);
-
-                    const pdfBytes = await pdfDoc.save();
-                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
-                    return;
-                } catch (err) { console.error('Error with Inicio Comercial PDF:', err); }
-            }
-
-            // 6. SECLO INICIO
-            else if (data.isOfficialForm === 'SECLO_INICIO') {
-                try {
-                    const pdfDoc = await PDFDocument.create();
-                    const page = pdfDoc.addPage();
-                    const { width, height } = page.getSize();
-                    const response = await fetch(secloInicioPngUrl);
-                    const pngImageBytes = await response.arrayBuffer();
-                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
-                    page.drawImage(pngImage, { x: 0, y: 0, width: width, height: height });
-
-                    const draw = (text, xPct, yPct, size = 11) => {
-                        if (!text) return;
-                        page.drawText(text.toString().toUpperCase(), {
-                            x: (xPct / 100) * width,
-                            y: (1 - (yPct / 100)) * height,
-                            size: size,
-                            color: rgb(0, 0, 0.4)
-                        });
-                    };
-
-                    draw(rawAnswers.actor_nombre, 25.0, 32.0);
-                    draw(rawAnswers.actor_cuil, 25.0, 35.5);
-                    draw(rawAnswers.empleador_nombre, 25.0, 53.5);
-                    draw(rawAnswers.motivo, 10.0, 78.5);
-
-                    const pdfBytes = await pdfDoc.save();
-                    saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
-                    return;
-                } catch (err) { console.error('Error with SECLO PDF:', err); }
             }
         }
 

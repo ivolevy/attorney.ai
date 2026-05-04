@@ -5,15 +5,71 @@ import { exportToPDF } from '../utils/exportUtils';
 import TemplateSelector from '../components/TemplateSelector';
 import RichDocumentPreview from '../components/RichDocumentPreview';
 import Skeleton from '../components/Skeleton';
-import {
-  Mic, MicOff, Trash2, Copy, AlertCircle, FileText, FileDown,
-  ExternalLink, Scale, CheckCircle2, PenTool
-} from 'lucide-react';
+import { Save, FileText, Send, Download, LogOut, ChevronDown, User, ArrowLeft, Search, PlusCircle, CheckCircle, Clock, Info } from 'lucide-react';
+import { supabase, getTemplates } from '../supabaseClient';
+import { LEGAL_TEMPLATES as LOCAL_TEMPLATES } from '../utils/templateData';
 import '../index.css';
 
 import SignatureExtractor from '../components/SignatureExtractor';
 
-function HomePage() {
+const HomePage = ({ user, onLogout }) => {
+  // State
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Existing state from original HomePage
+  const [currentTemplate, setCurrentTemplate] = useState(null);
+
+  // Load templates from Supabase
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const dbTemplates = await getTemplates();
+        // Merge with local templates if needed, or just use DB
+        setTemplates(dbTemplates.length > 0 ? dbTemplates : LOCAL_TEMPLATES);
+      } catch (err) {
+        console.error("Failed to load templates from DB, falling back to local", err);
+        setTemplates(LOCAL_TEMPLATES);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTemplates();
+  }, []);
+
+  // Helper to render dynamic templates from DB
+  const renderRichFormat = (template, answers) => {
+    if (!template.config?.richTemplate) {
+      // Fallback for old local templates that have a function
+      return typeof template.richFormat === 'function' 
+        ? template.richFormat(answers) 
+        : { title: template.name, body: [JSON.stringify(answers)] };
+    }
+
+    const { richTemplate } = template.config;
+    
+    const replaceVars = (str) => {
+      if (typeof str !== 'string') return str;
+      return str.replace(/{{(\w+)}}/g, (match, key) => answers[key] || '___');
+    };
+
+    return {
+      title: replaceVars(richTemplate.title),
+      isOfficial: true,
+      isOfficialForm: template.config.isOfficialForm,
+      header: replaceVars(richTemplate.header),
+      body: Array.isArray(richTemplate.body) 
+        ? richTemplate.body.map(replaceVars) 
+        : [replaceVars(richTemplate.body)],
+      footer: replaceVars(richTemplate.footer),
+      rawAnswers: answers,
+      backgroundUrl: template.background_url, // Pass the DB URL to the preview
+      pdfUrl: template.config?.pdf_url // Pass the PDF URL for generation
+    };
+  };
+
   const {
     text,
     setText,
@@ -53,6 +109,7 @@ function HomePage() {
     finalizeTemplate,
     isConfirmationStep
   } = useConversationalTemplate(
+    templates,
     (newText) => {
       setText(newText);
     },
@@ -60,7 +117,7 @@ function HomePage() {
   );
 
   const handleDownload = () => {
-    const content = activeTemplate ? activeTemplate.richFormat(answers) : text;
+    const content = activeTemplate ? renderRichFormat(activeTemplate, answers) : text;
     exportToPDF(content);
     stopListening();
   };
