@@ -96,8 +96,9 @@ const useConversationalTemplate = (templates, onUpdateText, onDownload) => {
         }
 
         const firstField = activeTemplate.fields[0];
+        const templateName = activeTemplate.name || activeTemplate.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         const firstFieldText = firstField.prompt ? `${firstField.name}. ${firstField.prompt}` : firstField.name;
-        const introText = `Iniciando ${activeTemplate.name}. ${firstFieldText}`;
+        const introText = `Iniciando ${templateName}. ${firstFieldText}`;
 
         speak(introText, onEnd);
     }, [activeTemplate, currentFieldIndex, speak]);
