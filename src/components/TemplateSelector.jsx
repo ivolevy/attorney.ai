@@ -1,44 +1,46 @@
 import { useState, useMemo } from 'react';
-import { LEGAL_TEMPLATES } from '../utils/templateData';
-import { BookOpen, Play, X, Mic, ChevronRight } from 'lucide-react';
+import { BookOpen, Play, X, Mic, ChevronRight, FileText } from 'lucide-react';
 
-const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, isListening }) => {
+const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, isListening, templates = [] }) => {
     const [selectedCategory, setSelectedCategory] = useState('Laboral');
     const [searchTerm, setSearchTerm] = useState('');
 
     const categories = useMemo(() => {
-        const cats = [...new Set(LEGAL_TEMPLATES.map(t => t.category))];
+        const cats = [...new Set(templates.map(t => t.category))];
         // Ensure Laboral is first if it exists, otherwise keep order
         return cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
     }, []);
 
     const filteredTemplates = useMemo(() => {
-        return LEGAL_TEMPLATES.filter(t => {
+        return templates.filter(t => {
             const matchesCategory = selectedCategory === 'Todos' || t.category === selectedCategory;
             const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                 t.description.toLowerCase().includes(searchTerm.toLowerCase());
+                                 (t.description && t.description.toLowerCase().includes(searchTerm.toLowerCase()));
             return matchesCategory && matchesSearch;
         });
-    }, [selectedCategory, searchTerm]);
+    }, [selectedCategory, searchTerm, templates]);
 
     return (
         <div className="library-container">
-            <div className="library-header">
-                <div className="header-title">
-                    <BookOpen size={16} color="var(--accent-green)" />
-                    <span>Librería Legal</span>
-                </div>
-                {!activeTemplate && (
+            {!activeTemplate && (
+                <div className="library-search-bar">
                     <div className="search-container">
                         <input 
                             type="text" 
-                            placeholder="Buscar formulario..." 
+                            placeholder="Buscar formulario o palabra clave..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"
                         />
                     </div>
-                )}
+                </div>
+            )}
+
+            <div className="library-header">
+                <div className="header-title">
+                    <BookOpen size={16} color="var(--accent-green)" />
+                    <span>Librería Legal</span>
+                </div>
                 {!activeTemplate && (
                     <div className="category-scroll">
                         <button
@@ -66,40 +68,51 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
             </div>
 
             {!activeTemplate ? (
-                <div className="template-list-compact">
+                <div className="template-grid">
                     {filteredTemplates.map((template) => (
                         <div
                             key={template.id}
-                            className={`compact-card ${template.disabled ? 'disabled' : ''}`}
+                            className={`template-card ${template.disabled ? 'disabled' : ''}`}
                             onClick={() => !template.disabled && onSelect(template.id)}
                         >
-                            <div className="card-main">
-                                <h5>{template.name}</h5>
+                            <div className="card-icon">
+                                <FileText size={20} />
+                            </div>
+                            <div className="card-content">
+                                <h3>{template.name}</h3>
                                 <p>{template.description}</p>
                             </div>
-                            {!template.disabled && <ChevronRight size={16} className="arrow-icon" />}
+                            <div className="card-action">
+                                <ChevronRight size={18} />
+                            </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="active-guide-compact">
-                    <div className="guide-status-bar">
-                        <div className="shimmer-line"></div>
-                        <span>Completando: <strong>{activeTemplate.name}</strong></span>
+                <div className="active-guide-container">
+                    <div className="guide-header">
+                        <div className="guide-indicator">
+                            <span className="dot"></span>
+                            <span>Completando Documento</span>
+                        </div>
+                        <h2>{activeTemplate.name}</h2>
                     </div>
                     {currentField ? (
-                        <div className="mini-prompt-box">
-                            <p className="prompt-txt">{currentField.prompt}</p>
+                        <div className="prompt-card">
+                            <div className="prompt-label">{currentField.label || 'Campo actual'}</div>
+                            <p className="prompt-text">{currentField.prompt}</p>
                             {isListening && (
-                                <div className="mic-wave">
-                                    <span></span><span></span><span></span>
-                                    <small>Escuchando...</small>
+                                <div className="listening-indicator">
+                                    <div className="bars">
+                                        <span></span><span></span><span></span><span></span>
+                                    </div>
+                                    <small>Escuchando voz...</small>
                                 </div>
                             )}
                         </div>
                     ) : (
-                        <div className="mini-prompt-box success">
-                            <p className="prompt-txt">✓ Todo listo</p>
+                        <div className="prompt-card success">
+                            <p className="prompt-text">✓ Toda la información ha sido recopilada.</p>
                         </div>
                     )}
                 </div>
@@ -109,206 +122,304 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
                 .library-container {
                     background: rgba(255, 255, 255, 0.02);
                     border: 1px solid rgba(255, 255, 255, 0.05);
-                    border-radius: 16px;
-                    margin: 0.5rem auto 0 auto;
-                    max-width: 800px;
+                    border-radius: 24px;
+                    margin: 1rem auto;
                     width: 100%;
                     overflow: hidden;
                     text-align: left;
+                    backdrop-filter: blur(20px);
                 }
-                .library-header {
+
+                .library-search-bar {
+                    padding: 1.5rem 2rem 0 2rem;
                     display: flex;
-                    align-items: center;
-                    padding: 0.75rem 1rem;
-                    background: rgba(255, 255, 255, 0.02);
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-                    gap: 1rem;
+                    justify-content: center;
                 }
-                .header-title {
-                    color: #888;
-                    white-space: nowrap;
-                }
+
                 .search-container {
                     flex: 1;
-                    min-width: 150px;
+                    max-width: 500px;
                 }
+
                 .search-input {
                     width: 100%;
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgba(255, 255, 255, 0.04);
                     border: 1px solid rgba(255, 255, 255, 0.1);
-                    border-radius: 8px;
-                    padding: 0.4rem 0.75rem;
+                    border-radius: 16px;
+                    padding: 0.8rem 1.5rem;
                     color: #fff;
-                    font-size: 0.8rem;
+                    font-size: 1rem;
                     outline: none;
-                    transition: all 0.2s;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    text-align: center;
+                    font-family: 'Outfit', sans-serif;
                 }
+
                 .search-input:focus {
                     border-color: var(--accent-green);
                     background: rgba(255, 255, 255, 0.08);
-                    box-shadow: 0 0 10px rgba(30, 215, 96, 0.1);
+                    box-shadow: 0 0 30px rgba(30, 215, 96, 0.15);
+                    text-align: left;
+                    transform: translateY(-2px);
                 }
+
+                .library-header {
+                    display: flex;
+                    align-items: center;
+                    padding: 1.5rem 2rem;
+                    gap: 2rem;
+                    flex-wrap: wrap;
+                }
+
+                .header-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    color: #fff;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    font-family: 'Outfit', sans-serif;
+                }
+
                 .category-scroll {
                     display: flex;
-                    gap: 0.4rem;
+                    gap: 0.5rem;
                     overflow-x: auto;
                     scrollbar-width: none;
+                    padding: 4px;
                 }
                 .category-scroll::-webkit-scrollbar { display: none; }
                 
                 .cat-pill {
-                    background: transparent;
-                    border: none;
-                    color: #666;
-                    font-size: 0.75rem;
-                    padding: 0.25rem 0.6rem;
-                    border-radius: 6px;
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    color: #888;
+                    font-size: 0.85rem;
+                    padding: 0.5rem 1rem;
+                    border-radius: 12px;
                     cursor: pointer;
                     transition: all 0.2s;
                     white-space: nowrap;
+                    font-family: 'Outfit', sans-serif;
                 }
-                .cat-pill.active {
-                    background: rgba(30, 215, 96, 0.1);
-                    color: var(--accent-green);
-                    font-weight: 500;
-                }
-
-                .template-list-compact {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                    padding: 0.5rem;
-                    gap: 0.5rem;
-                }
-                .compact-card {
-                    background: rgba(255, 255, 255, 0.01);
-                    border: 1px solid transparent;
-                    border-radius: 10px;
-                    padding: 0.75rem 1rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .compact-card:hover {
-                    background: rgba(255, 255, 255, 0.04);
-                    border-color: rgba(30, 215, 96, 0.2);
-                    transform: translateX(2px);
-                }
-                .compact-card.disabled {
-                    opacity: 0.4;
-                    cursor: not-allowed;
-                    filter: grayscale(1);
-                    pointer-events: none;
-                }
-                .compact-card.disabled:hover {
-                    background: rgba(255, 255, 255, 0.01);
-                    border-color: transparent;
-                    transform: none;
-                }
-                .card-main h5 {
-                    margin: 0;
-                    font-size: 0.85rem;
-                    color: #eee;
-                }
-                .card-main p {
-                    margin: 0.1rem 0 0 0;
-                    font-size: 0.7rem;
-                    color: #666;
-                }
-                .arrow-icon {
-                    color: #444;
-                    transition: color 0.2s;
-                }
-                .compact-card:hover .arrow-icon {
-                    color: var(--accent-green);
-                }
-
-                /* Active Guide refined */
-                .active-guide-compact {
-                    padding: 1rem;
-                }
-                .guide-status-bar {
-                    font-size: 0.7rem;
-                    color: #888;
-                    margin-bottom: 0.75rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-                .shimmer-line {
-                    height: 2px;
-                    width: 20px;
-                    background: var(--accent-green);
-                    box-shadow: 0 0 10px var(--accent-green);
-                }
-                .mini-prompt-box {
-                    background: rgba(255,255,255,0.02);
-                    border: 1px solid rgba(255,255,255,0.05);
-                    border-radius: 12px;
-                    padding: 1rem;
-                    position: relative;
-                }
-                .field-label {
-                    position: absolute;
-                    top: -8px;
-                    left: 12px;
-                    background: #0a0a0a;
-                    padding: 0 6px;
-                    font-size: 0.6rem;
-                    color: var(--accent-green);
-                    text-transform: uppercase;
-                }
-                .prompt-txt {
-                    margin: 0;
-                    font-size: 1rem;
+                .cat-pill:hover {
+                    background: rgba(255, 255, 255, 0.08);
                     color: #fff;
                 }
-                .mic-wave {
-                    margin-top: 0.75rem;
+                .cat-pill.active {
+                    background: var(--accent-green);
+                    color: #000;
+                    font-weight: 600;
+                    border-color: var(--accent-green);
+                }
+
+                .template-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                    padding: 1.5rem 2rem;
+                    gap: 1.25rem;
+                    border-top: 1px solid rgba(255, 255, 255, 0.05);
+                }
+
+                .template-card {
+                    background: rgba(255, 255, 255, 0.02);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                    border-radius: 20px;
+                    padding: 1.5rem;
+                    display: flex;
+                    gap: 1.25rem;
+                    cursor: pointer;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .template-card:hover {
+                    background: rgba(255, 255, 255, 0.06);
+                    border-color: rgba(30, 215, 96, 0.3);
+                    transform: translateY(-4px);
+                    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+                }
+
+                .card-icon {
+                    width: 44px;
+                    height: 44px;
+                    background: rgba(30, 215, 96, 0.1);
+                    border-radius: 12px;
                     display: flex;
                     align-items: center;
-                    gap: 3px;
+                    justify-content: center;
+                    color: var(--accent-green);
+                    flex-shrink: 0;
                 }
-                .mic-wave span {
+
+                .card-content {
+                    flex: 1;
+                }
+
+                .card-content h3 {
+                    margin: 0 0 0.4rem 0;
+                    font-size: 1rem;
+                    color: #fff;
+                    font-family: 'Outfit', sans-serif;
+                }
+
+                .card-content p {
+                    margin: 0;
+                    font-size: 0.85rem;
+                    color: #888;
+                    line-height: 1.4;
+                }
+
+                .card-action {
+                    display: flex;
+                    align-items: center;
+                    color: #444;
+                    transition: color 0.3s;
+                }
+
+                .template-card:hover .card-action {
+                    color: var(--accent-green);
+                }
+
+                .template-card.disabled {
+                    opacity: 0.3;
+                    filter: grayscale(1);
+                    cursor: not-allowed;
+                }
+
+                /* Active Guide Container */
+                .active-guide-container {
+                    padding: 2rem;
+                }
+
+                .guide-header {
+                    margin-bottom: 2rem;
+                }
+
+                .guide-indicator {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    font-size: 0.75rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    color: var(--accent-green);
+                    margin-bottom: 0.5rem;
+                }
+
+                .dot {
+                    width: 6px;
+                    height: 6px;
+                    background: var(--accent-green);
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px var(--accent-green);
+                    animation: pulse-dot 2s infinite;
+                }
+
+                @keyframes pulse-dot {
+                    0% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.5); opacity: 0.5; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+
+                .guide-header h2 {
+                    font-size: 1.75rem;
+                    margin: 0;
+                    font-family: 'Outfit', sans-serif;
+                }
+
+                .prompt-card {
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 20px;
+                    padding: 2rem;
+                    position: relative;
+                }
+
+                .prompt-card.success {
+                    border-color: var(--accent-green);
+                    background: rgba(30, 215, 96, 0.05);
+                }
+
+                .prompt-label {
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    color: #666;
+                    margin-bottom: 1rem;
+                    letter-spacing: 0.05em;
+                }
+
+                .prompt-text {
+                    font-size: 1.5rem;
+                    line-height: 1.3;
+                    color: #fff;
+                    margin: 0;
+                    font-family: 'Outfit', sans-serif;
+                }
+
+                .listening-indicator {
+                    margin-top: 2rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
+
+                .bars {
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 3px;
+                    height: 20px;
+                }
+
+                .bars span {
                     width: 3px;
-                    height: 8px;
                     background: var(--accent-green);
                     border-radius: 2px;
-                    animation: wave 1s infinite;
+                    animation: bar-wave 1s infinite;
                 }
-                .mic-wave span:nth-child(2) { animation-delay: 0.2s; }
-                .mic-wave span:nth-child(3) { animation-delay: 0.4s; }
-                .mic-wave small {
-                    margin-left: 0.5rem;
-                    font-size: 0.6rem;
+
+                .bars span:nth-child(1) { height: 10px; animation-delay: 0.1s; }
+                .bars span:nth-child(2) { height: 18px; animation-delay: 0.3s; }
+                .bars span:nth-child(3) { height: 14px; animation-delay: 0.2s; }
+                .bars span:nth-child(4) { height: 16px; animation-delay: 0.4s; }
+
+                @keyframes bar-wave {
+                    0%, 100% { transform: scaleY(0.5); }
+                    50% { transform: scaleY(1); }
+                }
+
+                .listening-indicator small {
                     color: #666;
+                    font-size: 0.8rem;
                 }
 
                 .close-circle {
                     background: rgba(255,255,255,0.05);
                     border: none;
                     color: #666;
-                    width: 24px;
-                    height: 24px;
+                    width: 32px;
+                    height: 32px;
                     border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
-                    margin-left: auto;
+                    transition: all 0.2s;
                 }
                 .close-circle:hover { color: #fff; background: var(--danger); }
 
-                @keyframes wave {
-                    0%, 100% { height: 4px; }
-                    50% { height: 12px; }
-                }
-
-                @keyframes pulse {
-                    0% { transform: scale(0.9); opacity: 1; }
-                    50% { transform: scale(1.1); opacity: 0.7; }
-                    100% { transform: scale(0.9); opacity: 1; }
+                @media (max-width: 768px) {
+                    .template-grid {
+                        grid-template-columns: 1fr;
+                        padding: 1rem;
+                    }
+                    .library-header {
+                        padding: 1rem;
+                    }
+                    .prompt-text {
+                        font-size: 1.2rem;
+                    }
                 }
             `}</style>
         </div>
