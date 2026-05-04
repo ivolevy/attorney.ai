@@ -63,7 +63,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                 <div className="tcl-pixel-perfect">
                     <img 
                         src={data.backgroundUrl || tclBg} 
-                        onError={(e) => { e.target.onError = null; e.target.src = tclBg; }}
+                        onError={(e) => { e.target.onerror = null; e.target.src = tclBg; }}
                         alt="TCL Form" 
                         className="tcl-bg-image" 
                     />
@@ -842,6 +842,75 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             style={{ top: '58.0%', left: '15.0%', width: '70%' }}
                             value={getValue('autorizado_nombre', rawAnswers?.autorizado_nombre)}
                             onChange={(e) => handleFieldChange('autorizado_nombre', e.target.value)}
+                        />
+                    </div>
+                </div>
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_COMERCIAL') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={data.backgroundUrl || inicioComercialOfficialBg} 
+                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
+                        alt="Inicio Comercial" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '23.5%', left: '26.5%', width: '65%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'demandado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '30.5%', left: '26.5%', width: '65%' }}
+                            value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
+                            onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'objeto' ? 'active-field' : ''}`}
+                            style={{ top: '37.5%', left: '26.5%', width: '40%' }}
+                            value={getValue('objeto', rawAnswers?.objeto)}
+                            onChange={(e) => handleFieldChange('objeto', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'monto' ? 'active-field' : ''}`}
+                            style={{ top: '37.5%', left: '75.0%', width: '15%' }}
+                            value={getValue('monto', rawAnswers?.monto)}
+                            onChange={(e) => handleFieldChange('monto', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_SS') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={data.backgroundUrl || ssInicioBg} 
+                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
+                        alt="Inicio Seguridad Social" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '25.5%', left: '26.5%', width: '65%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'actor_cuil' ? 'active-field' : ''}`}
+                            style={{ top: '32.5%', left: '26.5%', width: '30%' }}
+                            value={getValue('actor_cuil', rawAnswers?.actor_cuil)}
+                            onChange={(e) => handleFieldChange('actor_cuil', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'beneficio' ? 'active-field' : ''}`}
+                            style={{ top: '32.5%', left: '65.0%', width: '25%' }}
+                            value={getValue('beneficio', rawAnswers?.beneficio)}
+                            onChange={(e) => handleFieldChange('beneficio', e.target.value)}
                         />
                     </div>
                 </div>
