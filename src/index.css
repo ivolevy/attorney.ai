@@ -1196,7 +1196,7 @@ h1 {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     width: 100%;
-    max-width: 800px;
+    max-width: 1100px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -1426,21 +1426,145 @@ h1 {
     width: 100%;
     height: 100%;
     min-height: 200px;
-    background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScgLz4KPC9zdmc+');
+    background-color: #ffffff;
+    background-image: 
+        linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
     background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    border-radius: 8px;
+    position: relative;
 }
 
 .se-result-img {
     max-width: 100%;
-    max-height: 400px;
+    max-height: 500px;
     object-fit: contain;
-    mix-blend-mode: multiply;
-    /* Optional trick to ensure nice white background rendering */
+    display: block;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-.se-loading {
-    color: #666;
+.se-loading-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.scanning-laser {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-green);
+    box-shadow: 0 0 15px var(--accent-green), 0 0 5px white;
+    z-index: 25;
+    animation: scanningLine 2s linear infinite;
+}
+
+@keyframes scanningLine {
+    0% { top: 0%; opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+.se-preview-title {
+    color: var(--text-primary) !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.se-preview-box {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    min-height: 400px;
+    position: relative;
+}
+
+.se-tool-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.se-tool-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.85rem;
     font-weight: 500;
-    font-size: 0.9rem;
-    animation: pulse 1.5s infinite;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.se-tool-tab.active {
+    background: var(--accent-green);
+    color: #000;
+    box-shadow: 0 2px 8px rgba(30, 215, 96, 0.3);
+}
+
+.compare-btn-pill {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.compare-btn-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.compare-btn-pill.active {
+    background: var(--accent-green);
+    color: #000;
+    border-color: var(--accent-green);
+    box-shadow: 0 0 10px rgba(30, 215, 96, 0.4);
+}
+
+.sensitivity-value {
+    font-family: monospace;
+    color: var(--accent-green);
+    font-weight: bold;
+    font-size: 1rem;
 }

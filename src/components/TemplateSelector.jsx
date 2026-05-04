@@ -1,25 +1,27 @@
 import { useState, useMemo } from 'react';
-import { LEGAL_TEMPLATES } from '../utils/templateData';
+// Removed local import to use props instead
 import { BookOpen, Play, X, Mic, ChevronRight } from 'lucide-react';
 
-const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, isListening }) => {
-    const [selectedCategory, setSelectedCategory] = useState('Laboral');
+const TemplateSelector = ({ templates, onSelect, activeTemplate, currentField, onCancel, isListening, onMicStart }) => {
+    const [selectedCategory, setSelectedCategory] = useState('Todos');
     const [searchTerm, setSearchTerm] = useState('');
 
     const categories = useMemo(() => {
-        const cats = [...new Set(LEGAL_TEMPLATES.map(t => t.category))];
-        // Ensure Laboral is first if it exists, otherwise keep order
-        return cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
-    }, []);
+        if (!templates) return ['Todos'];
+        const cats = [...new Set(templates.map(t => t.category))];
+        const sortedCats = cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
+        return ['Todos', ...sortedCats];
+    }, [templates]);
 
     const filteredTemplates = useMemo(() => {
-        return LEGAL_TEMPLATES.filter(t => {
-            const matchesCategory = t.category === selectedCategory;
+        if (!templates) return [];
+        return templates.filter(t => {
+            const matchesCategory = selectedCategory === 'Todos' || t.category === selectedCategory;
             const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                  t.description.toLowerCase().includes(searchTerm.toLowerCase());
             return matchesCategory && matchesSearch;
         });
-    }, [selectedCategory, searchTerm]);
+    }, [templates, selectedCategory, searchTerm]);
 
     return (
         <div className="library-container">
@@ -80,12 +82,19 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
                     {currentField ? (
                         <div className="mini-prompt-box">
                             <p className="prompt-txt">{currentField.prompt}</p>
-                            {isListening && (
-                                <div className="mic-wave">
-                                    <span></span><span></span><span></span>
-                                    <small>Escuchando...</small>
-                                </div>
-                            )}
+                            <div className="mic-status-area" onClick={isListening ? () => {} : onMicStart}>
+                                {isListening ? (
+                                    <div className="mic-wave">
+                                        <span></span><span></span><span></span>
+                                        <small>Escuchando...</small>
+                                    </div>
+                                ) : (
+                                    <div className="mic-manual-start">
+                                        <Mic size={14} />
+                                        <small>Toca para activar micrófono</small>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div className="mini-prompt-box success">
@@ -250,8 +259,22 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
                     font-size: 1rem;
                     color: #fff;
                 }
-                .mic-wave {
+                .mic-status-area {
                     margin-top: 0.75rem;
+                    cursor: pointer;
+                }
+                .mic-manual-start {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: var(--accent-green);
+                    font-size: 0.75rem;
+                    background: rgba(30, 215, 96, 0.1);
+                    padding: 4px 10px;
+                    border-radius: 6px;
+                    width: fit-content;
+                }
+                .mic-wave {
                     display: flex;
                     align-items: center;
                     gap: 3px;
