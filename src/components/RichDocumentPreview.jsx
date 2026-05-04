@@ -792,6 +792,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         alt="PBA 3003 Form" 
                         className="tcl-bg-image" 
                     />
+                    <div className="tcl-overlay">
                         <div style={{ position: 'absolute', top: '15%', left: '40%', fontSize: '20px', fontWeight: 'bold', color: '#888' }}>3003/56</div>
                         <input
                             className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
@@ -807,7 +808,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'fecha_fallecimiento' ? 'active-field' : ''}`}
-                            style={{ top: '44.5%', left: '65.0%', width: '25%' }}
+                            style={{ top: '44.5%', left: '68.0%', width: '22%' }}
                             value={getValue('fecha_fallecimiento', rawAnswers?.fecha_fallecimiento)}
                             onChange={(e) => handleFieldChange('fecha_fallecimiento', e.target.value)}
                         />
@@ -817,6 +818,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             value={getValue('lugar_fallecimiento', rawAnswers?.lugar_fallecimiento)}
                             onChange={(e) => handleFieldChange('lugar_fallecimiento', e.target.value)}
                         />
+                    </div>
                 </div>
             );
         }
