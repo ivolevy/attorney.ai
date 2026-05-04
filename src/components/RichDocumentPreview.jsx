@@ -72,7 +72,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         {/* DESTINATARIO */}
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '13.8%', left: '8.0%', width: '35%' }}
+                            style={{ top: '11.8%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_nombre', rawAnswers?.dest_nombre)}
                             onChange={(e) => handleFieldChange('dest_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -82,7 +82,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_ramo' ? 'active-field' : ''}`}
-                            style={{ top: '17.5%', left: '8.0%', width: '35%' }}
+                            style={{ top: '15.5%', left: '8.0%', width: '35%' }}
                             value={getValue('dest_ramo', rawAnswers?.dest_ramo)}
                             onChange={(e) => handleFieldChange('dest_ramo', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -92,7 +92,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_domicilio' ? 'active-field' : ''}`}
-                            style={{ top: '21.1%', left: '8.0%', width: '28%' }}
+                            style={{ top: '19.1%', left: '8.0%', width: '28%' }}
                             value={getValue('dest_domicilio', rawAnswers?.dest_domicilio)}
                             onChange={(e) => handleFieldChange('dest_domicilio', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -102,7 +102,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_cp' ? 'active-field' : ''}`}
-                            style={{ top: '20.1%', left: '36.5%', width: '6%' }}
+                            style={{ top: '19.1%', left: '36.5%', width: '6%' }}
                             value={getValue('dest_cp', rawAnswers?.dest_cp)}
                             onChange={(e) => handleFieldChange('dest_cp', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -112,7 +112,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_localidad' ? 'active-field' : ''}`}
-                            style={{ top: '23.8%', left: '8.0%', width: '18%' }}
+                            style={{ top: '22.8%', left: '8.0%', width: '18%' }}
                             value={getValue('dest_localidad', rawAnswers?.dest_localidad)}
                             onChange={(e) => handleFieldChange('dest_localidad', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -122,7 +122,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         />
                         <input
                             className={`field-abs-input ${activeFieldId === 'dest_provincia' ? 'active-field' : ''}`}
-                            style={{ top: '23.8%', left: '32.5%', width: '18%' }}
+                            style={{ top: '22.8%', left: '32.5%', width: '18%' }}
                             value={getValue('dest_provincia', rawAnswers?.dest_provincia)}
                             onChange={(e) => handleFieldChange('dest_provincia', e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -134,7 +134,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         {/* REMITENTE */}
                         <input
                             className={`field-abs-input ${activeFieldId === 'rem_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '12.8%', left: '56.0%', width: '35%' }}
+                            style={{ top: '11.8%', left: '56.0%', width: '35%' }}
                             value={getValue('rem_nombre', rawAnswers?.rem_nombre)}
                             onChange={(e) => handleFieldChange('rem_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
