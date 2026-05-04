@@ -57,7 +57,69 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         return val;
     };
 
+    const renderDynamicOverlay = (layout, rawAnswers) => {
+        if (!layout || Object.keys(layout).length === 0) return null;
+
+        return (
+            <div className="tcl-overlay">
+                {Object.entries(layout).map(([fieldId, config]) => {
+                    const isTextarea = config.type === 'textarea';
+                    const Component = isTextarea ? 'textarea' : 'input';
+                    
+                    return (
+                        <Component
+                            key={fieldId}
+                            className={`field-abs-input ${isTextarea ? 'field-abs-textarea' : ''} ${activeFieldId === fieldId ? 'active-field' : ''}`}
+                            style={{ 
+                                top: config.top, 
+                                left: config.left, 
+                                width: config.width,
+                                height: config.height || (isTextarea ? '150px' : 'auto'),
+                                border: 'none',
+                                background: 'rgba(0, 123, 255, 0.05)',
+                                padding: '2px 4px',
+                                fontSize: isTextarea ? '12px' : '14px',
+                                resize: 'none'
+                            }}
+                            value={getValue(fieldId, rawAnswers?.[fieldId])}
+                            onChange={(e) => handleFieldChange(fieldId, e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder={fieldId.replace(/_/g, ' ')}
+                            name={fieldId}
+                        />
+                    );
+                })}
+            </div>
+        );
+    };
+
     const renderContent = () => {
+        // PRIORIDAD 1: Layout dinámico desde la DB
+        if (isOfficial && rawAnswers && data.layout && Object.keys(data.layout).length > 0) {
+            // Determinar imagen de fondo
+            let bgImage = data.backgroundUrl;
+            if (!bgImage) {
+                // Fallback inteligente basado en el título si no hay URL
+                if (title.includes('TCL')) bgImage = tclBg;
+                else if (title.includes('SUCESIONES')) bgImage = sucesiones3003Bg;
+                else if (title.includes('SECLO')) bgImage = secloCartaPoderBg;
+                else bgImage = tclBg; // Fallback final
+            }
+
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={bgImage} 
+                        onError={(e) => { e.target.onerror = null; e.target.src = tclBg; }}
+                        alt="Official Form" 
+                        className="tcl-bg-image" 
+                    />
+                    {renderDynamicOverlay(data.layout, rawAnswers)}
+                </div>
+            );
+        }
+
+        // FALLBACK: Lógica anterior para formularios que aún no tienen layout en DB
         if (isOfficial && (title.includes('TCL 30') || title.includes('TCL +30'))) {
             return (
                 <div className="tcl-pixel-perfect">
@@ -652,282 +714,6 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                         {body.map((p, i) => (
                             <p key={i} className="document-paragraph">{p}</p>
                         ))}
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'AGIP_DEUDA') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || agipDeudaBg} 
-                        onError={(e) => { e.target.onError = null; e.target.src = agipDeudaBg; }}
-                        alt="AGIP Deuda" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'dominio' ? 'active-field' : ''}`}
-                            style={{ top: '35.0%', left: '20.0%', width: '30%' }}
-                            value={getValue('dominio', rawAnswers?.dominio)}
-                            onChange={(e) => handleFieldChange('dominio', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'SECLO_CARTA_PODER') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || secloCartaPoderBg} 
-                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
-                        alt="SECLO Carta Poder" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        {/* OTORGANTE INFO */}
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '66.8%', left: '26.8%', width: '35%' }}
-                            value={getValue('otorgante_nombre', rawAnswers?.otorgante_nombre)}
-                            onChange={(e) => handleFieldChange('otorgante_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_fecha_nac' ? 'active-field' : ''}`}
-                            style={{ top: '69.8%', left: '26.8%', width: '15%' }}
-                            value={getValue('otorgante_fecha_nac', rawAnswers?.otorgante_fecha_nac)}
-                            onChange={(e) => handleFieldChange('otorgante_fecha_nac', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_nacionalidad' ? 'active-field' : ''}`}
-                            style={{ top: '69.8%', left: '53.0%', width: '15%' }}
-                            value={getValue('otorgante_nacionalidad', rawAnswers?.otorgante_nacionalidad)}
-                            onChange={(e) => handleFieldChange('otorgante_nacionalidad', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_estado_civil' ? 'active-field' : ''}`}
-                            style={{ top: '69.8%', left: '78.0%', width: '15%' }}
-                            value={getValue('otorgante_estado_civil', rawAnswers?.otorgante_estado_civil)}
-                            onChange={(e) => handleFieldChange('otorgante_estado_civil', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_domicilio' ? 'active-field' : ''}`}
-                            style={{ top: '72.8%', left: '26.8%', width: '65%' }}
-                            value={getValue('otorgante_domicilio', rawAnswers?.otorgante_domicilio)}
-                            onChange={(e) => handleFieldChange('otorgante_domicilio', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_localidad' ? 'active-field' : ''}`}
-                            style={{ top: '75.8%', left: '26.8%', width: '45%' }}
-                            value={getValue('otorgante_localidad', rawAnswers?.otorgante_localidad)}
-                            onChange={(e) => handleFieldChange('otorgante_localidad', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'otorgante_cp' ? 'active-field' : ''}`}
-                            style={{ top: '75.8%', left: '80.0%', width: '12%' }}
-                            value={getValue('otorgante_cp', rawAnswers?.otorgante_cp)}
-                            onChange={(e) => handleFieldChange('otorgante_cp', e.target.value)}
-                        />
-
-                        {/* ABOGADOS TABLE */}
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'abogado_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '84.8%', left: '15.2%', width: '35%' }}
-                            value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
-                            onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'abogado_tomo' ? 'active-field' : ''}`}
-                            style={{ top: '84.8%', left: '51.5%', width: '8%' }}
-                            value={getValue('abogado_tomo', rawAnswers?.abogado_tomo)}
-                            onChange={(e) => handleFieldChange('abogado_tomo', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'abogado_folio' ? 'active-field' : ''}`}
-                            style={{ top: '84.8%', left: '62.5%', width: '8%' }}
-                            value={getValue('abogado_folio', rawAnswers?.abogado_folio)}
-                            onChange={(e) => handleFieldChange('abogado_folio', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'abogado_matricula' ? 'active-field' : ''}`}
-                            style={{ top: '84.8%', left: '73.5%', width: '15%' }}
-                            value={getValue('abogado_matricula', rawAnswers?.abogado_matricula)}
-                            onChange={(e) => handleFieldChange('abogado_matricula', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'QUIEBRAS_3003') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || quiebras3003Bg} 
-                        onError={(e) => { e.target.onError = null; e.target.src = quiebras3003Bg; }}
-                        alt="Quiebras 3003 Form" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'razon_social' ? 'active-field' : ''}`}
-                            style={{ top: '34.0%', left: '27.5%', width: '60%' }}
-                            value={getValue('razon_social', rawAnswers?.razon_social)}
-                            onChange={(e) => handleFieldChange('razon_social', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'PBA_3003') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || sucesiones3003Bg} 
-                        onError={(e) => { e.target.onError = null; e.target.src = sucesiones3003Bg; }}
-                        alt="PBA 3003 Form" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        <div style={{ position: 'absolute', top: '15%', left: '40%', fontSize: '20px', fontWeight: 'bold', color: '#888' }}>3003/56</div>
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '37.0%', left: '27.5%', width: '60%' }}
-                            value={getValue('causante_nombre', rawAnswers?.causante_nombre)}
-                            onChange={(e) => handleFieldChange('causante_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'causante_dni' ? 'active-field' : ''}`}
-                            style={{ top: '44.5%', left: '27.5%', width: '25%' }}
-                            value={getValue('causante_dni', rawAnswers?.causante_dni)}
-                            onChange={(e) => handleFieldChange('causante_dni', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'fecha_fallecimiento' ? 'active-field' : ''}`}
-                            style={{ top: '44.5%', left: '68.0%', width: '22%' }}
-                            value={getValue('fecha_fallecimiento', rawAnswers?.fecha_fallecimiento)}
-                            onChange={(e) => handleFieldChange('fecha_fallecimiento', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'lugar_fallecimiento' ? 'active-field' : ''}`}
-                            style={{ top: '51.5%', left: '27.5%', width: '60%' }}
-                            value={getValue('lugar_fallecimiento', rawAnswers?.lugar_fallecimiento)}
-                            onChange={(e) => handleFieldChange('lugar_fallecimiento', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'IGJ_RETIRO') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || (typeof igjAnexoBg !== 'undefined' ? igjAnexoBg : '')} 
-                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
-                        alt="IGJ Anexo" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'profesional_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '51.0%', left: '15.0%', width: '70%' }}
-                            value={getValue('profesional_nombre', rawAnswers?.profesional_nombre)}
-                            onChange={(e) => handleFieldChange('profesional_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'autorizado_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '59.0%', left: '15.0%', width: '70%' }}
-                            value={getValue('autorizado_nombre', rawAnswers?.autorizado_nombre)}
-                            onChange={(e) => handleFieldChange('autorizado_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'tramite_nro' ? 'active-field' : ''}`}
-                            style={{ top: '38.0%', left: '15.0%', width: '20%' }}
-                            value={getValue('tramite_nro', rawAnswers?.tramite_nro)}
-                            onChange={(e) => handleFieldChange('tramite_nro', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_COMERCIAL') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || inicioComercialOfficialBg} 
-                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
-                        alt="Inicio Comercial" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '23.5%', left: '26.5%', width: '65%' }}
-                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
-                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'demandado_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '30.5%', left: '26.5%', width: '65%' }}
-                            value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
-                            onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'objeto' ? 'active-field' : ''}`}
-                            style={{ top: '37.5%', left: '26.5%', width: '40%' }}
-                            value={getValue('objeto', rawAnswers?.objeto)}
-                            onChange={(e) => handleFieldChange('objeto', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'monto' ? 'active-field' : ''}`}
-                            style={{ top: '37.5%', left: '75.0%', width: '15%' }}
-                            value={getValue('monto', rawAnswers?.monto)}
-                            onChange={(e) => handleFieldChange('monto', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
-        if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_SS') {
-            return (
-                <div className="tcl-pixel-perfect">
-                    <img 
-                        src={data.backgroundUrl || ssInicioBg} 
-                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
-                        alt="Inicio Seguridad Social" 
-                        className="tcl-bg-image" 
-                    />
-                    <div className="tcl-overlay">
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '25.5%', left: '26.5%', width: '65%' }}
-                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
-                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'actor_cuil' ? 'active-field' : ''}`}
-                            style={{ top: '32.5%', left: '26.5%', width: '30%' }}
-                            value={getValue('actor_cuil', rawAnswers?.actor_cuil)}
-                            onChange={(e) => handleFieldChange('actor_cuil', e.target.value)}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'beneficio' ? 'active-field' : ''}`}
-                            style={{ top: '32.5%', left: '65.0%', width: '25%' }}
-                            value={getValue('beneficio', rawAnswers?.beneficio)}
-                            onChange={(e) => handleFieldChange('beneficio', e.target.value)}
-                        />
-                    </div>
-                </div>
-            );
-        }
-
         return (
             <div className="document-standard">
                 <div className="document-header-professional">
