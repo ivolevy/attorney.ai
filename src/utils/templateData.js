@@ -148,9 +148,18 @@ export const LEGAL_TEMPLATES = [
         name: 'SECLO - Carta Poder',
         description: 'Carta poder para representación en conciliación laboral SECLO.',
         fields: [
-            { id: 'otorgante_nombre', name: 'Otorgante', prompt: '¿Nombre del trabajador que otorga el poder?', placeholder: 'Juan Pérez' },
+            { id: 'otorgante_nombre', name: 'Otorgante: Nombre', prompt: '¿Nombre completo del trabajador?', placeholder: 'Juan Pérez' },
+            { id: 'otorgante_fecha_nac', name: 'Fecha Nacimiento', prompt: '¿Fecha de nacimiento?', placeholder: 'DD/MM/AAAA' },
+            { id: 'otorgante_nacionalidad', name: 'Nacionalidad', prompt: '¿Nacionalidad?', placeholder: 'Argentina' },
+            { id: 'otorgante_estado_civil', name: 'Estado Civil', prompt: '¿Estado civil?', placeholder: 'Soltero/Casado' },
+            { id: 'otorgante_dni', name: 'DNI', prompt: '¿Número de DNI?', placeholder: '12.345.678' },
+            { id: 'otorgante_domicilio', name: 'Domicilio', prompt: '¿Domicilio real?', placeholder: 'Calle Falsa 123' },
+            { id: 'otorgante_localidad', name: 'Localidad', prompt: '¿Localidad?', placeholder: 'CABA' },
+            { id: 'otorgante_cp', name: 'Código Postal', prompt: '¿Código postal?', placeholder: '1414' },
             { id: 'abogado_nombre', name: 'Abogado/a', prompt: '¿Nombre del abogado apoderado?', placeholder: 'Dra. María López' },
-            { id: 'tomo_folio', name: 'Tomo/Folio', prompt: '¿Tomo y Folio del abogado?', placeholder: '123/456' }
+            { id: 'abogado_tomo', name: 'Tomo', prompt: '¿Tomo?', placeholder: '123' },
+            { id: 'abogado_folio', name: 'Folio', prompt: '¿Folio?', placeholder: '456' },
+            { id: 'abogado_matricula', name: 'Matrícula', prompt: '¿Número de matrícula?', placeholder: '9999' }
         ],
         isOfficialForm: 'SECLO_CARTA_PODER',
         richFormat: (answers) => ({

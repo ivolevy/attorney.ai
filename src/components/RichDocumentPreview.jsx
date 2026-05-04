@@ -9,7 +9,7 @@ import ssIngresoBg from '../assets/library/ss/ss-ingreso.png';
 import penalQuejaBg from '../assets/library/penal/casacion-queja.png';
 import quiebras3003Bg from '../assets/library/comercial/quiebras-3003.png';
 import agipDeudaBg from '../assets/library/Formularios_-_AGIP/Solicitud_Certificado_de_Inexistencia_de_Deuda_Tributaria_-_Departamento_Automotor/21042215_AGIP_Rentas_Inexistencia_Deuda_Automotor_page_1.png';
-import secloCartaPoderBg from '../assets/library/Formularios_-_SECLO/Carta_Poder/05042212_SECLO - Carta Poder_page_1.png';
+import secloCartaPoderBg from '../assets/library/Formularios_-_SECLO/Carta_Poder/seclo_carta_poder.png';
 import ssInicioBg from '../assets/library/Formularios_-_Fuero_de_la_Seguridad_Social/Cámara_Federal_de_la_Seguridad_Social_Formulario_para_ingreso_de_causas_Ingreso_de_Expedientes/21042209_SS_ingreso_causas_page_1.png';
 import inicioComercialOfficialBg from '../assets/library/Formularios_-_Fuero_Comercial/Ingreso_Demanda_Comercial/30032210_Ingreso Demanda Comercial Frente y Dorso_page_1.png';
 import sucesiones3003CivilBg from '../assets/library/Formularios_-_Fuero_Civil/Poder_Judicial_de_la_Nación_Dto-Ley_300356_Sucesiones_-_Juicios_universales/21042208_Formulario_PJN_Sucesiones_3003_civil_page_1.png';
@@ -683,16 +683,79 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                 <div className="tcl-pixel-perfect">
                     <img 
                         src={data.backgroundUrl || secloCartaPoderBg} 
-                        onError={(e) => { e.target.onError = null; e.target.src = secloCartaPoderBg; }}
+                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
                         alt="SECLO Carta Poder" 
                         className="tcl-bg-image" 
                     />
                     <div className="tcl-overlay">
+                        {/* OTORGANTE INFO */}
                         <input
                             className={`field-abs-input ${activeFieldId === 'otorgante_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '25.0%', left: '15.0%', width: '70%' }}
+                            style={{ top: '66.8%', left: '26.8%', width: '35%' }}
                             value={getValue('otorgante_nombre', rawAnswers?.otorgante_nombre)}
                             onChange={(e) => handleFieldChange('otorgante_nombre', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_fecha_nac' ? 'active-field' : ''}`}
+                            style={{ top: '69.8%', left: '26.8%', width: '15%' }}
+                            value={getValue('otorgante_fecha_nac', rawAnswers?.otorgante_fecha_nac)}
+                            onChange={(e) => handleFieldChange('otorgante_fecha_nac', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_nacionalidad' ? 'active-field' : ''}`}
+                            style={{ top: '69.8%', left: '53.0%', width: '15%' }}
+                            value={getValue('otorgante_nacionalidad', rawAnswers?.otorgante_nacionalidad)}
+                            onChange={(e) => handleFieldChange('otorgante_nacionalidad', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_estado_civil' ? 'active-field' : ''}`}
+                            style={{ top: '69.8%', left: '78.0%', width: '15%' }}
+                            value={getValue('otorgante_estado_civil', rawAnswers?.otorgante_estado_civil)}
+                            onChange={(e) => handleFieldChange('otorgante_estado_civil', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_domicilio' ? 'active-field' : ''}`}
+                            style={{ top: '72.8%', left: '26.8%', width: '65%' }}
+                            value={getValue('otorgante_domicilio', rawAnswers?.otorgante_domicilio)}
+                            onChange={(e) => handleFieldChange('otorgante_domicilio', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_localidad' ? 'active-field' : ''}`}
+                            style={{ top: '75.8%', left: '26.8%', width: '45%' }}
+                            value={getValue('otorgante_localidad', rawAnswers?.otorgante_localidad)}
+                            onChange={(e) => handleFieldChange('otorgante_localidad', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_cp' ? 'active-field' : ''}`}
+                            style={{ top: '75.8%', left: '80.0%', width: '12%' }}
+                            value={getValue('otorgante_cp', rawAnswers?.otorgante_cp)}
+                            onChange={(e) => handleFieldChange('otorgante_cp', e.target.value)}
+                        />
+
+                        {/* ABOGADOS TABLE */}
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '84.8%', left: '15.2%', width: '35%' }}
+                            value={getValue('abogado_nombre', rawAnswers?.abogado_nombre)}
+                            onChange={(e) => handleFieldChange('abogado_nombre', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_tomo' ? 'active-field' : ''}`}
+                            style={{ top: '84.8%', left: '51.5%', width: '8%' }}
+                            value={getValue('abogado_tomo', rawAnswers?.abogado_tomo)}
+                            onChange={(e) => handleFieldChange('abogado_tomo', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_folio' ? 'active-field' : ''}`}
+                            style={{ top: '84.8%', left: '62.5%', width: '8%' }}
+                            value={getValue('abogado_folio', rawAnswers?.abogado_folio)}
+                            onChange={(e) => handleFieldChange('abogado_folio', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'abogado_matricula' ? 'active-field' : ''}`}
+                            style={{ top: '84.8%', left: '73.5%', width: '15%' }}
+                            value={getValue('abogado_matricula', rawAnswers?.abogado_matricula)}
+                            onChange={(e) => handleFieldChange('abogado_matricula', e.target.value)}
                         />
                     </div>
                 </div>
