@@ -6,16 +6,18 @@ const TemplateSelector = ({ onSelect, activeTemplate, currentField, onCancel, is
     const [searchTerm, setSearchTerm] = useState('');
 
     const categories = useMemo(() => {
-        const cats = [...new Set(templates.map(t => t.category))];
+        const cats = [...new Set(templates.map(t => t.category))].filter(Boolean);
         // Ensure Laboral is first if it exists, otherwise keep order
         return cats.sort((a, b) => a === 'Laboral' ? -1 : b === 'Laboral' ? 1 : 0);
-    }, []);
+    }, [templates]);
 
     const filteredTemplates = useMemo(() => {
         return templates.filter(t => {
+            const name = t.name || '';
+            const description = t.description || '';
             const matchesCategory = selectedCategory === 'Todos' || t.category === selectedCategory;
-            const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                 (t.description && t.description.toLowerCase().includes(searchTerm.toLowerCase()));
+            const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 description.toLowerCase().includes(searchTerm.toLowerCase());
             return matchesCategory && matchesSearch;
         });
     }, [selectedCategory, searchTerm, templates]);
