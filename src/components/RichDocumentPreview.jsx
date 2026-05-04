@@ -850,9 +850,11 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             style={{ top: '38.0%', left: '15.0%', width: '20%' }}
                             value={getValue('tramite_nro', rawAnswers?.tramite_nro)}
                             onChange={(e) => handleFieldChange('tramite_nro', e.target.value)}
-                        />
                     </div>
                 </div>
+            );
+        }
+
         if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_COMERCIAL') {
             return (
                 <div className="tcl-pixel-perfect">
