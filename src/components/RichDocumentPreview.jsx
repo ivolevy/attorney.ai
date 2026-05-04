@@ -13,6 +13,7 @@ import secloCartaPoderBg from '../assets/library/Formularios_-_SECLO/Carta_Poder
 import ssInicioBg from '../assets/library/Formularios_-_Fuero_de_la_Seguridad_Social/Cámara_Federal_de_la_Seguridad_Social_Formulario_para_ingreso_de_causas_Ingreso_de_Expedientes/21042209_SS_ingreso_causas_page_1.png';
 import inicioComercialOfficialBg from '../assets/library/Formularios_-_Fuero_Comercial/Ingreso_Demanda_Comercial/30032210_Ingreso Demanda Comercial Frente y Dorso_page_1.png';
 import sucesiones3003CivilBg from '../assets/library/Formularios_-_Fuero_Civil/Poder_Judicial_de_la_Nación_Dto-Ley_300356_Sucesiones_-_Juicios_universales/21042208_Formulario_PJN_Sucesiones_3003_civil_page_1.png';
+import igjAnexoBg from '../assets/library/Inspección_General_de_Justicia_IGJ/Formulario_de_Autorización_para_Retiro_en_Sede_CPACF_CPACF/anexo_i_colegio_abogados_page_1.png';
 
 const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, onNextField }) => {
     if (!data) return null;
@@ -745,8 +746,8 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
             return (
                 <div className="tcl-pixel-perfect">
                     <img 
-                        src={data.backgroundUrl || igjAnexoBg} 
-                        onError={(e) => { e.target.onError = null; e.target.src = igjAnexoBg; }}
+                        src={data.backgroundUrl || (typeof igjAnexoBg !== 'undefined' ? igjAnexoBg : '')} 
+                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
                         alt="IGJ Anexo" 
                         className="tcl-bg-image" 
                     />
