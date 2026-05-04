@@ -2,6 +2,10 @@ import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver';
 import { PDFDocument, rgb } from 'pdf-lib';
 
+// Local fallbacks
+import tclPdf from '../assets/library/laboral/tcl30/tcl30web.png'; // Wait, TCL was PDF before, but if it's PNG I should handle it.
+// Actually, I'll use the PNG as a fallback if PDF is not available.
+
 /**
  * Exports text to a PDF file with basic branding or rich formatting
  * @param {string|object} content - The transcript text or rich content object

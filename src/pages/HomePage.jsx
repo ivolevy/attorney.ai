@@ -5,12 +5,7 @@ import { exportToPDF } from '../utils/exportUtils';
 import TemplateSelector from '../components/TemplateSelector';
 import RichDocumentPreview from '../components/RichDocumentPreview';
 import Skeleton from '../components/Skeleton';
-import { 
-  Save, FileText, Send, Download, LogOut, ChevronDown, User, ArrowLeft, 
-  Search, PlusCircle, CheckCircle, Clock, Info, Scale, Mic, MicOff, 
-  Trash2, Copy, AlertCircle, FileDown, ExternalLink, CheckCircle2, 
-  PenTool 
-} from 'lucide-react';
+import { Save, FileText, Send, Download, LogOut, ChevronDown, User, ArrowLeft, Search, PlusCircle, CheckCircle, Clock, Info, Scale, PenTool, AlertCircle, MicOff, Mic, Copy, Trash2, ExternalLink } from 'lucide-react';
 import { supabase, getTemplates } from '../supabaseClient';
 import { LEGAL_TEMPLATES as LOCAL_TEMPLATES } from '../utils/templateData';
 import '../index.css';
@@ -322,7 +317,6 @@ const HomePage = ({ user, onLogout }) => {
               currentField={currentField}
               onCancel={stopTemplate}
               isListening={isListening}
-              templates={templates}
             />
             <div className="minimal-start-view" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button className="free-thinking-btn" onClick={handleStartFreeThinking}>
@@ -367,7 +361,7 @@ const HomePage = ({ user, onLogout }) => {
                     <div className="preview-scroll-container">
                       {activeTemplate ? (
                         <RichDocumentPreview
-                          data={activeTemplate ? activeTemplate.richFormat(answers) : {
+                          data={activeTemplate ? renderRichFormat(activeTemplate, answers) : {
                             title: 'Documento en Proceso',
                             body: [text]
                           }}

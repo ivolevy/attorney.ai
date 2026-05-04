@@ -247,7 +247,6 @@ export const LEGAL_TEMPLATES = [
         id: 'demanda-danos',
         category: 'Civil',
         name: 'Daños y Perjuicios',
-        disabled: true,
         description: 'Demanda por accidente de tránsito y daños civiles.',
         fields: [
             { id: 'actor', name: 'Actor', prompt: '¿Quién demanda?', placeholder: '' },
@@ -264,7 +263,6 @@ export const LEGAL_TEMPLATES = [
         id: 'alquiler-vivienda',
         category: 'Civil',
         name: 'Contrato Alquiler',
-        disabled: true,
         description: 'Convenio de locación para vivienda particular.',
         fields: [
             { id: 'locador', name: 'Locador', prompt: '¿Nombre del dueño?', placeholder: '' },
@@ -284,7 +282,6 @@ export const LEGAL_TEMPLATES = [
         id: 'constitucion-sa',
         category: 'Comercial',
         name: 'Sociedad Anónima',
-        disabled: true,
         description: 'Estatuto social y acta de constitución de S.A.',
         fields: [
             { id: 'denominacion', name: 'Nombre', prompt: '¿Nombre de la sociedad?', placeholder: '' },
@@ -301,7 +298,6 @@ export const LEGAL_TEMPLATES = [
         id: 'pagare',
         category: 'Comercial',
         name: 'Pagaré',
-        disabled: true,
         description: 'Título ejecutivo de pago sin protesto.',
         fields: [
             { id: 'monto', name: 'Monto', prompt: '¿Cuál es el importe?', placeholder: '' },
@@ -320,7 +316,6 @@ export const LEGAL_TEMPLATES = [
         id: 'nda-it',
         category: 'Informático',
         name: 'Confidencialidad',
-        disabled: true,
         description: 'Acuerdo NDA para software y desarrollo de sistemas.',
         fields: [
             { id: 'partes', name: 'Partes', prompt: '¿Quiénes firman el acuerdo?', placeholder: '' },
@@ -337,7 +332,6 @@ export const LEGAL_TEMPLATES = [
         id: 'terminos-condiciones',
         category: 'Informático',
         name: 'TyC Web/App',
-        disabled: true,
         description: 'Términos y condiciones para plataformas digitales.',
         fields: [
             { id: 'sitio', name: 'Sitio Web', prompt: '¿Cuál es la URL o nombre del sitio?', placeholder: '' }
@@ -355,7 +349,6 @@ export const LEGAL_TEMPLATES = [
         id: 'registro-marca',
         category: 'Patentes',
         name: 'Registro Marca',
-        disabled: true,
         description: 'Solicitud formal de registro ante el INPI.',
         fields: [
             { id: 'marca', name: 'Marca', prompt: '¿Cuál es el nombre de la marca?', placeholder: '' },
@@ -374,7 +367,6 @@ export const LEGAL_TEMPLATES = [
         id: 'denuncia-penal',
         category: 'Penal',
         name: 'Denuncia Penal',
-        disabled: true,
         description: 'Presentación formal por presunto hecho delictivo.',
         fields: [
             { id: 'delito', name: 'Delito', prompt: '¿Cuál es el presunto delito?', placeholder: '' },

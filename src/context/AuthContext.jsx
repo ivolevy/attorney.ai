@@ -6,31 +6,39 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                fetchProfileAndSubscription(session.user);
-            } else {
-                // Check for persisted mock user
-                const savedUser = localStorage.getItem('lexia_mock_user');
-                if (savedUser) {
-                    try {
-                        setUser(JSON.parse(savedUser));
-                    } catch (e) {
-                        localStorage.removeItem('lexia_mock_user');
+        // 1. Check for initial session
+        const initAuth = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    await fetchProfileAndSubscription(session.user);
+                } else {
+                    // Fallback to mock user ONLY if no supabase session exists
+                    const savedMock = localStorage.getItem('lexia_mock_user');
+                    if (savedMock) {
+                        setUser(JSON.parse(savedMock));
                     }
                 }
+            } catch (err) {
+                console.error("Auth initialization error:", err);
+            } finally {
                 setLoading(false);
             }
-        });
+        };
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        initAuth();
+
+        // 2. Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log("Auth event:", event);
             if (session) {
-                fetchProfileAndSubscription(session.user);
-            } else {
+                await fetchProfileAndSubscription(session.user);
+            } else if (event === 'SIGNED_OUT') {
                 setUser(null);
+                localStorage.removeItem('lexia_mock_user');
                 setLoading(false);
             }
         });
@@ -40,22 +48,25 @@ export const AuthProvider = ({ children }) => {
 
     const fetchProfileAndSubscription = async (authUser) => {
         try {
-            const { data: subscription, error } = await supabase
+            // First set basic user info so UI isn't empty
+            setUser(prev => ({ ...authUser, ...prev }));
+
+            const { data: subData, error: subError } = await supabase
                 .from('subscriptions')
                 .select('status')
                 .eq('user_id', authUser.id)
-                .single();
+                .maybeSingle();
 
-            if (error && error.code !== 'PGRST116') {
-                console.error('Error fetching subscription:', error);
-            }
+            if (subError) throw subError;
 
             setUser({
                 ...authUser,
-                subscriptionStatus: subscription?.status || 'inactive'
+                subscriptionStatus: subData?.status || 'inactive'
             });
         } catch (error) {
-            console.error('Error in fetchProfileAndSubscription:', error);
+            console.error('Error fetching extra user data:', error);
+            // Don't log out on error, just keep the auth user
+            setUser(authUser);
         } finally {
             setLoading(false);
         }
@@ -74,15 +85,17 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (email, password, remember = true) => {
+        setLoading(true);
+        setError('');
+
         // Mock fallback for development/demo
         if ((email === 'admin@admin.com' || email === 'lexia@admin.com') && (password === 'admin' || password === 'lexia_password')) {
-            // Add a small delay to simulate network request
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             const mockUser = {
                 id: 'mock-id',
                 email: email,
-                subscriptionStatus: 'active'
+                subscriptionStatus: 'premium'
             };
 
             if (remember) {
@@ -90,28 +103,39 @@ export const AuthProvider = ({ children }) => {
             }
 
             setUser(mockUser);
+            setLoading(false);
             return { success: true };
         }
 
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error: authError } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
-        if (error) {
+        if (authError) {
+            setLoading(false);
             return { success: false, error: 'Credenciales inválidas o error de conexión' };
         }
+
+        // fetchProfileAndSubscription will be called by onAuthStateChange
         return { success: true };
     };
 
     const logout = async () => {
-        await supabase.auth.signOut();
-        localStorage.removeItem('lexia_mock_user');
-        setUser(null);
+        setLoading(true);
+        try {
+            await supabase.auth.signOut();
+            localStorage.removeItem('lexia_mock_user');
+            setUser(null);
+        } catch (err) {
+            console.error("Logout error:", err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ user, signUp, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, signUp, login, logout, loading, error }}>
             {children}
         </AuthContext.Provider>
     );

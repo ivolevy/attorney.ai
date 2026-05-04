@@ -8,6 +8,11 @@ import secloInicioBg from '../assets/library/seclo/seclo-inicio.png';
 import ssIngresoBg from '../assets/library/ss/ss-ingreso.png';
 import penalQuejaBg from '../assets/library/penal/casacion-queja.png';
 import quiebras3003Bg from '../assets/library/comercial/quiebras-3003.png';
+import agipDeudaBg from '../assets/library/Formularios_-_AGIP/Solicitud_Certificado_de_Inexistencia_de_Deuda_Tributaria_-_Departamento_Automotor/21042215_AGIP_Rentas_Inexistencia_Deuda_Automotor_page_1.png';
+import secloCartaPoderBg from '../assets/library/Formularios_-_SECLO/Carta_Poder/05042212_SECLO - Carta Poder_page_1.png';
+import ssInicioBg from '../assets/library/Formularios_-_Fuero_de_la_Seguridad_Social/Cámara_Federal_de_la_Seguridad_Social_Formulario_para_ingreso_de_causas_Ingreso_de_Expedientes/21042209_SS_ingreso_causas_page_1.png';
+import inicioComercialOfficialBg from '../assets/library/Formularios_-_Fuero_Comercial/Ingreso_Demanda_Comercial/30032210_Ingreso Demanda Comercial Frente y Dorso_page_1.png';
+import sucesiones3003CivilBg from '../assets/library/Formularios_-_Fuero_Civil/Poder_Judicial_de_la_Nación_Dto-Ley_300356_Sucesiones_-_Juicios_universales/21042208_Formulario_PJN_Sucesiones_3003_civil_page_1.png';
 
 const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, onNextField }) => {
     if (!data) return null;
@@ -55,7 +60,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && (title.includes('TCL 30') || title.includes('TCL +30'))) {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={data.backgroundUrl || tclBg} alt="TCL Form" className="tcl-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || tclBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = tclBg; }}
+                        alt="TCL Form" 
+                        className="tcl-bg-image" 
+                    />
 
                     <div className="tcl-overlay">
                         {/* DESTINATARIO */}
@@ -219,7 +229,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && data.isIngresoCausas) {
             return (
                 <div className="ingreso-causas-pixel-perfect">
-                    <img src={data.backgroundUrl || ingresoCausasBg} alt="Ingreso Causas Form" className="ingreso-causas-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || ingresoCausasBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = ingresoCausasBg; }}
+                        alt="Ingreso Causas Form" 
+                        className="ingreso-causas-bg-image" 
+                    />
 
                     <div className="ingreso-causas-overlay">
                         {/* ABOGADO */}
@@ -317,7 +332,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && data.isInicioDemanda) {
             return (
                 <div className="inicio-demanda-pixel-perfect">
-                    <img src={data.backgroundUrl || inicioDemandaBg} alt="Inicio Demanda Form" className="inicio-demanda-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || inicioDemandaBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = inicioDemandaBg; }}
+                        alt="Inicio Demanda Form" 
+                        className="inicio-demanda-bg-image" 
+                    />
 
                     <div className="inicio-demanda-overlay">
                         {/* FUERO */}
@@ -409,7 +429,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === '3003_SUCESIONES') {
             return (
                 <div className="sucesiones-pixel-perfect">
-                    <img src={data.backgroundUrl || sucesiones3003Bg} alt="Sucesiones Form" className="sucesiones-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || sucesiones3003Bg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = sucesiones3003Bg; }}
+                        alt="Sucesiones Form" 
+                        className="sucesiones-bg-image" 
+                    />
 
                     <div className="sucesiones-overlay">
                         <input
@@ -468,7 +493,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_COMERCIAL') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={inicioComercialBg} alt="Inicio Comercial Form" className="tcl-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || inicioComercialOfficialBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = inicioComercialOfficialBg; }}
+                        alt="Inicio Comercial" 
+                        className="tcl-bg-image" 
+                    />
                     <div className="tcl-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
@@ -477,25 +507,26 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                             onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
                         />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'INICIO_SS') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={data.backgroundUrl || ssInicioBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = ssInicioBg; }}
+                        alt="Inicio SS" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
                         <input
-                            className={`field-abs-input ${activeFieldId === 'demandado_nombre' ? 'active-field' : ''}`}
-                            style={{ top: '67.0%', left: '21.0%', width: '30%' }}
-                            value={getValue('demandado_nombre', rawAnswers?.demandado_nombre)}
-                            onChange={(e) => handleFieldChange('demandado_nombre', e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'objeto' ? 'active-field' : ''}`}
-                            style={{ top: '71.5%', left: '21.0%', width: '40%' }}
-                            value={getValue('objeto', rawAnswers?.objeto)}
-                            onChange={(e) => handleFieldChange('objeto', e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <input
-                            className={`field-abs-input ${activeFieldId === 'monto' ? 'active-field' : ''}`}
-                            style={{ top: '75.5%', left: '21.0%', width: '20%' }}
-                            value={getValue('monto', rawAnswers?.monto)}
-                            onChange={(e) => handleFieldChange('monto', e.target.value)}
+                            className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '32.0%', left: '20.0%', width: '60%' }}
+                            value={getValue('actor_nombre', rawAnswers?.actor_nombre)}
+                            onChange={(e) => handleFieldChange('actor_nombre', e.target.value)}
                             onKeyDown={handleKeyDown}
                         />
                     </div>
@@ -506,7 +537,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === 'SECLO_INICIO') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={secloInicioBg} alt="SECLO Form" className="tcl-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || secloInicioBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = secloInicioBg; }}
+                        alt="SECLO Form" 
+                        className="tcl-bg-image" 
+                    />
                     <div className="tcl-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
@@ -544,7 +580,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === 'SS_INGRESO') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={ssIngresoBg} alt="SS Ingreso Form" className="tcl-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || ssIngresoBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = ssIngresoBg; }}
+                        alt="SS Ingreso Form" 
+                        className="tcl-bg-image" 
+                    />
                     <div className="tcl-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'actor_nombre' ? 'active-field' : ''}`}
@@ -560,7 +601,12 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === 'CASACION_QUEJA') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={penalQuejaBg} alt="Penal Queja Form" className="tcl-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || penalQuejaBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = penalQuejaBg; }}
+                        alt="Penal Queja Form" 
+                        className="tcl-bg-image" 
+                    />
                     <div className="tcl-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'imputado_nombre' ? 'active-field' : ''}`}
@@ -573,10 +619,94 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
             );
         }
 
+        if (isOfficial && rawAnswers && data.isOfficialForm === '3003_SUCESIONES') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={data.backgroundUrl || sucesiones3003CivilBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = sucesiones3003CivilBg; }}
+                        alt="3003 Sucesiones" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '35.0%', left: '20.0%', width: '60%' }}
+                            value={getValue('causante_nombre', rawAnswers?.causante_nombre)}
+                            onChange={(e) => handleFieldChange('causante_nombre', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'CEDULA_CIVIL') {
+            return (
+                <div className="document-standard">
+                    <div className="document-header-professional">
+                        <div className="law-firm-header">CÉDULA DE NOTIFICACIÓN OFICIAL</div>
+                        <div className="document-header-content">{header}</div>
+                    </div>
+                    <div className="document-body-professional">
+                        {body.map((p, i) => (
+                            <p key={i} className="document-paragraph">{p}</p>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'AGIP_DEUDA') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={data.backgroundUrl || agipDeudaBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = agipDeudaBg; }}
+                        alt="AGIP Deuda" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'dominio' ? 'active-field' : ''}`}
+                            style={{ top: '35.0%', left: '20.0%', width: '30%' }}
+                            value={getValue('dominio', rawAnswers?.dominio)}
+                            onChange={(e) => handleFieldChange('dominio', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (isOfficial && rawAnswers && data.isOfficialForm === 'SECLO_CARTA_PODER') {
+            return (
+                <div className="tcl-pixel-perfect">
+                    <img 
+                        src={data.backgroundUrl || secloCartaPoderBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = secloCartaPoderBg; }}
+                        alt="SECLO Carta Poder" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'otorgante_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '25.0%', left: '15.0%', width: '70%' }}
+                            value={getValue('otorgante_nombre', rawAnswers?.otorgante_nombre)}
+                            onChange={(e) => handleFieldChange('otorgante_nombre', e.target.value)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
         if (isOfficial && rawAnswers && data.isOfficialForm === 'QUIEBRAS_3003') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <img src={quiebras3003Bg} alt="Quiebras 3003 Form" className="tcl-bg-image" />
+                    <img 
+                        src={data.backgroundUrl || quiebras3003Bg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = quiebras3003Bg; }}
+                        alt="Quiebras 3003 Form" 
+                        className="tcl-bg-image" 
+                    />
                     <div className="tcl-overlay">
                         <input
                             className={`field-abs-input ${activeFieldId === 'razon_social' ? 'active-field' : ''}`}
@@ -592,13 +722,20 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === 'PBA_3003') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <div style={{ padding: '40px', background: '#f9f9f9', minHeight: '600px', color: '#000' }}>
-                        <h3 style={{ borderBottom: '2px solid #000', paddingBottom: '10px' }}>REGISTRO DE JUICIOS UNIVERSALES - PBA</h3>
-                        <div style={{ marginTop: '30px' }}>
-                            <p>DEPARTAMENTO JUDICIAL: <strong>{getValue('departamento', rawAnswers?.departamento)}</strong></p>
-                            <p style={{ marginTop: '40px' }}>Nombre del Causante: <strong>{getValue('causante_nombre', rawAnswers?.causante_nombre)}</strong></p>
-                            <p>DNI: <strong>{getValue('causante_dni', rawAnswers?.causante_dni)}</strong></p>
-                        </div>
+                    <img 
+                        src={data.backgroundUrl || sucesiones3003Bg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = sucesiones3003Bg; }}
+                        alt="PBA 3003 Form" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <div style={{ position: 'absolute', top: '15%', left: '40%', fontSize: '20px', fontWeight: 'bold' }}>PBA</div>
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'causante_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '35.0%', left: '27.5%', width: '60%' }}
+                            value={getValue('causante_nombre', rawAnswers?.causante_nombre)}
+                            onChange={(e) => handleFieldChange('causante_nombre', e.target.value)}
+                        />
                     </div>
                 </div>
             );
@@ -607,13 +744,25 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
         if (isOfficial && rawAnswers && data.isOfficialForm === 'IGJ_RETIRO') {
             return (
                 <div className="tcl-pixel-perfect">
-                    <div style={{ padding: '60px', background: 'white', minHeight: '500px', border: '1px solid #ddd', color: '#000' }}>
-                        <h2 style={{ textAlign: 'center', textDecoration: 'underline' }}>ANEXO I - AUTORIZACIÓN DE RETIRO</h2>
-                        <div style={{ marginTop: '50px', lineHeight: '2' }}>
-                            Yo, <span className="active-field" style={{ padding: '0 10px' }}>{getValue('profesional_nombre', rawAnswers?.profesional_nombre)}</span>, 
-                            autorizo a <span className="active-field" style={{ padding: '0 10px' }}>{getValue('autorizado_nombre', rawAnswers?.autorizado_nombre)}</span> a retirar 
-                            el trámite correlativa N° <span className="active-field" style={{ padding: '0 10px' }}>{getValue('tramite_nro', rawAnswers?.tramite_nro)}</span> en la sede del CPACF.
-                        </div>
+                    <img 
+                        src={data.backgroundUrl || igjAnexoBg} 
+                        onError={(e) => { e.target.onError = null; e.target.src = igjAnexoBg; }}
+                        alt="IGJ Anexo" 
+                        className="tcl-bg-image" 
+                    />
+                    <div className="tcl-overlay">
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'profesional_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '48.0%', left: '15.0%', width: '70%' }}
+                            value={getValue('profesional_nombre', rawAnswers?.profesional_nombre)}
+                            onChange={(e) => handleFieldChange('profesional_nombre', e.target.value)}
+                        />
+                        <input
+                            className={`field-abs-input ${activeFieldId === 'autorizado_nombre' ? 'active-field' : ''}`}
+                            style={{ top: '56.0%', left: '15.0%', width: '70%' }}
+                            value={getValue('autorizado_nombre', rawAnswers?.autorizado_nombre)}
+                            onChange={(e) => handleFieldChange('autorizado_nombre', e.target.value)}
+                        />
                     </div>
                 </div>
             );
@@ -621,17 +770,24 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
 
         return (
             <div className="document-standard">
-                <div className="document-header">
-                    <pre>{header}</pre>
+                <div className="document-header-professional">
+                    <div className="law-firm-header">LEXIA LEGAL ENGINE</div>
+                    <div className="document-header-content">{header}</div>
                 </div>
-                <div className="document-body">
-                    {body.map((p, i) => <p key={i}>{p}</p>)}
+                <div className="document-body-professional">
+                    {body.map((p, i) => (
+                        <p key={i} className="document-paragraph">{p}</p>
+                    ))}
                 </div>
                 {footer && (
-                    <div className="document-footer">
+                    <div className="document-footer-professional">
+                        <div className="footer-line"></div>
                         <pre>{footer}</pre>
                     </div>
                 )}
+                <div className="digital-stamp">
+                    DOCUMENTO GENERADO POR LEXIA AI - VALIDEZ DIGITAL
+                </div>
             </div>
         );
     };
@@ -657,32 +813,67 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                     width: 100%;
                 }
                 .document-page {
-                    background: white;
+                    background: #fdfcf9; /* Subtle parchment color */
                     width: 100%;
                     max-width: 1000px;
                     margin: 0 auto;
                     padding: 0;
                     box-shadow: 0 10px 50px rgba(0,0,0,0.7);
-                    color: #333;
+                    color: #1a1a1a;
                     position: relative;
                     display: flex;
                     flex-direction: column;
+                    border: 1px solid #e5e0d5;
                 }
-                .official-stamp {
-                    position: absolute;
-                    top: 25px;
-                    right: -35px;
-                    transform: rotate(45deg);
-                    background: rgba(255, 0, 0, 0.03);
-                    color: rgba(255, 0, 0, 0.15);
-                    border: 1px solid rgba(255, 0, 0, 0.1);
-                    padding: 4px 40px;
-                    font-weight: 800;
-                    font-size: 11px;
-                    letter-spacing: 3px;
-                    pointer-events: none;
-                    z-index: 10;
-                    text-transform: uppercase;
+                .document-standard {
+                    padding: 60px 80px;
+                    font-family: 'Times New Roman', Times, serif;
+                    line-height: 1.8;
+                    color: #1a1a1a;
+                }
+                .document-header-professional {
+                    margin-bottom: 40px;
+                    border-bottom: 1px solid #ddd;
+                    padding-bottom: 20px;
+                }
+                .law-firm-header {
+                    font-family: 'Inter', sans-serif;
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                    color: #888;
+                    margin-bottom: 10px;
+                }
+                .document-header-content {
+                    font-weight: bold;
+                    white-space: pre-line;
+                    font-size: 14px;
+                }
+                .document-body-professional {
+                    min-height: 400px;
+                }
+                .document-paragraph {
+                    margin-bottom: 20px;
+                    text-align: justify;
+                    font-size: 16px;
+                }
+                .document-footer-professional {
+                    margin-top: 60px;
+                    font-size: 14px;
+                }
+                .footer-line {
+                    width: 150px;
+                    height: 1px;
+                    background: #333;
+                    margin-bottom: 10px;
+                }
+                .digital-stamp {
+                    margin-top: 100px;
+                    font-size: 9px;
+                    color: #aaa;
+                    text-align: center;
+                    letter-spacing: 1px;
+                    border: 1px dashed #eee;
+                    padding: 10px;
                 }
                 .preview-title {
                     font-size: 13px;
