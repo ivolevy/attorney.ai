@@ -27,8 +27,18 @@ const HomePage = ({ user, onLogout }) => {
     const loadTemplates = async () => {
       try {
         const dbTemplates = await getTemplates();
-        // Merge with local templates if needed, or just use DB
-        setTemplates(dbTemplates.length > 0 ? dbTemplates : LOCAL_TEMPLATES);
+        
+        // Merge DB templates with local templates, prioritizing DB for same IDs
+        const merged = [...dbTemplates];
+        const dbIds = new Set(dbTemplates.map(t => t.id));
+        
+        LOCAL_TEMPLATES.forEach(local => {
+          if (!dbIds.has(local.id)) {
+            merged.push(local);
+          }
+        });
+        
+        setTemplates(merged);
       } catch (err) {
         console.error("Failed to load templates from DB, falling back to local", err);
         setTemplates(LOCAL_TEMPLATES);
