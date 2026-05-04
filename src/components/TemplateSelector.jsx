@@ -68,7 +68,7 @@ const TemplateSelector = ({ templates, onSelect, activeTemplate, currentField, o
                             onClick={() => !template.disabled && onSelect(template.id)}
                         >
                             <div className="card-main">
-                                <h5>{template.name}</h5>
+                                <h5>{template.name || template.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</h5>
                                 <p>{template.description}</p>
                             </div>
                             {!template.disabled && <ChevronRight size={16} className="arrow-icon" />}
