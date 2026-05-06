@@ -100,7 +100,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
             let bgImage = data.backgroundUrl;
             if (!bgImage) {
                 // Fallback inteligente basado en el título o categoría
-                const upperTitle = title.toUpperCase();
+                const upperTitle = (data.title || '').toUpperCase();
                 if (upperTitle.includes('TCL') || upperTitle.includes('TELEGRAMA')) bgImage = tclBg;
                 else if (upperTitle.includes('SUCESIONES') || upperTitle.includes('3003')) bgImage = sucesiones3003Bg;
                 else if (upperTitle.includes('SECLO')) bgImage = secloCartaPoderBg;
@@ -253,6 +253,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                 .tcl-pixel-perfect {
                     position: relative;
                     width: 100%;
+                    container-type: inline-size; /* Habilitar Container Queries */
                 }
                 .tcl-bg-image {
                     width: 100%;
@@ -275,7 +276,7 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
                     color: #000080;
                     font-family: 'Courier New', Courier, monospace;
                     font-weight: bold;
-                    font-size: 14px;
+                    font-size: 1.6cqw; /* Fuente dinámica basada en el ancho del papel */
                     letter-spacing: -0.01em;
                     pointer-events: auto;
                     padding: 2px 4px;

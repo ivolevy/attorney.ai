@@ -123,30 +123,31 @@ const useConversationalTemplate = (templates, onUpdateText, onDownload) => {
     };
 
     const PUNCTUATION_MAP = {
-        " punto y coma": ";",
-        " punto aparte": ".\n",
-        " punto seguido": ".",
-        " punto": ".",
-        " coma": ",",
-        " dos puntos": ":",
-        " nueva línea": "\n",
-        " abrir paréntesis": "(",
-        " cerrar paréntesis": ")",
-        " arroba": "@"
+        "punto y coma": ";",
+        "punto aparte": ".\n",
+        "punto seguido": ".",
+        "punto": ".",
+        "coma": ",",
+        "dos puntos": ":",
+        "nueva línea": "\n",
+        "abrir paréntesis": "(",
+        "cerrar paréntesis": ")",
+        "arroba": "@"
     };
 
     const processTranscript = (text, fieldId) => {
-        let processed = text.toLowerCase();
+        let processed = text; // No pasar a minúsculas de entrada
 
-        // 1. Aplicar Diccionario Legal
+        // 1. Aplicar Diccionario Legal (usando regex que ignora mayúsculas)
         Object.entries(LEGAL_DICTIONARY).forEach(([key, val]) => {
             const regex = new RegExp(`\\b${key}\\b`, 'gi');
             processed = processed.replace(regex, val);
         });
 
-        // 2. Aplicar Puntuación Automática
+        // 2. Aplicar Puntuación Automática (más flexible con los espacios)
         Object.entries(PUNCTUATION_MAP).forEach(([key, val]) => {
-            const regex = new RegExp(key, 'gi');
+            // Reemplazar el comando con o sin espacio previo
+            const regex = new RegExp(`\\s?${key}\\b`, 'gi');
             processed = processed.replace(regex, val);
         });
 

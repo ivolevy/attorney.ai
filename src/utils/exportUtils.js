@@ -108,25 +108,36 @@ export const exportToPDF = async (content) => {
                 }
             }
 
-            // 2. INGRESO DE CAUSAS, INICIO DE DEMANDA, etc. (PNG Based)
-            else if (content.backgroundUrl) {
+            // 2. MOTOR DINÁMICO (Basado en el layout de la DB)
+            else if (content.layout && Object.keys(content.layout).length > 0) {
                 try {
                     const pdfDoc = await PDFDocument.create();
                     const page = pdfDoc.addPage();
                     const { width, height } = page.getSize();
 
-                    // Embed PNG from Supabase URL
-                    const response = await fetch(content.backgroundUrl);
-                    const pngImageBytes = await response.arrayBuffer();
-                    const pngImage = await pdfDoc.embedPng(pngImageBytes);
-                    page.drawImage(pngImage, {
+                    // Embed PNG from Supabase URL or local fallback
+                    const imageUrl = content.backgroundUrl;
+                    if (!imageUrl) throw new Error("No background image for official form");
+
+                    const response = await fetch(imageUrl);
+                    const imageBytes = await response.arrayBuffer();
+                    
+                    // Soporte para PNG o JPG
+                    let embeddedImage;
+                    if (imageUrl.toLowerCase().endsWith('.png')) {
+                        embeddedImage = await pdfDoc.embedPng(imageBytes);
+                    } else {
+                        embeddedImage = await pdfDoc.embedJpg(imageBytes);
+                    }
+
+                    page.drawImage(embeddedImage, {
                         x: 0,
                         y: 0,
                         width: width,
                         height: height,
                     });
 
-                    const draw = (text, xPct, yPct, size = 11) => {
+                    const draw = (text, xPct, yPct, size = 10) => {
                         if (!text) return;
                         page.drawText(text.toString().toUpperCase(), {
                             x: (xPct / 100) * width,
@@ -136,51 +147,41 @@ export const exportToPDF = async (content) => {
                         });
                     };
 
-                    if (content.isIngresoCausas) {
-                        draw(rawAnswers.abogado_tomo, 27.5, 40.2);
-                        draw(rawAnswers.abogado_folio, 34.5, 40.2);
-                        draw(rawAnswers.abogado_nombre, 43.5, 40.2);
-                        draw(rawAnswers.actor_nombre, 18.5, 55.6);
-                        draw(rawAnswers.actor_ieric, 43.5, 55.6);
-                        draw(rawAnswers.actor_dni, 18.5, 57.4);
-                        const s = (rawAnswers.actor_sexo || '').toLowerCase();
-                        if (s.includes('fem')) draw('X', 45.1, 59.2, 14);
-                        else if (s.includes('masc')) draw('X', 60.1, 59.2, 14);
-                        else if (s) draw('X', 88.3, 59.2, 14);
-                        draw(rawAnswers.demandado_nombre, 18.5, 67.0);
-                        draw(rawAnswers.expte_numero, 18.5, 80.5);
-                    } else if (content.isInicioDemanda) {
-                        draw(rawAnswers.fuero, 20, 15);
-                        draw(rawAnswers.objeto, 20, 20);
-                        draw(rawAnswers.monto, 20, 25);
-                        draw(rawAnswers.actor_nombre, 20, 30);
-                        draw(rawAnswers.actor_dni, 65, 30);
-                        draw(rawAnswers.demandado_nombre, 20, 35);
-                        draw(rawAnswers.abogado_nombre, 20, 40);
-                    } else if (content.isOfficialForm === '3003_SUCESIONES') {
-                        draw(rawAnswers.causante_nombre, 27.5, 34.0);
-                        draw(rawAnswers.causante_dni, 27.5, 39.0);
-                        draw(rawAnswers.fecha_fallecimiento, 27.5, 59.5);
-                        draw(rawAnswers.lugar_fallecimiento, 72.5, 59.5);
-                        draw(rawAnswers.ultimo_domicilio, 27.5, 64.5);
-                        draw(rawAnswers.abogado_nombre, 27.5, 83.5);
-                    } else if (content.isOfficialForm === 'INICIO_COMERCIAL') {
-                        draw(rawAnswers.actor_nombre, 21.0, 55.5);
-                        draw(rawAnswers.demandado_nombre, 21.0, 67.0);
-                        draw(rawAnswers.objeto, 21.0, 71.5);
-                        draw(rawAnswers.monto, 21.0, 75.5);
-                    } else if (content.isOfficialForm === 'SECLO_INICIO') {
-                        draw(rawAnswers.actor_nombre, 25.0, 32.0);
-                        draw(rawAnswers.actor_cuil, 25.0, 35.5);
-                        draw(rawAnswers.empleador_nombre, 25.0, 53.5);
-                        draw(rawAnswers.motivo, 10.0, 78.5);
-                    }
+                    // Dibujar cada campo definido en el layout
+                    Object.entries(content.layout).forEach(([fieldId, coords]) => {
+                        const value = rawAnswers[fieldId];
+                        if (value) {
+                            const xPct = parseFloat(coords.left);
+                            const yPct = parseFloat(coords.top);
+                            
+                            // Si es un campo de texto largo (ej: cuerpo del telegrama)
+                            if (coords.type === 'textarea' || fieldId === 'texto') {
+                                const words = value.toString().toUpperCase().split(' ');
+                                let currentLine = '';
+                                let yOffset = 0;
+                                const wrapWidth = 70; // Caracteres por línea aprox
+                                
+                                words.forEach(word => {
+                                    if ((currentLine + word).length > wrapWidth) {
+                                        draw(currentLine, xPct, yPct + (yOffset / height * 100));
+                                        currentLine = word + ' ';
+                                        yOffset += 12; // Salto de línea
+                                    } else {
+                                        currentLine += word + ' ';
+                                    }
+                                });
+                                draw(currentLine, xPct, yPct + (yOffset / height * 100));
+                            } else {
+                                draw(value, xPct, yPct);
+                            }
+                        }
+                    });
 
                     const pdfBytes = await pdfDoc.save();
                     saveAs(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
                     return;
                 } catch (err) {
-                    console.error('Error with PNG based PDF:', err);
+                    console.error('Error with Dynamic PDF:', err);
                 }
             }
         }
