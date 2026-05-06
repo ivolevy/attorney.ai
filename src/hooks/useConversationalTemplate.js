@@ -104,6 +104,67 @@ const useConversationalTemplate = (templates, onUpdateText, onDownload) => {
     }, [activeTemplate, currentFieldIndex, speak]);
 
     // Text cleaning helpers
+    // --- INTELIGENCIA DE VOZ: DICCIONARIOS Y COMANDOS ---
+    const LEGAL_DICTIONARY = {
+        "casa ante": "causante",
+        "casaante": "causante",
+        "litis consorcio": "litisconsorcio",
+        "litisconsorcio": "litisconsorcio",
+        "pervencion": "perención",
+        "perencion": "perención",
+        "exordio": "exordio",
+        "traslado": "traslado",
+        "fojas": "fojas",
+        "foja": "foja",
+        "vuestra señoria": "Vuestra Señoría",
+        "usía": "Usía",
+        "proveer de conformidad": "Proveer de conformidad",
+        "sera justicia": "Será Justicia"
+    };
+
+    const PUNCTUATION_MAP = {
+        " punto y coma": ";",
+        " punto aparte": ".\n",
+        " punto seguido": ".",
+        " punto": ".",
+        " coma": ",",
+        " dos puntos": ":",
+        " nueva línea": "\n",
+        " abrir paréntesis": "(",
+        " cerrar paréntesis": ")",
+        " arroba": "@"
+    };
+
+    const processTranscript = (text, fieldId) => {
+        let processed = text.toLowerCase();
+
+        // 1. Aplicar Diccionario Legal
+        Object.entries(LEGAL_DICTIONARY).forEach(([key, val]) => {
+            const regex = new RegExp(`\\b${key}\\b`, 'gi');
+            processed = processed.replace(regex, val);
+        });
+
+        // 2. Aplicar Puntuación Automática
+        Object.entries(PUNCTUATION_MAP).forEach(([key, val]) => {
+            const regex = new RegExp(key, 'gi');
+            processed = processed.replace(regex, val);
+        });
+
+        // 3. Limpieza de Contexto (Numéricos / Fechas)
+        if (['dest_cp', 'rem_cp', 'rem_dni', 'tipo_comunicacion'].includes(fieldId)) {
+            processed = processed.replace(/[^\d]/g, '');
+        }
+
+        if (['rem_fecha', 'fecha'].includes(fieldId)) {
+            processed = processed.replace(/\s+(del|de|barra)\s+/g, '/');
+            processed = processed.replace(/\b(uno|primero)\b/g, '1');
+            processed = processed.replace(/[^\d/]/g, '');
+        }
+
+        return processed;
+    };
+    // ----------------------------------------------------
+
     const cleanNumericInput = (text) => {
         return text.replace(/[^\d]/g, '');
     };
@@ -231,69 +292,64 @@ const useConversationalTemplate = (templates, onUpdateText, onDownload) => {
         if (currentFieldIndex === -1) return;
 
         const currentField = activeTemplate.fields[currentFieldIndex];
-        const lowerTranscript = transcript.toLowerCase();
+        const lowerTranscript = transcript.toLowerCase().trim();
 
-        // Voice command: CLEAR / BORRAR
-        if (lowerTranscript === 'borrar' || lowerTranscript === 'corregir' || lowerTranscript === 'limpiar' || lowerTranscript === 'borra') {
+        // --- MOTOR DE COMANDOS GLOBALES ---
+        if (lowerTranscript === 'siguiente' || lowerTranscript === 'continuar') {
+            advanceToNextField();
+            return;
+        }
+
+        if (lowerTranscript === 'atrás' || lowerTranscript === 'corregir anterior' || lowerTranscript === 'volver') {
+            goToPreviousField();
+            return;
+        }
+
+        if (lowerTranscript === 'repetir' || lowerTranscript === 'qué dijiste') {
+            speak(currentField.prompt || currentField.name);
+            return;
+        }
+
+        if (lowerTranscript === 'borrar todo' || lowerTranscript === 'limpiar campo') {
+            const newAnswers = { ...answers, [currentField.id]: '' };
+            setAnswers(newAnswers);
+            if (onUpdateText) onUpdateText(activeTemplate.format(newAnswers));
+            speak("Campo limpiado.");
+            return;
+        }
+
+        // Comando de borrado simple (mantiene lógica existente mejorada)
+        if (lowerTranscript === 'borrar' || lowerTranscript === 'borra') {
             if (currentField.id === 'texto') {
-                // For 'texto' field, remove the last segment
                 const existingText = answers[currentField.id] || '';
-                const segments = existingText.split(' ').filter(s => s.trim() !== '');
-                if (segments.length > 0) {
-                    segments.pop(); // Remove the last segment
-                    const newText = segments.join(' ');
+                const words = existingText.trim().split(' ');
+                if (words.length > 0) {
+                    words.pop();
+                    const newText = words.join(' ');
                     const newAnswers = { ...answers, [currentField.id]: newText };
                     setAnswers(newAnswers);
                     if (onUpdateText) onUpdateText(activeTemplate.format(newAnswers));
-                    speak("Último segmento borrado.");
-                } else {
-                    speak("El campo de texto ya está vacío.");
+                    speak("Última palabra borrada.");
                 }
             } else {
-                // For other fields, clear the entire field
                 const newAnswers = { ...answers, [currentField.id]: '' };
                 setAnswers(newAnswers);
                 if (onUpdateText) onUpdateText(activeTemplate.format(newAnswers));
-                speak(`Campo ${currentField.name} borrado.`);
+                speak("Campo borrado.");
             }
             return;
         }
 
-        let processedTranscript = transcript;
+        // --- PROCESAMIENTO INTELIGENTE DEL TEXTO ---
+        let processedTranscript = processTranscript(transcript, currentField.id);
 
-        // Strict numeric formatting for CP and DNI
-        if (['dest_cp', 'rem_cp', 'rem_dni'].includes(currentField.id)) {
-            processedTranscript = cleanNumericInput(transcript);
-            if (!processedTranscript && transcript.trim().length > 0) {
-                speak("No he entendido. Por favor di sólo números.");
-                return;
-            }
+        // Validaciones de seguridad
+        if (['dest_cp', 'rem_cp', 'rem_dni'].includes(currentField.id) && !processedTranscript) {
+            speak("No entendí los números. Por favor, repítelos.");
+            return;
         }
 
-        // Strict date formatting
-        if (['rem_fecha', 'fecha'].includes(currentField.id)) {
-            processedTranscript = cleanDateInput(transcript);
-            if (!processedTranscript && transcript.trim().length > 0) {
-                speak("No he entendido. Por favor di una fecha válida.");
-                return;
-            }
-        }
-
-        // Custom filter for communication type (extract number)
-        if (currentField.id === 'tipo_comunicacion') {
-            const verbalMap = { 'uno': '1', 'una': '1', 'dos': '2', 'tres': '3' };
-
-            Object.keys(verbalMap).forEach(key => {
-                if (lowerTranscript.includes(key)) processedTranscript = verbalMap[key];
-            });
-
-            if (processedTranscript === transcript) {
-                const match = transcript.match(/\d/);
-                if (match) processedTranscript = match[0];
-            }
-        }
-
-        // Special logic for long body text (keep appending until "finalizado")
+        // Lógica especial para el cuerpo del texto (Append + Finalizado)
         if (currentField.id === 'texto') {
             const isFinished = lowerTranscript.includes('finalizado') ||
                 lowerTranscript.includes('terminar') ||

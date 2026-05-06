@@ -65,6 +65,7 @@ const HomePage = ({ user, onLogout }) => {
         : [replaceVars(richTemplate.body)],
       footer: replaceVars(richTemplate.footer),
       rawAnswers: answers,
+      layout: template.layout, // CRÍTICO: Pasar el layout de la DB
       backgroundUrl: template.background_url, // Pass the DB URL to the preview
       pdfUrl: template.config?.pdf_url // Pass the PDF URL for generation
     };
