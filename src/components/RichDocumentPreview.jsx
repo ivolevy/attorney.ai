@@ -99,18 +99,26 @@ const RichDocumentPreview = ({ data, updateAnswers, interimText, activeFieldId, 
             // Determinar imagen de fondo
             let bgImage = data.backgroundUrl;
             if (!bgImage) {
-                // Fallback inteligente basado en el título si no hay URL
-                if (title.includes('TCL')) bgImage = tclBg;
-                else if (title.includes('SUCESIONES')) bgImage = sucesiones3003Bg;
-                else if (title.includes('SECLO')) bgImage = secloCartaPoderBg;
-                else bgImage = tclBg; // Fallback final
+                // Fallback inteligente basado en el título o categoría
+                const upperTitle = title.toUpperCase();
+                if (upperTitle.includes('TCL') || upperTitle.includes('TELEGRAMA')) bgImage = tclBg;
+                else if (upperTitle.includes('SUCESIONES') || upperTitle.includes('3003')) bgImage = sucesiones3003Bg;
+                else if (upperTitle.includes('SECLO')) bgImage = secloCartaPoderBg;
+                else if (upperTitle.includes('CAUSAS') || upperTitle.includes('INGRESO')) bgImage = ingresoCausasBg;
+                else if (upperTitle.includes('DEMANDA')) bgImage = inicioDemandaBg;
+                else if (upperTitle.includes('COMERCIAL')) bgImage = inicioComercialBg;
+                else bgImage = tclBg; // Último recurso
             }
 
             return (
                 <div className="tcl-pixel-perfect">
                     <img 
                         src={bgImage} 
-                        onError={(e) => { e.target.onerror = null; e.target.src = tclBg; }}
+                        onError={(e) => { 
+                            e.target.onerror = null; 
+                            // Si falla la carga, intentamos un placeholder neutro o el fondo de SECLO que es genérico
+                            e.target.src = secloCartaPoderBg; 
+                        }}
                         alt="Official Form" 
                         className="tcl-bg-image" 
                     />
